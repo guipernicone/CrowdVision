@@ -1,2 +1,2 @@
-#Crowd Vision
-Trabalho de conclusão de curso, voltado para a detecção de armas de fogo, utilizando detecção de objetos
+# Crowd Vision
+Detecção de armas de fogos utilizando detecção de objetos
