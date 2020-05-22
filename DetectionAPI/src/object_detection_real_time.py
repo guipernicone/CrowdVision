@@ -10,7 +10,7 @@ from object_detection.utils import visualization_utils as vis_util
 #                         VIDEO STREAM
 #--------------------------------------------------------------------
 
-cap = cv2.VideoCapture('videos/testVideo2.mp4')
+cap = cv2.VideoCapture('videos/testVideo4.mp4')
 
 #--------------------------------------------------------------------
 #                         MODEL PREPARATION
@@ -31,7 +31,6 @@ NUM_CLASSES = 1
 #--------------------------------------------------------------------
 #                         LOAD MODEL
 #--------------------------------------------------------------------
-
 
 # Load the frozen TensorFlow model to the memory
 detection_graph = tf.Graph()
@@ -64,11 +63,10 @@ def load_image_into_numpy_array(image):
 #                         DETECTION
 #--------------------------------------------------------------------
 
-# Detection
 with detection_graph.as_default():
     with tf.compat.v1.Session(graph=detection_graph) as sess:
         while True:
-            # Read frame from camera
+            # Read a frame
             ret, image_np = cap.read()
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
             image_np_expanded = np.expand_dims(image_np, axis=0)
@@ -82,11 +80,14 @@ with detection_graph.as_default():
             classes = detection_graph.get_tensor_by_name('detection_classes:0')
             # Extract number of detectionsd
             num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-            # Actual detection.
+
+            # Run the tensors by running the session, getting the actual detection.
             (boxes, scores, classes, num_detections) = sess.run(
                 [boxes, scores, classes, num_detections],
                 feed_dict={image_tensor: image_np_expanded})
-            # Visualization of the results of a detection.
+
+            # Visualization of the results of a detection by creating the boxes and
+            # labels on the frame
             vis_util.visualize_boxes_and_labels_on_image_array(
                 image_np,
                 np.squeeze(boxes),
@@ -102,7 +103,7 @@ with detection_graph.as_default():
             print(num_detections[0])
             print(boxes[0][0])
 
-            # Display output
+            # Display the frames with the detection boxes
             cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
             # cv2.imshow('object detection', cv2.resize(image_np, (340, 660)))
 
