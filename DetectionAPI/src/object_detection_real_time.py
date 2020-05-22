@@ -6,22 +6,21 @@ from io import StringIO
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
 
-# Define the video stream
-cap = cv2.VideoCapture('videos/testVideo2.mp4')  # Change only if you have more than one webcams
+#--------------------------------------------------------------------
+#                         VIDEO STREAM
+#--------------------------------------------------------------------
 
+cap = cv2.VideoCapture('videos/testVideo2.mp4')
 
 #--------------------------------------------------------------------
 #                         MODEL PREPARATION
 #--------------------------------------------------------------------
 
+# PATH for the TensorFlow frozen inference graph, that is the actual model for 
+# the object detection.
+PATH_TO_CKPT = os.path.join('inference_graph', 'frozen_inference_graph.pb')
 
-# What model to download.
-MODEL_NAME = 'inference_graph'
-
-# Path to frozen detection graph. This is the actual model that is used for the object detection.
-PATH_TO_CKPT = os.path.join(MODEL_NAME, 'frozen_inference_graph.pb')
-
-# List of the strings that is used to add correct label for each box.
+# PATH to the labels map, in a json file.
 PATH_TO_LABELS = os.path.join('label_map', 'object-detection.pbtxt')
 
 # Number of classes to detect
@@ -34,7 +33,7 @@ NUM_CLASSES = 1
 #--------------------------------------------------------------------
 
 
-# Load a (frozen) Tensorflow model into memory.
+# Load the frozen TensorFlow model to the memory
 detection_graph = tf.Graph()
 with detection_graph.as_default():
     od_graph_def = tf.compat.v1.GraphDef()
@@ -49,6 +48,9 @@ with detection_graph.as_default():
 # predicts `5`, we know that this corresponds to `airplane`.  Here we use internal 
 # utility functions, but anything that returns a dictionary mapping integers to 
 # appropriate string labels would be fine
+
+# Load the label map and create a indice to the category name, where a indice
+# corresponds to a actual category name.
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(
     label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
