@@ -2,6 +2,8 @@ import numpy as np
 import os
 import tensorflow as tf
 import cv2
+import base64
+import requests
 from io import StringIO
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
@@ -58,6 +60,17 @@ def load_image_into_numpy_array(image):
     return np.array(image.getdata()).reshape(
         (im_height, im_width, 3)).astype(np.uint8)
 
+#--------------------------------------------------------------------
+#                      CONVERT TO BASE64
+#--------------------------------------------------------------------
+#Enconde the image to a jpg format
+def convert_frame_to_base_64_string(frame):
+    ret, buffer = cv2.imencode('.jpg', cv2.resize(image_np, (300, 300)))
+    return base64.b64encode(buffer)
+
+#--------------------------------------------------------------------
+#                         HTTP REQUEST
+#--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
 #                         DETECTION
@@ -66,8 +79,12 @@ def load_image_into_numpy_array(image):
 with detection_graph.as_default():
     with tf.compat.v1.Session(graph=detection_graph) as sess:
         while True:
-            # Read a frame
+            # Read a frame from the defined stream
             ret, image_np = cap.read()
+
+            if (ret == True):
+                jpg_img = convert_frame_to_base_64_string(image_np)
+
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
             image_np_expanded = np.expand_dims(image_np, axis=0)
             # Extract image tensor
@@ -95,13 +112,18 @@ with detection_graph.as_default():
                 np.squeeze(scores),
                 category_index,
                 use_normalized_coordinates=True,
-                min_score_thresh=.5,
+                min_score_thresh=.75,
                 line_thickness=8)
 
             print(scores[0][0])
             print(classes[0][0])
             print(num_detections[0])
             print(boxes[0][0])
+
+            # convert any frame that has more than 75% of accuracy
+            if (scores[0][0].item() > 0.75):
+                jpg_img_detected = convert_frame_to_base_64_string(image_np)
+                # print(jpg_img_detected)
 
             # Display the frames with the detection boxes
             cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
