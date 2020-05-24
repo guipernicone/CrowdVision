@@ -4,6 +4,10 @@ import tensorflow as tf
 import cv2
 import base64
 import requests
+import json
+import geocoder
+import socket
+from datetime import datetime
 from io import StringIO
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
@@ -71,6 +75,21 @@ def convert_frame_to_base_64_string(frame):
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
 #--------------------------------------------------------------------
+#Send a http request to the java server.
+def send_detected_frame(frame, score):
+    URL = "http://localhost:8080/detection/add-frame/detected"
+    headers = {'content-type': 'application/json'}
+    response = geocoder.ip('me');
+
+    payload = {
+            "frame" : str(frame),
+            "detectionScore" : float(score),
+            "latitude" : str(response.lat),
+            "longitude": str(response.lng),
+            "time" : datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        }
+    r = requests.post(url = URL, data=json.dumps(payload), headers=headers, );
+    print(f"HTTP post request Response status: {r.status_code}");
 
 #--------------------------------------------------------------------
 #                         DETECTION
@@ -123,7 +142,7 @@ with detection_graph.as_default():
             # convert any frame that has more than 75% of accuracy
             if (scores[0][0].item() > 0.75):
                 jpg_img_detected = convert_frame_to_base_64_string(image_np)
-                # print(jpg_img_detected)
+                send_detected_frame(jpg_img_detected, scores[0][0])
 
             # Display the frames with the detection boxes
             cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
