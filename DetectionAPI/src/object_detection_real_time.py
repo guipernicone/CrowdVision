@@ -7,6 +7,8 @@ import requests
 import json
 import geocoder
 import socket
+import _thread as thread
+import time
 from datetime import datetime
 from io import StringIO
 from object_detection.utils import label_map_util
@@ -97,6 +99,8 @@ def send_detected_frame(frame, score):
 
 with detection_graph.as_default():
     with tf.compat.v1.Session(graph=detection_graph) as sess:
+        delay = 0
+        initial_time = int(round(time.time() * 1000))
         while True:
             # Read a frame from the defined stream
             ret, image_np = cap.read()
@@ -141,8 +145,14 @@ with detection_graph.as_default():
 
             # convert any frame that has more than 75% of accuracy
             if (scores[0][0].item() > 0.75):
-                jpg_img_detected = convert_frame_to_base_64_string(image_np)
-                send_detected_frame(jpg_img_detected, scores[0][0])
+                detectionTime = int(round(time.time() * 1000))
+                running_time = detectionTime - initial_time
+                #Send the detection once 5 seconds
+                if (delay <= running_time):
+                    jpg_img_detected = convert_frame_to_base_64_string(image_np)
+                    initial_time = int(round(time.time() * 1000))
+                    delay = 5000
+                    thread.start_new_thread(send_detected_frame, (jpg_img_detected, scores[0][0]))
 
             # Display the frames with the detection boxes
             cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
