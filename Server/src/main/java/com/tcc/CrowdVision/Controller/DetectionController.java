@@ -23,8 +23,6 @@ public class DetectionController {
 		System.out.println(detection);
 		System.out.println(detection.getFrame());
 		System.out.println(detection.getDetectionScore());
-		System.out.println(detection.getLatitude());
-		System.out.println(detection.getLongitude());
 		System.out.println(detection.getTime());
 		
 		try {
@@ -32,8 +30,7 @@ public class DetectionController {
 			System.out.println(savedDetection.toString());
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			
+			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
 

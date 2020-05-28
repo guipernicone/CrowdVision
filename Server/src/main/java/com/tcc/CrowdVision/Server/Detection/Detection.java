@@ -7,20 +7,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Detection {
 	
 	@Id
-	public String id;
-	public String frame;
-	public Float detectionScore;
-	public String latitude;
-	public String longitude;
-	public String time;
-	
-	public Detection(String frame, Float detectionScore, String latitude, String longitude, String time) {
-		this.frame = frame;
-		this.detectionScore = detectionScore;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.time = time;
-	}
+	private String id;
+	private String frame;
+	private Float detectionScore;
+	private String time;
+	private String cameraId;
 	
 	public String getFrame() {
 		return frame;
@@ -30,23 +21,20 @@ public class Detection {
 		return detectionScore;
 	}
 	
-	public String getLatitude() {
-		return latitude;
-	}
-	
-	public String getLongitude() {
-		return longitude;
-	}
-	
 	public String getTime() {
 		return time;
 	}
 
+	public String getCameraId() {
+		return cameraId;
+	}
+
 	@Override
 	public String toString() {
-		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", latitude="
-				+ latitude + ", longitude=" + longitude + ", time=" + time + "]";
+		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", time=" + time
+				+ ", camera=" + cameraId + "]";
 	}
+
 	
 	
 }
