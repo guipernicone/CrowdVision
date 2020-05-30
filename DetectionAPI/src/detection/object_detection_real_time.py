@@ -47,19 +47,9 @@ with detection_graph.as_default():
 # corresponds to a actual category name.
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(
-    label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
 
-
-#--------------------------------------------------------------------
-#                            HELPER
-#--------------------------------------------------------------------
-
-def load_image_into_numpy_array(image):
-    (im_width, im_height) = image.size
-    return np.array(image.getdata()).reshape(
-        (im_height, im_width, 3)).astype(np.uint8)
-            
 #--------------------------------------------------------------------
 #                            BASE64
 #--------------------------------------------------------------------
@@ -110,11 +100,6 @@ def run_detection(frame):
                 use_normalized_coordinates=True,
                 min_score_thresh=.75,
                 line_thickness=8)
-    
-            # print(scores[0][0])
-            # print(classes[0][0])
-            # print(num_detections[0])
-            # print(boxes[0][0])
             
             frame = convert_frame_to_base_64_string(image_np)
 

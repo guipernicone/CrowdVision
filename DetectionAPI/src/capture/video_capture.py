@@ -6,7 +6,8 @@ import requests
 import json
 import geocoder
 import socket
-import _thread as thread
+# import _thread as thread
+import threading
 import time
 from datetime import datetime
 from io import StringIO
@@ -90,7 +91,7 @@ def send_to_detection(frame):
         }
     r = send_post(URL, payload)
 
-    print(f"HTTP post request Response status: {r.status_code}")
+    # print(f"HTTP post request Response status: {r.status_code}")
     return r.text
     
 
@@ -101,50 +102,34 @@ def send_to_detection(frame):
 def validate_frame(image_np):
     jpg_img = convert_frame_to_base_64_string(image_np)
     response = send_to_detection(jpg_img);
-    # print(response)
-    # # convert any frame that has more than 75% of accuracy
-    # if (scores[0][0].item() > 0.75):
-    #     detectionTime = int(round(time.time() * 1000))
-    #     running_time = detectionTime - initial_time
-    #     #Send the detection once 5 seconds
-    #     if (delay <= running_time):
-    #         jpg_img_detected = convert_frame_to_base_64_string(image_np)
-    #         initial_time = int(round(time.time() * 1000))
-    #         delay = 5000
-    #         thread.start_new_thread(send_detected_frame, (jpg_img_detected, scores[0][0], device_key))
-
+    jsonResponse = json.loads(response)
+    print(jsonResponse['score'])
+    # print(response.json())
+    # print(threading.current_thread())
     # Display the frames with the detection boxes
-    cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
-    # # time.sleep(10)
-    # cv2.imshow('object detection', cv2.resize(image_np, (340, 660)))
+    # cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
 
-    if cv2.waitKey(25) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
-
-
-    
-
-# delay = 0
-# initial_time = int(round(time.time() * 1000))
-# device_key = register_deveice()
-# print(device_key)
+    # if cv2.waitKey(25) & 0xFF == ord('q'):
+    #     cv2.destroyAllWindows()
+i = 0
 while True:
     # Read a frame from the defined stream
     ret, image_np = cap.read()
-    # max = 50
-    # i = 0
-    # max1 = 0
-    # thread_id = 0;
+
+    
     if (ret == True):
         validate_frame(image_np)
-        # if (max > i):
-        thread_id = thread.start_new_thread(validate_frame, (image_np,))
-        print(thread_id)
-        # else:
-        #     time.sleep(1)
-        #     i = 0
+        # thread_id = thread.start_new_thread(validate_frame, (image_np,))
+        # threaded = threading.Thread(target=validate_frame, args=(image_np,))
+        # threaded.daemon = True  # This thread dies when main thread (only non-daemon thread) exits.
+        # threaded.start()
+        # assert threading.current_thread() is threading.main_thread()
         # i += 1
-        # max1 += 1
-        # print(max1)
+        # print(i)
+        # if(i == 10):
+        #     time.sleep(5)
+        #     i = 0
     else:       
         print("Frame was not receive")
+        break;
+        time.sleep(10)
