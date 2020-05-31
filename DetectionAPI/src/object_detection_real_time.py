@@ -2,6 +2,14 @@ import numpy as np
 import os
 import tensorflow as tf
 import cv2
+import base64
+import requests
+import json
+import geocoder
+import socket
+import _thread as thread
+import time
+from datetime import datetime
 from io import StringIO
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
@@ -58,6 +66,62 @@ def load_image_into_numpy_array(image):
     return np.array(image.getdata()).reshape(
         (im_height, im_width, 3)).astype(np.uint8)
 
+#--------------------------------------------------------------------
+#                      CONVERT TO BASE64
+#--------------------------------------------------------------------
+#Enconde the image to a jpg format
+def convert_frame_to_base_64_string(frame):
+    ret, buffer = cv2.imencode('.jpg', cv2.resize(image_np, (300, 300)))
+    return base64.b64encode(buffer)
+
+#--------------------------------------------------------------------
+#                         HTTP REQUEST
+#--------------------------------------------------------------------
+#Send a http request to the java server.
+def send_post(URL, payload):
+    headers = {'content-type': 'application/json'}
+    return requests.post(url = URL, data=json.dumps(payload), headers=headers)
+
+def send_detected_frame(frame, score, device_key):
+    URL = "http://localhost:8080/detection/add-frame/detected"
+
+    payload = {
+            "frame" : str(frame),
+            "detectionScore" : float(score),
+            "cameraId": str(device_key),
+            "time" : datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        }
+
+    r = send_post(URL, payload)
+    print(f"HTTP post request Response status: {r.status_code}");
+
+def register_deveice():
+    try:
+        f = open('property.txt', 'r')
+        content = f.read()
+        if (len(content) != 0) :
+            f.close()
+            return content
+    except FileNotFoundError:
+        print('File does not exist')
+     
+    URL = "http://localhost:8080/camera/register"
+    response = geocoder.ip('me');
+
+    payload = {
+            "latitude" : str(response.lat),
+            "longitude" : str(response.lng),
+        }
+    r = send_post(URL, payload)
+
+    print(f"HTTP post request Response status: {r.status_code}")
+    if (r.status_code == 200) :
+        f = open('property.txt', 'w')
+        f.write(r.text)
+        f.close()
+        return r.text
+            
+    
 
 #--------------------------------------------------------------------
 #                         DETECTION
@@ -65,9 +129,18 @@ def load_image_into_numpy_array(image):
 
 with detection_graph.as_default():
     with tf.compat.v1.Session(graph=detection_graph) as sess:
+        delay = 0
+        initial_time = int(round(time.time() * 1000))
+        device_key = register_deveice()
+        print(device_key)
         while True:
-            # Read a frame
+            # Read a frame from the defined stream
             ret, image_np = cap.read()
+
+            if (ret == True):
+                jpg_img = convert_frame_to_base_64_string(image_np)
+
+            # image_np = cv2.resize(image_np, (300, 300))
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
             image_np_expanded = np.expand_dims(image_np, axis=0)
             # Extract image tensor
@@ -95,13 +168,24 @@ with detection_graph.as_default():
                 np.squeeze(scores),
                 category_index,
                 use_normalized_coordinates=True,
-                min_score_thresh=.5,
+                min_score_thresh=.75,
                 line_thickness=8)
 
             print(scores[0][0])
             print(classes[0][0])
             print(num_detections[0])
             print(boxes[0][0])
+
+            # convert any frame that has more than 75% of accuracy
+            if (scores[0][0].item() > 0.75):
+                detectionTime = int(round(time.time() * 1000))
+                running_time = detectionTime - initial_time
+                #Send the detection once 5 seconds
+                if (delay <= running_time):
+                    jpg_img_detected = convert_frame_to_base_64_string(image_np)
+                    initial_time = int(round(time.time() * 1000))
+                    delay = 5000
+                    thread.start_new_thread(send_detected_frame, (jpg_img_detected, scores[0][0], device_key))
 
             # Display the frames with the detection boxes
             cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
