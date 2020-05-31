@@ -20,11 +20,6 @@ public class DetectionController {
 	
 	@PostMapping("/add-frame/detected")
 	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
-		System.out.println(detection);
-		System.out.println(detection.getFrame());
-		System.out.println(detection.getDetectionScore());
-		System.out.println(detection.getTime());
-		
 		try {
 			Detection savedDetection = detectionRepository.save(detection);
 			System.out.println(savedDetection.toString());
