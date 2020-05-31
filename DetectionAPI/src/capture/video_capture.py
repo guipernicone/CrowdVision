@@ -46,8 +46,9 @@ def send_post(URL, payload):
 
 def register_deveice():
     try:
-        f = open('property.txt', 'r')
-        content = f.read()
+        f = open('property.bin', 'rb')
+        contntBytes = f.read()
+        content = str(contntBytes, 'utf-8')
         if (len(content) != 0) :
             f.close()
             return content
@@ -65,8 +66,8 @@ def register_deveice():
 
     print(f"HTTP post request Response status: {r.status_code}")
     if (r.status_code == 200) :
-        f = open('property.txt', 'w')
-        f.write(r.text)
+        f = open('property.bin', 'wb')
+        f.write(bytes(r.text, 'utf-8'))
         f.close()
         return r.text
             
