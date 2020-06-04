@@ -15,7 +15,7 @@ from io import StringIO
 #                         VIDEO STREAM
 #--------------------------------------------------------------------
 
-cap = cv2.VideoCapture('videos/testVideo4.mp4')
+cap = cv2.VideoCapture('videos/testVideo2.mp4')
 
 #--------------------------------------------------------------------
 #                         CONFIGs
@@ -79,7 +79,7 @@ def send_to_detection(frame, device_key, t):
         "t" : t
     }
     r = send_post(URL, payload)
-
+    semaphore.release()
     print(f"HTTP post request Response status: {r.status_code}")
        
 
@@ -91,6 +91,7 @@ print(device_key)
 frame_list = []
 frame_count = 0
 t = 0
+semaphore = threading.Semaphore(9)
 while True:
     # Read a frame from the defined stream
     ret, image_np = cap.read()
@@ -101,8 +102,10 @@ while True:
         frame_count += 1
         frame_list.append(str(img64, 'utf-8'))
         
-        if (frame_count > 99):
-            print("Enviando 100 frames")
+        if (frame_count > 199):
+            semaphore.acquire()
+            print("active Threads " + str(threading.active_count()))
+            print("Enviando 200 frames")
             t += 1
             threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key, f'Pacote {t}'))
             threaded.daemon = True
@@ -126,7 +129,7 @@ while True:
             threaded.start()
             frame_list = []
             frame_count = 0 
-   
+
         print("Frame was not receive")
         time.sleep(2)
         break
