@@ -11,6 +11,11 @@ public class Camera {
 	private String latitude;
 	private String longitude;
 	
+	@Override
+	public String toString() {
+		return "Camera [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]";
+	}
+
 	public String getLatitude() {
 		return latitude;
 	}

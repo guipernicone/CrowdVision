@@ -18,7 +18,7 @@ from object_detection.utils import visualization_utils as vis_util
 #                         VIDEO STREAM
 #--------------------------------------------------------------------
 
-cap = cv2.VideoCapture('videos/testVideo4.mp4')
+cap = cv2.VideoCapture('videos/testVideo2.mp4')
 
 #--------------------------------------------------------------------
 #                         MODEL PREPARATION
