@@ -135,17 +135,17 @@ while True:
             print("Enviando 200 frames")
 
             threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
-            threaded.daemon = True
+            # threaded.daemon = True
             threaded.start()
             frame_list = []
             frame_count = 0
 
-        # # Display the frames with the detection boxes
-        # cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
+        # Display the frames with the detection boxes
+        cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
 
-        # if cv2.waitKey(25) & 0xFF == ord('q'):
-        #     cv2.destroyAllWindows()
-        #     break
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
 
     else:
         if (frame_count != 0):

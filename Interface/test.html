@@ -18,10 +18,8 @@
                 console.log(data.frames);
                 frames.innerHTML = null;
                 for(let frame in data.frames) {
-                    // console.log(frame);
                     console.log(data.frames[frame].frame)
-                    // console.log(data.frames[frame].id)
-                        frames.innerHTML += '<img src="data:image/jpeg;base64, '+ data.frames[frame].frame +'" alt="frames"/>'
+                        frames.innerHTML += '<img src="data:image/jpeg;base64, '+ data.frames[frame].frame +'" alt="frames"/> '+ data.frames[frame].detectionScore +'</br>'
                 }
             })
             .catch(function (error) {
@@ -33,7 +31,7 @@
 <body>
    
     <label>Insira o id da camera</label>
-    <input type="text" id="cameraInput" value="5edb4778c89f5332db38acfb">
+    <input type="text" id="cameraInput" value="5edb6f53afd2d60d22da2581">
     <button onClick="getFrame()"> buscar</button>
     <div id="camera"></div>
     <div id="frames"></div>

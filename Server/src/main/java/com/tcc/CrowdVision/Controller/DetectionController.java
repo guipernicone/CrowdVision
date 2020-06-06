@@ -36,15 +36,20 @@ public class DetectionController {
 	@PostMapping("/add-frame/detected")
 	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
 		try {
-			Detection savedDetection = detectionRepository.save(detection);
-			System.out.println(savedDetection.toString());
+			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
+						
+			if (optionalCamera.isPresent()) {
+				Detection savedDetection = detectionRepository.save(detection);
+				System.out.println(savedDetection.toString());
+				return ResponseEntity.ok("Success");
+			}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Camera Id");
 		}
 		catch (Exception e) {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
 
-		return ResponseEntity.ok("Success");
 	}
 	
 	@GetMapping("/frames")
@@ -70,7 +75,7 @@ public class DetectionController {
 					JSONObject detectionObject = new JSONObject(detectionString);
 					detectionArray.put(detectionObject);
 					i++;
-					if (i > 5) break;
+//					if (i > 5) break;
 				}
 				json.put("frames", detectionArray);
 				return ResponseEntity.ok(json.toString());

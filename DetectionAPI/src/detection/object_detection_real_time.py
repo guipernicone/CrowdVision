@@ -149,6 +149,6 @@ def run_detection(content):
                         frame = convert_frame_to_base_64_string(image_np)
 
                         threaded = threading.Thread(target=send_detected_frame, args=(frame, scores[0][0], device_key))
-                        threaded.daemon = True
+                        # threaded.daemon = True
                         threaded.start()
                 print(scores[0][0])
