@@ -16,13 +16,12 @@
                 frames = document.getElementById('frames');
                 camera.innerHTML = '<h1>'+ data.camera.id +' | long: '+ data.camera.longitude +' lat: '+ data.camera.latitude +'</h1></br>'
                 console.log(data.frames);
+                frames.innerHTML = null;
                 for(let frame in data.frames) {
                     // console.log(frame);
-                    console.log(data.frames[frame].frame.substr(2, data.frames[frame].frame.length -3).length)
+                    console.log(data.frames[frame].frame)
                     // console.log(data.frames[frame].id)
-                    if(frame == 1) {
-                        frames.innerHTML += '<img src="data:image/jpg;base64, '+ data.frames[frame].frame.substr(2, data.frames[frame].frame.length-3) +' alt="frames">'
-                    }
+                        frames.innerHTML += '<img src="data:image/jpeg;base64, '+ data.frames[frame].frame +'" alt="frames"/>'
                 }
             })
             .catch(function (error) {
@@ -34,7 +33,7 @@
 <body>
    
     <label>Insira o id da camera</label>
-    <input type="text" id="cameraInput" value="5ed88ae833d7e878f61da037">
+    <input type="text" id="cameraInput" value="5edb4778c89f5332db38acfb">
     <button onClick="getFrame()"> buscar</button>
     <div id="camera"></div>
     <div id="frames"></div>

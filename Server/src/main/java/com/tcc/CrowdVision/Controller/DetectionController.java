@@ -65,11 +65,14 @@ public class DetectionController {
 				
 				JSONArray detectionArray = new JSONArray();
 				ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
+				int i = 0;
 				for(Detection detection: detections) {
 					String detectionString = gson.toJson(detection);
 					
 					JSONObject detectionObject = new JSONObject(detectionString);
 					detectionArray.put(detectionObject);
+					i++;
+					if (i > 5) break;
 				}
 				json.put("frames", detectionArray);
 				return ResponseEntity.ok(json.toString());

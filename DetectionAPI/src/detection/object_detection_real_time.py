@@ -97,7 +97,6 @@ def run_detection(content):
     frames = content['frames']
     device_key = content['deviceId']
     print(len(frames))
-    print(content['t'])
     delay = 0
     initial_time = int(round(time.time() * 1000))
     
@@ -134,7 +133,7 @@ def run_detection(content):
                         print("Enviado")
 
                         initial_time = int(round(time.time() * 1000))
-                        delay = 5000
+                        delay = 2000
 
                         # creating the boxes and labels on the frame
                         vis_util.visualize_boxes_and_labels_on_image_array(
@@ -148,7 +147,8 @@ def run_detection(content):
                             line_thickness=8)
                         
                         frame = convert_frame_to_base_64_string(image_np)
-                        # threaded = threading.Thread(target=send_detected_frame, args=(frame, scores[0][0], device_key))
-                        # threaded.daemon = True
-                        # threaded.start()
+
+                        threaded = threading.Thread(target=send_detected_frame, args=(frame, scores[0][0], device_key))
+                        threaded.daemon = True
+                        threaded.start()
                 print(scores[0][0])

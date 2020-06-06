@@ -35,6 +35,7 @@ DETECTION_API_URL = 'http://localhost:5000'
 def convert_frame_to_base_64_string(frame):
     ret, buffer = cv2.imencode('.jpg', cv2.resize(frame, (300, 300)))
     return base64.b64encode(buffer)
+    # return base64.standard_b64encode(buffer)
 
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
@@ -51,6 +52,7 @@ def register_deveice():
         content = str(contntBytes, 'utf-8')
         if (len(content) != 0) :
             f.close()
+            print("File found, return device key " + content)
             return content
     except FileNotFoundError:
         print('File does not exist')
@@ -62,36 +64,36 @@ def register_deveice():
             "latitude" : str(response.lat),
             "longitude" : str(response.lng),
         }
+    print("Request for new device key")
     r = send_post(URL, payload)
 
-    print(f"HTTP post request Response status: {r.status_code}")
+    # print(f"HTTP post request Response status: {r.status_code}")
+    print("Device key " + r.text + " receive from server")
     if (r.status_code == 200) :
         f = open('property.bin', 'wb')
         f.write(bytes(r.text, 'utf-8'))
         f.close()
         return r.text
             
-def send_to_detection(frame, device_key, t):
+def send_to_detection(frame, device_key):
     URL = DETECTION_API_URL + "/detection"
     payload = {
         "frames" : frame,
-        "deviceId" : str(device_key),
-        "t" : t
+        "deviceId" : str(device_key)
     }
     r = send_post(URL, payload)
     semaphore.release()
-    print(f"HTTP post request Response status: {r.status_code}")
+    # print(f"HTTP post request Response status: {r.status_code}")
        
 
 #--------------------------------------------------------------------
 #                         CAPTURE
 #--------------------------------------------------------------------
 device_key = register_deveice()
-print(device_key)
 frame_list = []
 frame_count = 0
-t = 0
 semaphore = threading.Semaphore(9)
+
 while True:
     # Read a frame from the defined stream
     ret, image_np = cap.read()
@@ -101,13 +103,12 @@ while True:
 
         frame_count += 1
         frame_list.append(str(img64, 'utf-8'))
-        
+
         if (frame_count > 199):
             semaphore.acquire()
-            print("active Threads " + str(threading.active_count()))
             print("Enviando 200 frames")
-            t += 1
-            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key, f'Pacote {t}'))
+
+            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
             threaded.daemon = True
             threaded.start()
             frame_list = []
@@ -130,7 +131,7 @@ while True:
             frame_list = []
             frame_count = 0 
 
-        print("Frame was not receive")
+        print("No frame was received")
         time.sleep(2)
         break
         
