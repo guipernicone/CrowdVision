@@ -2,12 +2,12 @@ import os
 import numpy as np
 import cv2
 import base64
-import requests
 import json
 import geocoder
 import socket
 import threading
 import time
+import http_request
 from datetime import datetime
 from io import StringIO
 
@@ -40,40 +40,67 @@ def convert_frame_to_base_64_string(frame):
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
 #--------------------------------------------------------------------
-#Send a http request to the java server.
-def send_post(URL, payload):
-    headers = {'content-type': 'application/json'}
-    return requests.post(url = URL, data=json.dumps(payload), headers=headers)
-
-def register_deveice():
+def get_key():
     try:
         f = open('property.bin', 'rb')
         contntBytes = f.read()
+        print(contntBytes)
         content = str(contntBytes, 'utf-8')
+        print(content)
+
         if (len(content) != 0) :
             f.close()
-            print("File found, return device key " + content)
-            return content
+            print("Local save found, device key " + content)
+            URL = SERVER_URL + "/camera/validate-key"
+            payload = {
+                "cameraId" : content
+            }
+
+            print("Sending key " + content  + " to validade")
+            r = http_request.send_post(URL, payload)
+
+            if (r.status_code == 200):
+                print("Valid key")
+                return r.text
+
+            print("Invalid key")
+            return False
     except FileNotFoundError:
-        print('File does not exist')
-     
-    URL = "http://localhost:8080/camera/register"
-    response = geocoder.ip('me');
+        print('Local save not found')
+        return False
+  
+def request_key():
+    URL = SERVER_URL + "/camera/register"
+    localization = geocoder.ip('me');
 
     payload = {
-            "latitude" : str(response.lat),
-            "longitude" : str(response.lng),
+            "latitude" : str(localization.lat),
+            "longitude" : str(localization.lng),
         }
+
     print("Request for new device key")
-    r = send_post(URL, payload)
+    r = http_request.send_post(URL, payload)
 
     # print(f"HTTP post request Response status: {r.status_code}")
-    print("Device key " + r.text + " receive from server")
     if (r.status_code == 200) :
+        print("Device key " + r.text + " receive from server")
         f = open('property.bin', 'wb')
         f.write(bytes(r.text, 'utf-8'))
         f.close()
         return r.text
+    print("Device not regitered ")
+    return False
+
+def register_device():
+    key = get_key()
+
+    if (key != False):
+        return key
+     
+    new_key = request_key();
+
+    if (new_key != False):
+        return new_key
             
 def send_to_detection(frame, device_key):
     URL = DETECTION_API_URL + "/detection"
@@ -81,15 +108,14 @@ def send_to_detection(frame, device_key):
         "frames" : frame,
         "deviceId" : str(device_key)
     }
-    r = send_post(URL, payload)
+    r = http_request.send_post(URL, payload)
     semaphore.release()
     # print(f"HTTP post request Response status: {r.status_code}")
        
-
 #--------------------------------------------------------------------
 #                         CAPTURE
 #--------------------------------------------------------------------
-device_key = register_deveice()
+device_key = register_device()
 frame_list = []
 frame_count = 0
 semaphore = threading.Semaphore(9)
@@ -124,8 +150,7 @@ while True:
     else:
         if (frame_count != 0):
             print(f"Enviando {frame_count} frames")
-            t += 1
-            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key, f'Pacote {t}'))
+            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
             threaded.daemon = True
             threaded.start()
             frame_list = []
