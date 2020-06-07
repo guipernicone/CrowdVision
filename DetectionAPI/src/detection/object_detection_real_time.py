@@ -97,7 +97,6 @@ def send_detected_frame(frame, score, device_key, captureTime):
 def run_detection(content):
     frames = content['frames']
     device_key = content['deviceId']
-    print(len(frames))
     delay = 0
     initial_time = int(round(time.time() * 1000))
 

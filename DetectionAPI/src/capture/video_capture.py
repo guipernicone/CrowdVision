@@ -74,7 +74,7 @@ def get_key():
   
 def request_key():
     URL = SERVER_URL + "/camera/register"
-    localization = geocoder.ip('me');
+    localization = geocoder.ip('me')
 
     payload = {
             "latitude" : str(localization.lat),
@@ -100,7 +100,7 @@ def register_device():
     if (key != False):
         return key
      
-    new_key = request_key();
+    new_key = request_key()
 
     if (new_key != False):
         return new_key
