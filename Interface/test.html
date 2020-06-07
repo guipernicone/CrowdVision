@@ -8,18 +8,30 @@
         function getFrame() {
             cameraId = document.getElementById('cameraInput').value
             console.log(cameraId)
-            axios.get('http://localhost:8080/detection/frames?cameraId=' + cameraId)
+            // let url = 'http://localhost:8080';
+            let url = 'http://192.168.15.21:8080';
+            axios.get(url + '/detection/frames?cameraId=' + cameraId)
             .then(function (response) {
                 console.log(response);
                 data = response.data;
                 camera = document.getElementById('camera');
                 frames = document.getElementById('frames');
-                camera.innerHTML = '<h1>'+ data.camera.id +' | long: '+ data.camera.longitude +' lat: '+ data.camera.latitude +'</h1></br>'
+                camera.innerHTML = '<h1>Camera: '+ data.camera.id +' | Long: '+ data.camera.longitude +' Lat: '+ data.camera.latitude +'</h1></br>'
                 console.log(data.frames);
                 frames.innerHTML = null;
-                for(let frame in data.frames) {
-                    console.log(data.frames[frame].frame)
-                        frames.innerHTML += '<img src="data:image/jpeg;base64, '+ data.frames[frame].frame +'" alt="frames"/> '+ data.frames[frame].detectionScore +'</br>'
+                detectionArray = data.frames.reverse();
+                for(let frame in detectionArray) {
+                    console.log(detectionArray[frame].frame)
+                        frames.innerHTML += 
+                        '<img src="data:image/jpeg;base64, '+ 
+                        detectionArray[frame].frame +
+                        '" alt="frames"/><p>Detection Score: '+ 
+                        detectionArray[frame].detectionScore +
+                        '</p><p>Time of capture: ' +
+                        detectionArray[frame].captureTime +
+                        '</p><p>Time of detection: ' +
+                        detectionArray[frame].detectionTime +
+                        '</p></br>'
                 }
             })
             .catch(function (error) {

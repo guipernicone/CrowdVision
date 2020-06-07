@@ -21,11 +21,14 @@ cap = cv2.VideoCapture('videos/testVideo2.mp4')
 #                         CONFIGs
 #--------------------------------------------------------------------
 
-# PATH for the TensorFlow frozen inference graph, that is the actual model for 
-# the object detection.
-SERVER_URL = 'http://localhost:8080'
+# SERVER_URL = 'http://localhost:8080'
+SERVER_URL = 'http://192.168.15.21:8080'
 
 DETECTION_API_URL = 'http://localhost:5000'
+
+MAX_FRAMES__PER_REQUEST = 9
+
+RECONNECT_DELAY = 10
 
 
 #--------------------------------------------------------------------
@@ -104,11 +107,17 @@ def register_device():
             
 def send_to_detection(frame, device_key):
     URL = DETECTION_API_URL + "/detection"
+    global failed_send_attemps
     payload = {
         "frames" : frame,
         "deviceId" : str(device_key)
     }
-    r = http_request.send_post(URL, payload)
+
+    try:
+        r = http_request.send_post(URL, payload)
+    except Exception:
+        failed_send_attemps += 1
+        semaphore.release()
     semaphore.release()
     # print(f"HTTP post request Response status: {r.status_code}")
        
@@ -119,20 +128,30 @@ device_key = register_device()
 frame_list = []
 frame_count = 0
 semaphore = threading.Semaphore(9)
+failed_send_attemps = 0
 
 while True:
     # Read a frame from the defined stream
     ret, image_np = cap.read()
 
+    if (failed_send_attemps > 10):
+        failed_send_attemps = 0
+        print('Connection to ' + DETECTION_API_URL + ' qfailed')
+        print('Trying to reconnect again in ' + str(RECONNECT_DELAY) + ' seconds')
+        time.sleep(RECONNECT_DELAY)
+    
     if (ret == True):
         img64 = convert_frame_to_base_64_string(image_np)
 
         frame_count += 1
-        frame_list.append(str(img64, 'utf-8'))
+        frame_list.append({
+            "frame": str(img64, 'utf-8'),
+            "captureTime": datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        })
 
-        if (frame_count > 199):
+        if (frame_count > MAX_FRAMES__PER_REQUEST):
             semaphore.acquire()
-            print("Enviando 200 frames")
+            print("Enviando " + str(MAX_FRAMES__PER_REQUEST + 1) + " frames")
 
             threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
             # threaded.daemon = True
