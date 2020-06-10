@@ -18,8 +18,8 @@ from object_detection.utils import visualization_utils as vis_util
 #                         MODEL PREPARATION
 #--------------------------------------------------------------------
 
-SERVER_URL = 'http://localhost:8080'
-
+# SERVER_URL = 'http://localhost:8080'
+SERVER_URL = 'http://192.168.15.21:8080'
 #--------------------------------------------------------------------
 #                         MODEL PREPARATION
 #--------------------------------------------------------------------
@@ -77,14 +77,15 @@ def send_post(URL, payload):
     headers = {'content-type': 'application/json'}
     return requests.post(url = URL, data=json.dumps(payload), headers=headers)
 
-def send_detected_frame(frame, score, device_key):
+def send_detected_frame(frame, score, device_key, captureTime):
     URL = SERVER_URL + "/detection/add-frame/detected"
 
     payload = {
             "frame" : str(frame, 'utf-8'),
             "detectionScore" : float(score),
             "cameraId": str(device_key),
-            "time" : datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+            "detectionTime" : datetime.today().strftime('%d-%m-%Y %H:%M:%S'),
+            "captureTime": str(captureTime)
         }
 
     r = send_post(URL, payload)
@@ -96,15 +97,13 @@ def send_detected_frame(frame, score, device_key):
 def run_detection(content):
     frames = content['frames']
     device_key = content['deviceId']
-    print(len(frames))
-    print(content['t'])
     delay = 0
     initial_time = int(round(time.time() * 1000))
-    
+
     with detection_graph.as_default():
         with tf.compat.v1.Session(graph=detection_graph) as sess:
             for frame in frames:
-                image_np = decode_base_64_string(frame)
+                image_np = decode_base_64_string(frame['frame'])
 
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
                 image_np_expanded = np.expand_dims(image_np, axis=0)
@@ -134,7 +133,7 @@ def run_detection(content):
                         print("Enviado")
 
                         initial_time = int(round(time.time() * 1000))
-                        delay = 5000
+                        delay = 2000
 
                         # creating the boxes and labels on the frame
                         vis_util.visualize_boxes_and_labels_on_image_array(
@@ -147,8 +146,9 @@ def run_detection(content):
                             min_score_thresh=.75,
                             line_thickness=8)
                         
-                        frame = convert_frame_to_base_64_string(image_np)
-                        threaded = threading.Thread(target=send_detected_frame, args=(frame, scores[0][0], device_key))
-                        threaded.daemon = True
+                        frameConverted = convert_frame_to_base_64_string(image_np)
+
+                        threaded = threading.Thread(target=send_detected_frame, args=(frameConverted, scores[0][0], device_key, frame['captureTime']))
+                        # threaded.daemon = True
                         threaded.start()
                 print(scores[0][0])

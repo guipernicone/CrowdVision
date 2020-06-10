@@ -10,7 +10,8 @@ public class Detection {
 	private String id;
 	private String frame;
 	private Float detectionScore;
-	private String time;
+	private String detectionTime;
+	private String captureTime;
 	private String cameraId;
 	
 	public String getFrame() {
@@ -20,9 +21,13 @@ public class Detection {
 	public Float getDetectionScore() {
 		return detectionScore;
 	}
-	
-	public String getTime() {
-		return time;
+
+	public String getDetectionTime() {
+		return detectionTime;
+	}
+
+	public String getCaptureTime() {
+		return captureTime;
 	}
 
 	public String getCameraId() {
@@ -31,9 +36,11 @@ public class Detection {
 
 	@Override
 	public String toString() {
-		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", time=" + time
-				+ ", camera=" + cameraId + "]";
+		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", detectionTime="
+				+ detectionTime + ", captureTime=" + captureTime + ", cameraId=" + cameraId + "]";
 	}
+	
+
 
 	
 	

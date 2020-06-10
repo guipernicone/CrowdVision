@@ -1,7 +1,6 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,15 +36,20 @@ public class DetectionController {
 	@PostMapping("/add-frame/detected")
 	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
 		try {
-			Detection savedDetection = detectionRepository.save(detection);
-			System.out.println(savedDetection.toString());
+			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
+						
+			if (optionalCamera.isPresent()) {
+				Detection savedDetection = detectionRepository.save(detection);
+				System.out.println(savedDetection.toString());
+				return ResponseEntity.ok("Success");
+			}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Camera Id");
 		}
 		catch (Exception e) {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
 
-		return ResponseEntity.ok("Success");
 	}
 	
 	@GetMapping("/frames")
@@ -65,11 +68,14 @@ public class DetectionController {
 				
 				JSONArray detectionArray = new JSONArray();
 				ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
+				int i = 0;
 				for(Detection detection: detections) {
 					String detectionString = gson.toJson(detection);
 					
 					JSONObject detectionObject = new JSONObject(detectionString);
 					detectionArray.put(detectionObject);
+					i++;
+//					if (i > 5) break;
 				}
 				json.put("frames", detectionArray);
 				return ResponseEntity.ok(json.toString());

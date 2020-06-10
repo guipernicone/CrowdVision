@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/detection', methods =['POST'])
 def detection():
     content = request.get_json()
-    run_detection(content);
+    run_detection(content)
     return "success"
 
 if __name__ == "__main__":
