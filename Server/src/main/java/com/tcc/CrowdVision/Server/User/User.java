@@ -12,10 +12,24 @@ public class User {
 	private String id;
 	private String name;
 	private String surname;
+	private String email;
 	private String password;
 	private int permission;
-	private ArrayList<String> organizationId;
+	private ArrayList<String> organizationIds;
+	private String parentUserId;
 	
+	
+	
+	public User(String name, String surname, String email, String password, int permission, ArrayList<String> organizationIds, String parentUserId) {
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.password = password;
+		this.permission = permission;
+		this.organizationIds = organizationIds;
+		this.parentUserId = parentUserId;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -30,6 +44,10 @@ public class User {
 	
 	public String getSurname() {
 		return surname;
+	}
+	
+	public String getEmail() {
+		return email;
 	}
 	
 	public void setSurname(String surname) {
@@ -52,9 +70,20 @@ public class User {
 		this.permission = permission;
 	}
 	
-
-	public ArrayList<String> getOrganizationId() {
-		return organizationId;
+	public String getParentUserId() {
+		return parentUserId;
 	}
+
+	public ArrayList<String> getOrganizationIds() {
+		return organizationIds;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", password=" + password + ", permission="
+				+ permission + ", organizationIds=" + organizationIds + ", parentUserId=" + parentUserId + "]";
+	}
+
+	
 	
 }

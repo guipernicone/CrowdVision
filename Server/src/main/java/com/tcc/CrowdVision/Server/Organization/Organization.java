@@ -12,5 +12,30 @@ public class Organization {
 	private String id;
 	private String name;
 	private ArrayList<String> cameraIds;
+	private String userId;
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public ArrayList<String> getCameraIds() {
+		return cameraIds;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	@Override
+	public String toString() {
+		return "Organization [id=" + id + ", name=" + name + ", cameraIds=" + cameraIds + ", userId=" + userId + "]";
+	}
+	
+
 	
 }
