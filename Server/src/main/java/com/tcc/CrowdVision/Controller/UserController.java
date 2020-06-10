@@ -24,19 +24,19 @@ import com.tcc.CrowdVision.Server.User.UserManager;
 public class UserController {
 	@Autowired
 	private UserRepository userRepository;
-	
+			
 	@PostMapping("/save")
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<String> saveUser(@RequestBody Map<String, Object> userJSON) {
 		try {
-			
+				UserManager userManager = UserManager.getInstance();
 				String requestUserId = (String) userJSON.get("requestUserId");
 				Optional<User> userOptional = userRepository.findById(requestUserId);
 				
 				if(userOptional.isPresent()) {
 					User requestUser = userOptional.get();
 					
-					if(UserManager.isAdminOrManager(requestUser)) {
+					if(userManager.isAdminOrManager(requestUser)) {
 						int permission = (int) userJSON.get("permission");
 						
 						if (permission == PermissionEnum.MANAGER.getValue() || permission == PermissionEnum.USER.getValue()) {
@@ -47,15 +47,19 @@ public class UserController {
 							ArrayList<String> organizationIds = (ArrayList<String>) userJSON.get("organizationIds");
 							String parentUserId = null;
 							
-							if(UserManager.isManager(requestUser)) {
+							if(userManager.isManager(requestUser)) {
 								parentUserId = requestUser.getParentUserId();
 							}
 							else {
 								parentUserId = requestUser.getId();
 							}
 							
-							User user = new User(name, surname, email, password, permission, organizationIds, parentUserId);
 							
+							User user = new User(name, surname, email, password, permission, organizationIds, parentUserId);
+				
+							if (!userManager.isEmailUniq(user)) {
+								return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Already Used");
+							}
 							User savedUser = userRepository.save(user);
 							System.out.println(savedUser.toString());
 							
