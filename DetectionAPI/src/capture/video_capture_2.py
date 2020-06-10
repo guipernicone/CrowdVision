@@ -15,7 +15,7 @@ from io import StringIO
 #                         VIDEO STREAM
 #--------------------------------------------------------------------
 
-cap = cv2.VideoCapture('videos/testVideo2.mp4')
+cap = cv2.VideoCapture('videos/testVideo4.mp4')
 
 #--------------------------------------------------------------------
 #                         CONFIGs
@@ -45,7 +45,7 @@ def convert_frame_to_base_64_string(frame):
 #--------------------------------------------------------------------
 def get_key():
     try:
-        f = open('property.bin', 'rb')
+        f = open('property2.bin', 'rb')
         contntBytes = f.read()
         print(contntBytes)
         content = str(contntBytes, 'utf-8')
@@ -87,7 +87,7 @@ def request_key():
     # print(f"HTTP post request Response status: {r.status_code}")
     if (r.status_code == 200) :
         print("Device key " + r.text + " receive from server")
-        f = open('property.bin', 'wb')
+        f = open('property2.bin', 'wb')
         f.write(bytes(r.text, 'utf-8'))
         f.close()
         return r.text
