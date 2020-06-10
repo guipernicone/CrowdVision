@@ -27,7 +27,7 @@ public class UserController {
 	
 	@PostMapping("/save")
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<String> addicionar(@RequestBody Map<String, Object> userJSON) {
+	public ResponseEntity<String> saveUser(@RequestBody Map<String, Object> userJSON) {
 		try {
 			
 				String requestUserId = (String) userJSON.get("requestUserId");
@@ -73,6 +73,20 @@ public class UserController {
 		catch (Exception e) {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON");
+		}
+
+	}
+	
+	@PostMapping("/add")
+	public ResponseEntity<String> saveUser(@RequestBody User user) {
+		try {
+				User savedUser = userRepository.save(user);
+				System.out.println(savedUser.toString());
+				return ResponseEntity.ok("Success");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();	
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
 
 	}
