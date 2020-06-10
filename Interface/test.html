@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function getFrame() {
+            cameraId = document.getElementById('cameraInput').value
+            console.log(cameraId)
+            axios.get('http://localhost:8080/detection/frames?cameraId=' + cameraId)
+            .then(function (response) {
+                console.log(response);
+                data = response.data;
+                camera = document.getElementById('camera');
+                frames = document.getElementById('frames');
+                camera.innerHTML = '<h1>'+ data.camera.id +' | long: '+ data.camera.longitude +' lat: '+ data.camera.latitude +'</h1></br>'
+                console.log(data.frames);
+                for(let frame in data.frames) {
+                    // console.log(frame);
+                    console.log(data.frames[frame].frame.substr(2, data.frames[frame].frame.length -3).length)
+                    // console.log(data.frames[frame].id)
+                    if(frame == 1) {
+                        frames.innerHTML += '<img src="data:image/jpg;base64, '+ data.frames[frame].frame.substr(2, data.frames[frame].frame.length-3) +' alt="frames">'
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    </script>
+</head>
+<body>
+   
+    <label>Insira o id da camera</label>
+    <input type="text" id="cameraInput" value="5ed88ae833d7e878f61da037">
+    <button onClick="getFrame()"> buscar</button>
+    <div id="camera"></div>
+    <div id="frames"></div>
+</body>
+</html>
