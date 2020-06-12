@@ -10,12 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcc.CrowdVision.Repository.OrganizationRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
+import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.PermissionEnum;
 import com.tcc.CrowdVision.Server.User.User;
 import com.tcc.CrowdVision.Server.User.UserManager;
@@ -26,6 +30,9 @@ import com.tcc.CrowdVision.Server.User.UserManager;
 public class UserController {
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private OrganizationRepository organizationRepository;
 			
 	@PostMapping("/save")
 	@SuppressWarnings("unchecked")
@@ -87,13 +94,45 @@ public class UserController {
 	@PostMapping("/add")
 	public ResponseEntity<String> saveUser(@RequestBody User user) {
 		try {
-				User savedUser = userRepository.save(user);
-				System.out.println(savedUser.toString());
-				return ResponseEntity.ok("Success");
+			User savedUser = userRepository.save(user);
+			System.out.println(savedUser.toString());
+			return ResponseEntity.ok("Success");
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
+		}
+
+	}
+	
+	@GetMapping("/information")
+	public ResponseEntity<String> getUser(@RequestParam(defaultValue = "none") String userID) {
+		try {
+			if (!userID.equals("none")) {
+				Optional<User> optionalUser = userRepository.findById(userID);
+				
+				if (optionalUser.isPresent()) {
+					System.out.println(optionalUser.toString());
+					User user = optionalUser.get();
+					Iterable<Organization> iterableOrganization = null;
+					
+					if(user.getOrganizationIds() != null) {
+						iterableOrganization = organizationRepository.findAllById(user.getOrganizationIds());
+						for(Organization org : iterableOrganization) {
+							System.out.println(org.toString());
+						}
+					}
+					
+			
+					return ResponseEntity.ok("Success");
+				}
+				
+			}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();	
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Invalid JSON");
 		}
 
 	}
