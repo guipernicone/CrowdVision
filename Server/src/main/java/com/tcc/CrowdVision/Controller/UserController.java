@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_256;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +46,7 @@ public class UserController {
 							String surname = (String) userJSON.get("surname");
 							String email = (String) userJSON.get("email");
 							String password = (String) userJSON.get("password");
+							String sha3_256hex_password = new DigestUtils(SHA3_256).digestAsHex(password);
 							ArrayList<String> organizationIds = (ArrayList<String>) userJSON.get("organizationIds");
 							String parentUserId = null;
 							
@@ -55,7 +58,7 @@ public class UserController {
 							}
 							
 							
-							User user = new User(name, surname, email, password, permission, organizationIds, parentUserId);
+							User user = new User(name, surname, email, sha3_256hex_password, permission, organizationIds, parentUserId);
 				
 							if (!userManager.isEmailUniq(user)) {
 								return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Already Used");
