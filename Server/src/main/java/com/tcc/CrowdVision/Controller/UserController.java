@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_256;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.PermissionEnum;
 import com.tcc.CrowdVision.Server.User.User;
 import com.tcc.CrowdVision.Server.User.UserManager;
+import com.tcc.CrowdVision.Server.User.UserUtils;
 
 @RestController
 @CrossOrigin
@@ -112,19 +116,59 @@ public class UserController {
 				Optional<User> optionalUser = userRepository.findById(userID);
 				
 				if (optionalUser.isPresent()) {
-					System.out.println(optionalUser.toString());
-					User user = optionalUser.get();
-					Iterable<Organization> iterableOrganization = null;
+
 					
+					JSONObject response = new JSONObject();
+					JSONArray orgArray= new JSONArray();
+					JSONObject parentUserObject = new JSONObject();
+					
+					User user = optionalUser.get();
+					
+					response.put("id", user.getId());
+					response.put("name", user.getName());
+					response.put("surname", user.getSurname());
+					response.put("email", user.getEmail());
+
+					Iterable<Organization> iterableOrganization = null;
 					if(user.getOrganizationIds() != null) {
 						iterableOrganization = organizationRepository.findAllById(user.getOrganizationIds());
 						for(Organization org : iterableOrganization) {
-							System.out.println(org.toString());
+							JSONObject orgObject = new JSONObject();
+							orgObject.put("id",org.getId());
+							orgObject.put("name",org.getName());
+							orgArray.put(orgObject);
 						}
 					}
+					else {
+						orgArray = null;
+					}
+					response.put("org", orgArray);
+					
+					if(user.getParentUserId() != null) {
+						Optional<User> optionalParentUser = userRepository.findById(user.getParentUserId());
+						
+						if (optionalParentUser.isPresent()) {
+							User parentUser = optionalParentUser.get();
+							parentUserObject.put("id", parentUser.getId());
+							parentUserObject.put("name", parentUser.getName());
+							parentUserObject.put("surname", parentUser.getSurname());
+							parentUserObject.put("email", parentUser.getEmail());
+							parentUserObject.put("permission", UserUtils.getPermissionByInt(parentUser.getPermission()));
+						}
+						else {
+							ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Parent User does not exist");
+						}
+				
+						
+					}
+					else {
+						parentUserObject = null;
+					}
+					response.put("parentUser", parentUserObject);
+					response.put("permission", UserUtils.getPermissionByInt(user.getPermission()));
 					
 			
-					return ResponseEntity.ok("Success");
+					return ResponseEntity.ok(response.toString());
 				}
 				
 			}
