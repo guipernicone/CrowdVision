@@ -98,6 +98,7 @@ public class UserController {
 	@PostMapping("/add")
 	public ResponseEntity<String> saveUser(@RequestBody User user) {
 		try {
+			user.setPassword(new DigestUtils(SHA3_256).digestAsHex(user.getPassword()));
 			User savedUser = userRepository.save(user);
 			System.out.println(savedUser.toString());
 			return ResponseEntity.ok("Success");

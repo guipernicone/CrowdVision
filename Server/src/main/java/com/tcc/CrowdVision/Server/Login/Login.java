@@ -3,6 +3,7 @@ package com.tcc.CrowdVision.Server.Login;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.tcc.CrowdVision.Utils.DateUtils;
@@ -13,11 +14,13 @@ public class Login {
 
 	@Id
 	private String id;
-	private String creationDate;
+	@Indexed(name = "creationDate", expireAfterSeconds = 0)
+	private Date creationDate;
 	private String userId;
 	
 	public Login(String id) {
-		creationDate = DateUtils.convetDateToString(new Date(), "dd-MM-yyyy hh:mm:ss");
+//		creationDate = DateUtils.convetDateToString(new Date(), "dd-MM-yyyy hh:mm:ss");
+		creationDate = new Date();
 		userId = id;
 
 	}
@@ -26,7 +29,7 @@ public class Login {
 		return id;
 	}
 
-	public String getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
