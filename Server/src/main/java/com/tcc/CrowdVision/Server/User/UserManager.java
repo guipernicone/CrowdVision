@@ -28,8 +28,22 @@ public class UserManager {
 		return false;
 	}
 	
+	public boolean isUser(User user) {
+		if (user.getPermission() == PermissionEnum.USER.getValue()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean isAdminOrManager(User user) {
 		if (isManager(user) || isAdmin(user)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isManagerOrUser(User user) {
+		if (isManager(user) || isUser(user)) {
 			return true;
 		}
 		return false;

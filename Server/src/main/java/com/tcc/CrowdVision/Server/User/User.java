@@ -3,6 +3,7 @@ package com.tcc.CrowdVision.Server.User;
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "User")
@@ -12,6 +13,7 @@ public class User {
 	private String id;
 	private String name;
 	private String surname;
+	@Indexed(unique = true)
 	private String email;
 	private String password;
 	private int permission;

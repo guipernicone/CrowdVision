@@ -68,11 +68,10 @@ public class UserController {
 								parentUserId = requestUser.getId();
 							}
 							
-							
 							User user = new User(name, surname, email, sha3_256hex_password, permission, organizationIds, parentUserId);
 				
 							if (!userManager.isEmailUniq(user)) {
-								return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Already Used");
+								return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Email Already Used");
 							}
 							User savedUser = userRepository.save(user);
 							System.out.println(savedUser.toString());
@@ -85,7 +84,7 @@ public class UserController {
 					return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid Permission");
 				}
 				
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid User");
 
 		}
 		catch (Exception e) {
