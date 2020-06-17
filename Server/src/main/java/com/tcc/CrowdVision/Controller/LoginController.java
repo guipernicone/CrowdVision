@@ -1,8 +1,11 @@
 package com.tcc.CrowdVision.Controller;
 
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_256;
+
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +39,8 @@ public class LoginController {
 			
 			String userEmail = loginJSON.get("userEmail");
 			String userPassword = loginJSON.get("userPassword");
-			Optional<User> optionalUser = userRepository.findUserByEmailAndPassword(userEmail, userPassword);
+			String hashPassword = new DigestUtils(SHA3_256).digestAsHex(userPassword);
+			Optional<User> optionalUser = userRepository.findUserByEmailAndPassword(userEmail, hashPassword);
 			
 			if(optionalUser.isPresent()) {
 				User user = optionalUser.get();

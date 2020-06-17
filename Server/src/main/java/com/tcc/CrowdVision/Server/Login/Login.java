@@ -11,6 +11,7 @@ public class Login {
 
 	@Id
 	private String id;
+	
 	@Indexed(name = "creationDate", expireAfterSeconds = 3600)
 	private Date creationDate;
 	private String userId;
