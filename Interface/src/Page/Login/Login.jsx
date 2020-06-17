@@ -1,23 +1,39 @@
 import React, { Component } from 'react';
 import 'Common/css/CrowdVision.css';
 import styled from 'styled-components';
-import { Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 class Login extends Component {
+
+
+
+    handlePassword = (password) => {
+        console.log(password.target.value);
+    }
+    handleSubmit= (submit) => {
+        submit.preventDefault();
+        submit.stopPropagation();
+    }
     render() {
         return (
             <div className='cv-background'>
                 <LoginBox>
                     <h1 className="title">Crowd Vison</h1>
                     {/* <h2>Bem - Vindo</h2> */}
-                    <Form>
+                    <Form onSubmit={this.handleSubmit}>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Email</Form.Label>
                             <Form.Control type="email" placeholder="Digite seu email" className="inputField"/>
                         </Form.Group>
                         <Form.Group controlId="formBasicPassword">
                             <Form.Label>Senha</Form.Label>
-                            <Form.Control type="password" placeholder="Digita sua Senha" className="inputField"/>
+                            <Form.Control type="password" placeholder="Digita sua Senha" className="inputField" onChange={this.handlePassword}/>
                         </Form.Group>
+                        <Form.Text className="text-muted">
+                            Esqueceu sua Senha?
+                        </Form.Text>
+                        <Button variant="primary" type="submit" className="submit">
+                            Submit
+                        </Button>
                     </Form>
                 </LoginBox>
             </div>
@@ -37,7 +53,8 @@ const LoginBox = styled.div`
     transform: translate(-50%, -50%);
 
     .title {
-        margin-bottom: 100px
+        margin-top: 30px;
+        margin-bottom: 70px;
     }
     .inputField {
         width:300px;
@@ -53,6 +70,13 @@ const LoginBox = styled.div`
         border-bottom: solid #121212 1px;
         padding: 3px 10px;
         box-shadow:none !important;
+    }
+    .submit {
+        background-color: #bb86fc;
+        color: black;
+        font-weight:500;
+        border: none;
+        margin-top:10px;
     }
 `;
 export default Login;
