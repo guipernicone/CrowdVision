@@ -3,12 +3,15 @@ import 'Common/css/CrowdVision.css';
 import styled from 'styled-components';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { login } from 'Service/HttpRequest'
+import {Redirect} from 'react-router-dom';
+
 class Login extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            errorMSG : "none"
+            errorMSG : "none",
+            redirect : false
         }
     }
 
@@ -29,7 +32,7 @@ class Login extends Component {
                 if (this.state.errorMSG === "") {
                     this.setState({errorMSG : "none"});
                 }
-                console.log("Validado");
+                this.setState({redirect: true});
             }
             else if (this.state.errorMSG !== "") {
                 this.setState({errorMSG : ""});
@@ -40,9 +43,11 @@ class Login extends Component {
         }) 
     }
 
+
     render() {
         return (
             <div className='cv-background'>
+                {this.state.redirect ? <Redirect to='/' /> :
                 <LoginBox>
                     <h1 className="title">Crowd Vison</h1>
                     <Alert variant={'danger'} className="alertForm" style={{display:this.state.errorMSG}}>Email ou Senha Invalida</Alert>
@@ -63,6 +68,7 @@ class Login extends Component {
                         </Button>
                     </Form>
                 </LoginBox>
+                }
             </div>
         );
     }

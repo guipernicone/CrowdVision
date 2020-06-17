@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Login from "Page/Login/Login"
+import Home from "Page/Home/Home"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
@@ -9,8 +10,8 @@ class App extends Component {
         return (
             <Router>
                 <Switch>
-                    {/* <Route path="/" exact component={Home}></Route> */}
                     <Route path="/login" component={Login}></Route>
+                    <Route path="/" exact component={Home}></Route>
                 </Switch>
             </Router>
         );
