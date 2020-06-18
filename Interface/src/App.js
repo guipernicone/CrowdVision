@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Login from "Page/Login/Login"
 import Home from "Page/Home/Home"
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PrivateRoute from 'Page/Routes/PrivateRoute'
 
 class App extends Component {
     render() {
@@ -10,8 +11,8 @@ class App extends Component {
         return (
             <Router>
                 <Switch>
-                    <Route path="/login" component={Login}></Route>
-                    <Route path="/" exact component={Home}></Route>
+                    <Route path="/login" component={Login}/>
+                    <PrivateRoute path="/" exact component={Home}/>
                 </Switch>
             </Router>
         );

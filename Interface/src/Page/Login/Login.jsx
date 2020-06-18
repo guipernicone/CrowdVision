@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import 'Common/css/CrowdVision.css';
-import styled from 'styled-components';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { login } from 'Service/HttpRequest'
+import { login } from 'Service/LoginService'
+import CookieManager from 'Service/CookieService';
 import {Redirect} from 'react-router-dom';
+import {LoginBox} from 'Page/Login/LoginStyle'
 
 class Login extends Component {
 
@@ -32,6 +33,16 @@ class Login extends Component {
                 if (this.state.errorMSG === "") {
                     this.setState({errorMSG : "none"});
                 }
+                console.log(response.data)
+
+                let date = new Date();
+ 
+                date.setTime(date.getTime() + (60* 60 * 1000));
+                let object = {path: '/', expires: date}
+
+                const cm =  new CookieManager();
+                cm.set("login", JSON.stringify(response.data), object);
+
                 this.setState({redirect: true});
             }
             else if (this.state.errorMSG !== "") {
@@ -39,7 +50,7 @@ class Login extends Component {
             }
         })
         .catch((error) => {
-            console.log("error")
+            console.log(error)
         }) 
     }
 
@@ -74,47 +85,4 @@ class Login extends Component {
     }
 }
 
-const LoginBox = styled.div`
-    text-align:center;
-    color: white;
-    background-color: #1e1e1e;
-    width:400px;
-    height:500px;
-    position:absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    .title {
-        margin-top: 30px;
-        margin-bottom: 70px;
-    }
-    .inputField {
-        width:300px;
-        margin: 0 auto;
-        background-color: transparent;
-        color: white;
-        outline: none;
-        outline-style: none;
-        outline-width: 0;
-        border-top: none;
-        border-left: none;
-        border-right: none;
-        border-bottom: solid #121212 1px;
-        padding: 3px 10px;
-        box-shadow:none !important;
-    }
-    .submit {
-        background-color: #bb86fc;
-        color: black;
-        font-weight:500;
-        border: none;
-        margin-top:10px;
-    }
-    .alertForm {
-        width:300px;
-        margin: 0 auto;
-        margin-bottom: 10px;
-    }
-`;
 export default Login;
