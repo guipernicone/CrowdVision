@@ -28,7 +28,7 @@ class Login extends Component {
 
         login(email, password)
         .then((response) => {
-            if (response == 200) {
+            if (response.status === 200) {
                 if (this.state.errorMSG === "") {
                     this.setState({errorMSG : "none"});
                 }
@@ -64,7 +64,7 @@ class Login extends Component {
                             Esqueceu sua Senha?
                         </Form.Text>
                         <Button variant="primary" type="submit" className="submit">
-                            Submit
+                            Entrar
                         </Button>
                     </Form>
                 </LoginBox>

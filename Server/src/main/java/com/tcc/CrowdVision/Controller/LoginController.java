@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import com.tcc.CrowdVision.Repository.LoginRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Login.Login;
 import com.tcc.CrowdVision.Server.User.User;
+import com.tcc.CrowdVision.Server.User.UserUtils;
 
 @RestController
 @CrossOrigin
@@ -41,6 +43,8 @@ public class LoginController {
 			String userPassword = loginJSON.get("userPassword");
 			String hashPassword = new DigestUtils(SHA3_256).digestAsHex(userPassword);
 			Optional<User> optionalUser = userRepository.findUserByEmailAndPassword(userEmail, hashPassword);
+			JSONObject response = new JSONObject();
+			JSONObject userObject = new JSONObject();
 			
 			if(optionalUser.isPresent()) {
 				User user = optionalUser.get();
@@ -55,7 +59,14 @@ public class LoginController {
 				login = new Login(user.getId());
 				Login savedLogin = loginRepository.save(login);
 				
-				return ResponseEntity.ok(savedLogin.getId());
+				
+				userObject.put("id", user.getId());
+				userObject.put("name", user.getName());
+				userObject.put("email", user.getEmail());
+				userObject.put("permission", UserUtils.getPermissionByInt(user.getPermission()));
+				response.put("loginID", savedLogin.getId());
+				response.put("user", userObject);
+				return ResponseEntity.ok(response.toString());
 			}
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email or Password Incorrect");
 			

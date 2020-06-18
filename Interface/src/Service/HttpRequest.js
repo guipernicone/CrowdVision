@@ -9,7 +9,7 @@ const sendPost = (body, route) => {
     return axios.post(`http://${serverIP}:${serverPort}/${route}`, body, config)
     .then((response) => {
         console.log(response);
-        return response.status;
+        return response;
     })
     .catch((error) => {
         console.log(error);
