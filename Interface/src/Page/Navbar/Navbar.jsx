@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 
 import { NavbarStyle } from './NavbarStyle';
-// import CookieService from 'Service/CookieService';
-
+import { Link } from 'react-router-dom';
+import { logoutUser } from 'Service/LoginService'
 class Navbar extends Component {
-    // constructor(props) {
-    //     let cs = new CookieService();
-    //     let user = cs.get('login').user
-    //     this.userName = user.name
-    // }
     render() {
         return (
             <NavbarStyle>
@@ -21,7 +16,7 @@ class Navbar extends Component {
                 </div>
                 <div className="navBarGroup2">
                     <div className="navButton">Perfil</div>
-                    <div className="navButton">Sair</div>
+                    <Link to={'/login'} onClick={logoutUser}><div className="navButton">Sair</div></Link>
                 </div>
             </NavbarStyle>
         );

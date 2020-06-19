@@ -38,3 +38,11 @@ export const validateSession = () =>{
     let cm = new CookieService();
     return cm.isDeclared('login');
 }
+
+/**
+ * Logout the user
+ */
+export const logoutUser = () => {
+    let cs = new CookieService();
+    return cs.remove('login')
+}

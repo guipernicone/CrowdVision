@@ -13,6 +13,9 @@ class App extends Component {
                 <Switch>
                     <Route path="/login" component={Login}/>
                     <PrivateRoute path="/" exact component={Home}/>
+                    <PrivateRoute path="/recent-detections" component={Home}/>
+                    <PrivateRoute path="/history" component={Home}/>
+                    <PrivateRoute path="/profile" component={Home}/>
                 </Switch>
             </Router>
         );

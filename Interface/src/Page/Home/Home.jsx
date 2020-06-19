@@ -32,8 +32,8 @@ class Home extends Component {
 
 
     render() {
+        console.log(this.state.loggedInStatus)
         return (
-           
             <div className="cv-background">
                  <Navbar/>
                 {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
