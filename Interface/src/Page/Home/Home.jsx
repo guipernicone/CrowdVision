@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import {LOGIN_STATES} from "Common/Js/LoginStatusEnum"
-import { validateLogin } from 'Service/LoginService'
+import {LOGIN_STATES} from "Common/Js/LoginStatusEnum";
+import { validateLogin } from 'Service/LoginService';
 import {Redirect} from "react-router-dom";
+import Navbar from "Page/Navbar/Navbar";
+import {HomeStyle} from "Page/Home/HomeStyle";
+import 'Common/css/CrowdVision.css'
+
 class Home extends Component {
     
     constructor(props) {
@@ -29,11 +33,17 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
+           
+            <div className="cv-background">
+                 <Navbar/>
                 {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                     :
                     this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ? 
-                    <div> HOME </div>
+                    
+                    <HomeStyle>
+                        HOME
+                    </HomeStyle>
+
                     :
                     <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                 }
