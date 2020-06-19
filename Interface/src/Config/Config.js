@@ -1,2 +1,2 @@
-export const serverIP = '127.0.0.1'
+export const serverIP = '192.168.15.21'
 export const serverPort = '8080'

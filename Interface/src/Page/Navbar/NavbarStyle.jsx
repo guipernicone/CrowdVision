@@ -5,7 +5,7 @@ export const NavbarStyle = styled.div`
     position:relative;
     background-color: #1e1e1e;
     color:#bb86fc;
-    font-weight: 900;
+    font-weight: 700;
     width:100%;
     height:60px;
     line-height: 60px;
