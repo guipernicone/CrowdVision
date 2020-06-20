@@ -1,5 +1,6 @@
 import React from 'react';
 import { DetectionCardStyle } from 'Page/Detections/Style/DetectionCardStyle'
+import { Button } from 'react-bootstrap';
 
 /**
  * A componet to display a detection frame
@@ -11,9 +12,10 @@ import { DetectionCardStyle } from 'Page/Detections/Style/DetectionCardStyle'
  * @param {String} backgroundColor 
  * @param {Object} img 
  */
-const DetectionCard = (field1 , field2, field3, field4, backgroundColor , img = null) => {
+const DetectionCard = ({field1 , field2, field3, field4, buttonText, backgroundColor , buttonColor, img = null, onClick}) => {
+ 
     return (
-        <DetectionCardStyle>
+        <DetectionCardStyle backgroundColor={backgroundColor} buttonColor={buttonColor} >
             <div className="frame">
                 <img src={img}/>
             </div>
@@ -22,6 +24,7 @@ const DetectionCard = (field1 , field2, field3, field4, backgroundColor , img = 
                 <div>{field2}</div>
                 <div>{field3}</div>
                 <div>{field4}</div>
+                <Button variant="primary" className="buttonCard" onClick={onClick}>{buttonText}</Button>
             </div>
         </DetectionCardStyle>
     );

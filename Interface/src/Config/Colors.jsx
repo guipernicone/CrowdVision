@@ -1,7 +1,9 @@
-let colors = {
-    'primary-background' : '#121212',
-    'secundary-background' : '#1e1e1e',
-    'contrast' : '#bb86fc',
-    'contrast2' : '#6E79E6',
-    'contrast3' : '#7ACCFE'
-}
+let colors = [
+    '#121212',
+    '#1e1e1e',
+    '#333333',
+    '#bb86fc',
+    '#6E79E6',
+    '#7ACCFE',
+    '#25cabe'
+]

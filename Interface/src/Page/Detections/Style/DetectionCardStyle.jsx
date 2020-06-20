@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const DetectionCardStyle = styled.div `
     margin: 100px;
     width: 300px;
-    height: 400px;
+    height: 450px;
     display: block;
     
     .frame{
@@ -12,18 +12,23 @@ export const DetectionCardStyle = styled.div `
         box-sizing: content-box;
         border-width: 1px;
         border-style: solid;
-        border-color: #7ACCFE;
+        border-color: ${props => props.backgroundColor ?? '#454545'};
         border-bottom: 0;
 
     }
     .cardInfo {
-
-        /* background-color: #1e1e1e; */
-        background-color: #7ACCFE;
-        height: 100px;
+        background-color: ${props => props.backgroundColor ?? '#454545'};
+        height: 150px;
         width: 302px;
         padding: 5px;
-        color: black;
+        color: white;
         font-weight: 500;
+    }
+
+    .buttonCard{
+        float: right;
+        background-color: ${props => props.buttonColor ?? '#bb86fc'};
+        border: none;
+        margin-top: 5px;
     }
 `
