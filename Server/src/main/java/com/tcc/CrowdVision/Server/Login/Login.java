@@ -6,20 +6,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.tcc.CrowdVision.Utils.DateUtils;
-
-
 @Document(collection = "Login")
 public class Login {
 
 	@Id
 	private String id;
-	@Indexed(name = "creationDate", expireAfterSeconds = 0)
+	
+	@Indexed(name = "creationDate", expireAfterSeconds = 3600)
 	private Date creationDate;
 	private String userId;
 	
 	public Login(String id) {
-//		creationDate = DateUtils.convetDateToString(new Date(), "dd-MM-yyyy hh:mm:ss");
 		creationDate = new Date();
 		userId = id;
 
