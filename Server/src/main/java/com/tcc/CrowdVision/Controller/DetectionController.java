@@ -23,6 +23,7 @@ import com.tcc.CrowdVision.Repository.OrganizationRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Detection.Detection;
+import com.tcc.CrowdVision.Server.Detection.DetectionManager;
 import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.User;
 
@@ -103,54 +104,11 @@ public class DetectionController {
 	@GetMapping("/frames-from-user")
 	public ResponseEntity<String> framesFromUser(@RequestParam(defaultValue = "none") String userId) {
 		
-		ArrayList<String> cameraIds = new ArrayList<String>();
-		JSONArray json = new JSONArray();
-		
-		Optional<User> optionalUser = userRepository.findById(userId);
-		
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			
-			if (user.getOrganizationIds() != null) {
-				
-				for (String orgId : user.getOrganizationIds()) {
-					Optional<Organization> optionalOrg = orgRepository.findById(orgId);
-					
-					if (optionalOrg.isPresent()) {
-						Organization org = optionalOrg.get();
-						cameraIds.addAll(org.getCameraIds());
-					}
-				}
-	
-				for (String cameraId: cameraIds) {
-					JSONObject cameraObject = new JSONObject();
-					Optional<Camera> cameraOptional = cameraRepository.findById(cameraId);
-					
-					if (cameraOptional.isPresent()) {
-						Camera camera = cameraOptional.get();
-						
-						Gson gson = new Gson();
-						String cameraString = gson.toJson(camera);
-						cameraObject.put("camera", cameraString);
-						
-						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId); 
-						JSONArray detectionArray = new JSONArray();
-						
-						for (Detection detection: detections) {
-							String detectionString = gson.toJson(detection);
-							
-							JSONObject detectionObject = new JSONObject(detectionString);
-							detectionArray.put(detectionObject);
-						}
-						
-						cameraObject.put("frames", detectionArray);
-					}
-					json.put(cameraObject);
-				}
-				
-				return ResponseEntity.ok(json.toString());
-			}
+		DetectionManager detectionManager = DetectionManager.getInstance();
+		if (!userId.contains("none")) {
+			return ResponseEntity.ok(detectionManager.getFrames(userId));
 		}
+		
 		return ResponseEntity.badRequest().body("user id invalido");
 	}
 	
