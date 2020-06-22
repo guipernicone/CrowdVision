@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.tcc.CrowdVision.Repository.CameraRepository;
 import com.tcc.CrowdVision.Repository.DetectionRepository;
+import com.tcc.CrowdVision.Repository.OrganizationRepository;
+import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Detection.Detection;
+import com.tcc.CrowdVision.Server.Organization.Organization;
+import com.tcc.CrowdVision.Server.User.User;
 
 @RestController
 @CrossOrigin
@@ -32,6 +36,13 @@ public class DetectionController {
 	
 	@Autowired
 	private CameraRepository cameraRepository;
+	
+	@Autowired
+	private OrganizationRepository orgRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	
 	@PostMapping("/add-frame/detected")
 	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
@@ -52,8 +63,8 @@ public class DetectionController {
 
 	}
 	
-	@GetMapping("/frames")
-	public ResponseEntity<String> frames_detected(@RequestParam String cameraId) {
+	@GetMapping("/frames-from-camera")
+	public ResponseEntity<String> framesFromCamera(@RequestParam String cameraId) {
 		try {
 			Optional<Camera> cameraOptional  = cameraRepository.findById(cameraId);
 			if (cameraOptional.isPresent()) {
@@ -68,14 +79,13 @@ public class DetectionController {
 				
 				JSONArray detectionArray = new JSONArray();
 				ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
-				int i = 0;
+				
 				for(Detection detection: detections) {
 					String detectionString = gson.toJson(detection);
 					
 					JSONObject detectionObject = new JSONObject(detectionString);
 					detectionArray.put(detectionObject);
-					i++;
-//					if (i > 5) break;
+					
 				}
 				json.put("frames", detectionArray);
 				return ResponseEntity.ok(json.toString());
@@ -89,4 +99,59 @@ public class DetectionController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
 	}
+	
+	@GetMapping("/frames-from-user")
+	public ResponseEntity<String> framesFromUser(@RequestParam(defaultValue = "none") String userId) {
+		
+		ArrayList<String> cameraIds = new ArrayList<String>();
+		JSONArray json = new JSONArray();
+		
+		Optional<User> optionalUser = userRepository.findById(userId);
+		
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			
+			if (user.getOrganizationIds() != null) {
+				
+				for (String orgId : user.getOrganizationIds()) {
+					Optional<Organization> optionalOrg = orgRepository.findById(orgId);
+					
+					if (optionalOrg.isPresent()) {
+						Organization org = optionalOrg.get();
+						cameraIds.addAll(org.getCameraIds());
+					}
+				}
+	
+				for (String cameraId: cameraIds) {
+					JSONObject cameraObject = new JSONObject();
+					Optional<Camera> cameraOptional = cameraRepository.findById(cameraId);
+					
+					if (cameraOptional.isPresent()) {
+						Camera camera = cameraOptional.get();
+						
+						Gson gson = new Gson();
+						String cameraString = gson.toJson(camera);
+						cameraObject.put("camera", cameraString);
+						
+						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId); 
+						JSONArray detectionArray = new JSONArray();
+						
+						for (Detection detection: detections) {
+							String detectionString = gson.toJson(detection);
+							
+							JSONObject detectionObject = new JSONObject(detectionString);
+							detectionArray.put(detectionObject);
+						}
+						
+						cameraObject.put("frames", detectionArray);
+					}
+					json.put(cameraObject);
+				}
+				
+				return ResponseEntity.ok(json.toString());
+			}
+		}
+		return ResponseEntity.badRequest().body("user id invalido");
+	}
+	
 }
