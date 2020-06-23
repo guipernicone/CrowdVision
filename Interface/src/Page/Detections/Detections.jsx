@@ -4,6 +4,8 @@ import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
 import { Redirect } from "react-router-dom";
 import {DetectionsStyle} from 'Page/Detections/Style/DetectionsStyle';
+import CookieService from 'Service/CookieService'
+import {serverIP, serverPort} from 'Config/Config'
 
 class Detections extends Component {
     constructor(props) {
@@ -26,6 +28,19 @@ class Detections extends Component {
             this.setState({loggedInStatus : LOGIN_STATES.NOTLOGGEDIN})
         })
         
+        let cs = new CookieService();
+        let login = cs.get('login');
+
+        const ws = new WebSocket(`ws://${serverIP}:${serverPort}/websocket/detections/${login.user.id}`);
+
+        ws.onopen = () => {
+            console.log("connection stablished")
+        }
+
+        ws.onmessage = evt => {
+            const json = JSON.parse(evt.data);
+            console.log(json)
+        }
     }
 
     render() {

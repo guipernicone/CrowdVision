@@ -1,14 +1,10 @@
 package com.tcc.CrowdVision.Server.Detection;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Detection")
-public class Detection {
-	
+@Document(collection = "DetectionHistory")
+public class DetectionHistory {
 	@Id
 	private String id;
 	private String frame;
@@ -16,18 +12,17 @@ public class Detection {
 	private String detectionTime;
 	private String captureTime;
 	private String cameraId;
-//	@Indexed(name = "creationTime", expireAfterSeconds = 86400)
-	private Date creationTime;
 	
 	
 	
-	public Detection(String frame, Float detectionScore, String detectionTime, String captureTime, String cameraId) {
+	public DetectionHistory(String id, String frame, Float detectionScore, String detectionTime, String captureTime,
+			String cameraId) {
+		this.id = id;
 		this.frame = frame;
 		this.detectionScore = detectionScore;
 		this.detectionTime = detectionTime;
 		this.captureTime = captureTime;
 		this.cameraId = cameraId;
-		this.creationTime = new Date();
 	}
 
 	public String getId() {
@@ -77,22 +72,11 @@ public class Detection {
 	public void setCameraId(String cameraId) {
 		this.cameraId = cameraId;
 	}
-	
-	public Date getCreationTime() {
-		return creationTime;
-	}
-	
-	public void setCreationTime(Date creationTime) {
-		this.creationTime = creationTime;
-	}
-	
+
 	@Override
 	public String toString() {
 		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", detectionTime="
-				+ detectionTime + ", captureTime=" + captureTime + ", cameraId=" + cameraId + ", creationTime="
-				+ creationTime + "]";
+				+ detectionTime + ", captureTime=" + captureTime + ", cameraId=" + cameraId + "]";
 	}
-	
-	
 	
 }

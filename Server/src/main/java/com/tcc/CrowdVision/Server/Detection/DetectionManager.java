@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.tcc.CrowdVision.Controller.WebSocket.WebSocketListener;
 import com.tcc.CrowdVision.Repository.CameraRepository;
+import com.tcc.CrowdVision.Repository.DetectionHistoryRepository;
 import com.tcc.CrowdVision.Repository.DetectionRepository;
 import com.tcc.CrowdVision.Repository.OrganizationRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
@@ -22,6 +23,7 @@ public class DetectionManager {
 	private static DetectionManager instance;
 	private WebSocketListener listerner;
 	private DetectionRepository detectionRepository = BeanUtils.getBean(DetectionRepository.class);
+	private DetectionHistoryRepository detectionHistoryRepository = BeanUtils.getBean(DetectionHistoryRepository.class);
 	private UserRepository userRepository = BeanUtils.getBean(UserRepository.class);
 	private CameraRepository cameraRepository = BeanUtils.getBean(CameraRepository.class);
 	private OrganizationRepository orgRepository = BeanUtils.getBean(OrganizationRepository.class);
@@ -41,7 +43,7 @@ public class DetectionManager {
 		this.listerner.sendDetectionFrame();
 	}
 	
-	public String getFrames(String userId) {
+	public String getFrames(String userId, Boolean history) {
 		
 		ArrayList<String> cameraIds = new ArrayList<String>();
 		JSONArray json = new JSONArray();
@@ -73,15 +75,31 @@ public class DetectionManager {
 						String cameraString = gson.toJson(camera);
 						cameraObject.put("camera", cameraString);
 						
-						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId); 
 						JSONArray detectionArray = new JSONArray();
 						
-						for (Detection detection: detections) {
-							String detectionString = gson.toJson(detection);
+						if (history) {
+							ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(cameraId); 
 							
-							JSONObject detectionObject = new JSONObject(detectionString);
-							detectionArray.put(detectionObject);
+							
+							for (DetectionHistory detection: detections) {
+								String detectionString = gson.toJson(detection);
+								
+								JSONObject detectionObject = new JSONObject(detectionString);
+								detectionArray.put(detectionObject);
+							}
 						}
+						else {
+							ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
+							
+							for (Detection detection: detections) {
+								String detectionString = gson.toJson(detection);
+								
+								JSONObject detectionObject = new JSONObject(detectionString);
+								detectionArray.put(detectionObject);
+							}
+						}
+						
+						
 						
 						cameraObject.put("frames", detectionArray);
 					}

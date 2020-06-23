@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.tcc.CrowdVision.Repository.CameraRepository;
+import com.tcc.CrowdVision.Repository.DetectionHistoryRepository;
 import com.tcc.CrowdVision.Repository.DetectionRepository;
 import com.tcc.CrowdVision.Repository.OrganizationRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Detection.Detection;
+import com.tcc.CrowdVision.Server.Detection.DetectionHistory;
 import com.tcc.CrowdVision.Server.Detection.DetectionManager;
 import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.User;
@@ -36,24 +38,30 @@ public class DetectionController {
 	private DetectionRepository detectionRepository;
 	
 	@Autowired
+	private DetectionHistoryRepository detectionHistoryRepository;
+	
+	@Autowired
 	private CameraRepository cameraRepository;
-	
-	@Autowired
-	private OrganizationRepository orgRepository;
-	
-	@Autowired
-	private UserRepository userRepository;
 	
 	
 	@PostMapping("/add-frame/detected")
-	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
+	public ResponseEntity<String> addicionar(@RequestBody DetectionHistory detection) {
 		try {
 			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
 						
 			if (optionalCamera.isPresent()) {
-				Detection savedDetection = detectionRepository.save(detection);
-				System.out.println(savedDetection.toString());
-				return ResponseEntity.ok("Success");
+				detectionHistoryRepository.save(detection);
+				Detection frameDetected = new Detection(
+													detection.getFrame(), 
+													detection.getDetectionScore(), 
+													detection.getDetectionTime(), 
+													detection.getCaptureTime(), 
+													detection.getCameraId()
+												);
+				
+				detectionRepository.save(frameDetected);
+				
+				return ResponseEntity.ok("Detection saved");
 			}
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Camera Id");
 		}
@@ -106,10 +114,16 @@ public class DetectionController {
 		
 		DetectionManager detectionManager = DetectionManager.getInstance();
 		if (!userId.contains("none")) {
-			return ResponseEntity.ok(detectionManager.getFrames(userId));
+			return ResponseEntity.ok(detectionManager.getFrames(userId, false));
 		}
 		
 		return ResponseEntity.badRequest().body("user id invalido");
 	}
 	
+	@GetMapping("/test")
+	public ResponseEntity<String> test() {
+		DetectionManager detectionManager = DetectionManager.getInstance();
+		detectionManager.sendStatus();
+		return ResponseEntity.ok("ok");
+	}
 }
