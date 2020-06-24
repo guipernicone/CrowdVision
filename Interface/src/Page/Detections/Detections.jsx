@@ -6,12 +6,13 @@ import { Redirect } from "react-router-dom";
 import {DetectionsStyle} from 'Page/Detections/Style/DetectionsStyle';
 import CookieService from 'Service/CookieService'
 import {serverIP, serverPort} from 'Config/Config'
-
+import  DetectionView from 'Page/Detections/DetectionView'
 class Detections extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loggedInStatus: LOGIN_STATES.WAITING,
+            content : [],
         }
     }
     componentDidMount(){
@@ -38,8 +39,8 @@ class Detections extends Component {
         }
 
         ws.onmessage = evt => {
-            const json = JSON.parse(evt.data);
-            console.log(json)
+            let contentJSON = JSON.parse(evt.data);
+            this.setState({content: contentJSON});
         }
     }
 
@@ -52,7 +53,9 @@ class Detections extends Component {
                     this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
                     <DetectionsStyle>
                         <h1 className="title">Detecções Recentes</h1>
-                        <div className="cards">CARDS</div>
+                        <div className="cards">
+                            <DetectionView content={this.state.content}/>    
+                        </div>
                         
                     </DetectionsStyle>
                     :

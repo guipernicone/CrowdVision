@@ -8,7 +8,7 @@ class History extends Component {
         return (
             <div>
                 <Navbar/>
-                <div style={{margin: "200px", backgroundColor:"#1e1e1e", height: "500px", width: "600px"}}>
+                <div style={{margin: "200px", backgroundColor:"#1e1e1e"}}>
                     <DetectionCard
                         img={img}
                         field1={'Camera: 5eedd78c89ca262b4d67644a'}

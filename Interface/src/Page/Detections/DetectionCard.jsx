@@ -12,12 +12,12 @@ import { Button } from 'react-bootstrap';
  * @param {String} backgroundColor 
  * @param {Object} img 
  */
-const DetectionCard = ({field1 , field2, field3, field4, buttonText, backgroundColor , buttonColor, img = null, onClick}) => {
+const DetectionCard = ({field1 , field2, field3, field4, buttonText, backgroundColor , buttonColor, img = null, onClick, infoHeight}) => {
  
     return (
-        <DetectionCardStyle backgroundColor={backgroundColor} buttonColor={buttonColor} >
+        <DetectionCardStyle backgroundColor={backgroundColor} buttonColor={buttonColor} infoHeight={infoHeight}>
             <div className="frame">
-                <img src={img}/>
+                <img src={img} alt="Detected frame"/>
             </div>
             <div className="cardInfo">
                 <div>{field1}</div>

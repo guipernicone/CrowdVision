@@ -18,7 +18,7 @@ export const DetectionCardStyle = styled.div `
     }
     .cardInfo {
         background-color: ${props => props.backgroundColor ?? '#454545'};
-        height: 150px;
+        height: ${props => props.infoHeight ?? "150px"};
         width: 302px;
         padding: 5px;
         color: white;

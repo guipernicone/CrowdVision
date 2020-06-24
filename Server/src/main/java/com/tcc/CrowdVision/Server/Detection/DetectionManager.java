@@ -73,7 +73,7 @@ public class DetectionManager {
 						
 						Gson gson = new Gson();
 						String cameraString = gson.toJson(camera);
-						cameraObject.put("camera", cameraString);
+						cameraObject.put("camera", new JSONObject(cameraString));
 						
 						JSONArray detectionArray = new JSONArray();
 						
