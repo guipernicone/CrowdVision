@@ -52,7 +52,7 @@ class Detections extends Component {
                     :
                     this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
                     <DetectionsStyle>
-                        <h1 className="title">Detecções Recentes</h1>
+                        <div className="title">Detecções Recentes</div>
                         <div className="cards">
                             <DetectionView content={this.state.content}/>    
                         </div>

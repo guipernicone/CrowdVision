@@ -1,16 +1,25 @@
 import React from 'react';
-import DetectionCard from 'Page/Detections/DetectionCard'
+import DetectionCard from 'Page/Detections/DetectionCard';
+import { DetectionViewStyle } from 'Page/Detections/Style/DetectionViewStyle';
+import Divisor from 'Components/Divisor/Divisor'
 
+/**
+ * Build the body of the detection page
+ * 
+ * @param {Array} content  an array of object with detection crd properties
+ */
 const DetectionView = ({content}) => {
 
     function buildCard() {
         let body = []
         let card = []
+
         content.map((camera) => {
             let cameraJSON = camera.camera;
             let framesJSON = camera.frames;
+
             card = framesJSON.map((frame, index) =>{
-                if (index < 2) {
+                // if (index < 7) {
                     return <DetectionCard 
                         img={`data:image/jpeg;base64, ${frame.frame}`}
                         field1={`Score: ${frame.detectionScore}`}
@@ -20,13 +29,17 @@ const DetectionView = ({content}) => {
                         onClick={() => {console.log("Clico")}}
                         infoHeight={'125px'}
                     />
-                 }
+                //  }
             });
+
             body.push(
-                <div>
-                    <div>{cameraJSON.id} | ver localização</div>  
-                    <div>{card}</div>
-                </div>
+                <DetectionViewStyle>
+                    <div className="viewTitle">
+                        {cameraJSON.id} | ver localização
+                        <Divisor width={"68%"} margin={"20px"}/>
+                    </div>  
+                    <div className="viewCard">{card}</div>
+                </DetectionViewStyle>
                 
             );
         });

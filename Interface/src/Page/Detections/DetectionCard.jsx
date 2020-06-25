@@ -5,12 +5,14 @@ import { Button } from 'react-bootstrap';
 /**
  * A componet to display a detection frame
  * 
- * @param {String} field1 
- * @param {String} field2 
- * @param {String} fied3 
- * @param {String} fied4 
- * @param {String} backgroundColor 
- * @param {Object} img 
+ * @param {String} field1 field of content
+ * @param {String} field2 field of content
+ * @param {String} fied3 field of content
+ * @param {String} fied4 field of content
+ * @param {String} backgroundColor the background color for the card
+ * @param {Object} img the image url
+ * @param {Function} onClick handler onclick event function
+ * @param {String} infoHeight info div height
  */
 const DetectionCard = ({field1 , field2, field3, field4, buttonText, backgroundColor , buttonColor, img = null, onClick, infoHeight}) => {
  

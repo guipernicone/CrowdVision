@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const DetectionCardStyle = styled.div `
-    margin: 100px;
+    margin: 10px;
     width: 300px;
     height: 450px;
     display: block;
@@ -30,5 +30,6 @@ export const DetectionCardStyle = styled.div `
         background-color: ${props => props.buttonColor ?? '#bb86fc'};
         border: none;
         margin-top: 5px;
+        color: black;
     }
 `
