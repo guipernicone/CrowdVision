@@ -1,6 +1,8 @@
 package com.tcc.CrowdVision.Server.Detection;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -53,23 +55,22 @@ public class DetectionManager {
 		if (optionalUser.isPresent()) {
 			User user = optionalUser.get();
 			
-			if (user.getOrganizationIds() != null) {
+			if (user.getOrganizationIds() != null) {	
+
+				Iterable<Organization> iterable = orgRepository.findAllById(user.getOrganizationIds());
+				List<Organization> organizations = new ArrayList<Organization>();
+				iterable.iterator().forEachRemaining(organizations::add);
 				
-				for (String orgId : user.getOrganizationIds()) {
-					Optional<Organization> optionalOrg = orgRepository.findById(orgId);
-					
-					if (optionalOrg.isPresent()) {
-						Organization org = optionalOrg.get();
-						cameraIds.addAll(org.getCameraIds());
-					}
+				for (Organization org : organizations) {
+					cameraIds.addAll(org.getCameraIds());
 				}
-	
+				
 				for (String cameraId: cameraIds) {
 					JSONObject cameraObject = new JSONObject();
-					Optional<Camera> cameraOptional = cameraRepository.findById(cameraId);
 					
-					if (cameraOptional.isPresent()) {
-						Camera camera = cameraOptional.get();
+					Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+					
+					for (Camera camera : cameras) {
 						
 						Gson gson = new Gson();
 						String cameraString = gson.toJson(camera);

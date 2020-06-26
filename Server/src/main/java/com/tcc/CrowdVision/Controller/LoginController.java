@@ -42,7 +42,9 @@ public class LoginController {
 			String userEmail = loginJSON.get("userEmail");
 			String userPassword = loginJSON.get("userPassword");
 			String hashPassword = new DigestUtils(SHA3_256).digestAsHex(userPassword);
+			
 			Optional<User> optionalUser = userRepository.findUserByEmailAndPassword(userEmail, hashPassword);
+			
 			JSONObject response = new JSONObject();
 			JSONObject userObject = new JSONObject();
 			
@@ -66,6 +68,7 @@ public class LoginController {
 				userObject.put("permission", UserUtils.getPermissionByInt(user.getPermission()));
 				response.put("loginID", savedLogin.getId());
 				response.put("user", userObject);
+				
 				return ResponseEntity.ok(response.toString());
 			}
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email or Password Incorrect");
