@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Colors from 'Config/Colors'
 
 const DialogStyle = styled.div `
     position:absolute;
@@ -6,17 +7,18 @@ const DialogStyle = styled.div `
     top: 50%;
     transform: translate(-50%, -50%);
     
-    .contentDialog{
+    .contentDialog {
         position:relative;
         width: ${props => props.width ?? '800px'};
         height: ${props => props.height ?? '800px'};
-        /* border: 5px blue solid;
-        border-radius: 20px; */
-        background-color:red;
+        background-color: ${Colors.primary}
     }
 
-    .closeDialog{
-        color: white;
+    .closeIcon {
+        color: ${Colors.text_color_1}; 
+        width: 35px; 
+        height: 35px;
+        color: ${Colors.text_color_1}; 
         position: absolute;
         top: 0;
         right: 0;

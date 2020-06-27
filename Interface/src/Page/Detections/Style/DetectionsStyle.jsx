@@ -3,7 +3,6 @@ import styled from 'styled-components'
 export const DetectionsStyle = styled.div `
     background-color: #1e1e1e;
     color: white;
-    /* height: calc(100% - 85px); */
     height: auto;
     min-height: calc(100% - 85px) !important;
     margin: 0 auto;

@@ -1,11 +1,14 @@
 import React from 'react';
 import DialogStyle from 'Components/Dialog/DialogStyle'
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
-const Dialog = () => {
+const Dialog = ({closeDialog, dialogContent, dialogStyle}) => {
+
     return (
-        <DialogStyle>
+        <DialogStyle style={dialogStyle}>
             <div className="contentDialog">
-                <div className="closeDialog">X</div>
+                <HighlightOffIcon className="closeIcon" onClick={closeDialog}/>
+                {dialogContent}
             </div>
         </DialogStyle>
     );

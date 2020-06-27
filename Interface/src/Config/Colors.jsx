@@ -1,10 +1,13 @@
-let colors = [
-    '#121212',
-    '#1e1e1e',
-    '#333333',
-    '#bb86fc',
-    '#865eb8',
-    '#6E79E6',
-    '#7ACCFE',
-    '#25cabe'
-]
+ const Colors = {
+    primary: '#121212',
+    secundary:  '#1e1e1e',
+    tertiary:  '#333333',
+    contrast_1:  '#bb86fc',
+    contrast_2:  '#865eb8',
+    contrast_3:  '#6E79E6',
+    contrast_4:  '#7ACCFE',
+    contrast_5: '#25cabe',
+    text_color_1: '#FFFFFF' 
+}
+
+export default Colors;
