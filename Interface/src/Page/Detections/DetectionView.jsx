@@ -3,9 +3,12 @@ import DetectionCard from 'Page/Detections/DetectionCard';
 import { DetectionViewStyle } from 'Page/Detections/Style/DetectionViewStyle';
 import Divisor from 'Components/Divisor/Divisor'
 import Dialog from 'Components/Dialog/Dialog'
-import ExploreIcon from '@material-ui/icons/Explore';
 import { Button } from 'react-bootstrap';
 import GoogleMapsApi from 'Components/GoogleMapsApi/GoogleMapsApi'
+import ExploreIcon from '@material-ui/icons/Explore';
+import DoneIcon from '@material-ui/icons/Done';
+import CloseIcon from '@material-ui/icons/Close';
+import Colors from 'Config/Colors'
 
 /**
  * Build the body of the detection page
@@ -46,11 +49,15 @@ class DetectionView extends Component {
             card = framesJSON.map((frame, index) =>{
                 return <DetectionCard 
                     img={`data:image/jpeg;base64, ${frame.frame}`}
-                    field1={`Score: ${frame.detectionScore}`}
-                    field2={'Capture Date: 20-06-2020 10:00:00'}
-                    field3={'Detection Date: 20-06-2020 10:01:00'}
-                    buttonText={'Detecção Incorreta'}
-                    onClick={() => {console.log("Clico")}}
+                    field1={`Confiabilidade: ${frame.detectionScore}`}
+                    field2={'Data de Captura: 20-06-2020 10:00:00'}
+                    field3={'Data de detecção: 20-06-2020 10:01:00'}
+                    buttonText1={<DoneIcon/>}
+                    onClick1={() => {console.log("Clico Left")}}
+                    buttonText2={<CloseIcon/>}
+                    onClick2={() => {console.log("Clico Right")}}
+                    buttonColor1={"#00ff00"}
+                    buttonColor2={"#ff0000"}
                     infoHeight={'125px'}
                 />
             });

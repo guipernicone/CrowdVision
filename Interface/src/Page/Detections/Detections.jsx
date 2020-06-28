@@ -7,6 +7,7 @@ import {DetectionsStyle} from 'Page/Detections/Style/DetectionsStyle';
 import CookieService from 'Service/CookieService'
 import {serverIP, serverPort} from 'Config/Config'
 import  DetectionView from 'Page/Detections/DetectionView'
+
 class Detections extends Component {
     constructor(props) {
         super(props);
