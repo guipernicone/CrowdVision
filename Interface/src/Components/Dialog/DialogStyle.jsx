@@ -15,14 +15,14 @@ const DialogStyle = styled.div `
     }
 
     .closeIcon {
-        color: ${Colors.text_color_1}; 
+        color: ${Colors.contrast_1}; 
         width: 35px; 
         height: 35px;
-        color: ${Colors.text_color_1}; 
         position: absolute;
         top: 0;
         right: 0;
         transform: translate(50%, -50%);
+        z-index: 100;
     }
 `;
 

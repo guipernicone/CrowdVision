@@ -19,11 +19,12 @@ export const DetectionViewStyle = styled.div `
     }
 
     .exploreIcon {
-        color: ${Colors.text_color_1};
+        color: ${Colors.primary};
     }
 
     .buttonLocal {
         background-color: ${Colors.contrast_1};
+        color: ${Colors.primary};
         border: none;
         margin-left: 10px;
     }

@@ -65,7 +65,7 @@ class DetectionView extends Component {
                     {this.state.dialogStatus[index] ? 
                         <Dialog 
                             closeDialog={() => {this.handlerDialog(false, index)}}
-                            // dialogContent= {<GoogleMapsApi zoom={15} coordinates={{ lat: 47.444, lng: -122.176}}/>}
+                            // dialogContent= {<GoogleMapsApi zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
                             dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>
