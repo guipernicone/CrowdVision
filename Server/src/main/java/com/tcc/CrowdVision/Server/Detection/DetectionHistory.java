@@ -12,17 +12,23 @@ public class DetectionHistory {
 	private String detectionTime;
 	private String captureTime;
 	private String cameraId;
+	private Boolean detectionStatus;
 	
-	
-	
-	public DetectionHistory(String id, String frame, Float detectionScore, String detectionTime, String captureTime,
-			String cameraId) {
+	public DetectionHistory(
+			String id,
+			String frame,
+			Float detectionScore,
+			String detectionTime,
+			String captureTime,
+			String cameraId)
+	{
 		this.id = id;
 		this.frame = frame;
 		this.detectionScore = detectionScore;
 		this.detectionTime = detectionTime;
 		this.captureTime = captureTime;
 		this.cameraId = cameraId;
+		this.detectionStatus = true;
 	}
 
 	public String getId() {
@@ -71,6 +77,14 @@ public class DetectionHistory {
 	
 	public void setCameraId(String cameraId) {
 		this.cameraId = cameraId;
+	}
+
+	public Boolean getDetectionStatus() {
+		return detectionStatus;
+	}
+
+	public void setDetectionStatus(Boolean detectionStatus) {
+		this.detectionStatus = detectionStatus;
 	}
 
 	@Override

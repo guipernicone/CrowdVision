@@ -1,6 +1,7 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -50,16 +51,21 @@ public class DetectionController {
 			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
 						
 			if (optionalCamera.isPresent()) {
-				detectionHistoryRepository.save(detection);
+				DetectionHistory detectionHistory = detectionHistoryRepository.save(detection);
+				
 				Detection frameDetected = new Detection(
 													detection.getFrame(), 
 													detection.getDetectionScore(), 
 													detection.getDetectionTime(), 
 													detection.getCaptureTime(), 
-													detection.getCameraId()
+													detection.getCameraId(),
+													detectionHistory.getId()
 												);
 				
 				detectionRepository.save(frameDetected);
+				
+				DetectionManager detectionManager = DetectionManager.getInstance();
+				detectionManager.sendStatus();
 				
 				return ResponseEntity.ok("Detection saved");
 			}
@@ -119,6 +125,41 @@ public class DetectionController {
 		
 		return ResponseEntity.badRequest().body("user id invalido");
 	}
+	
+	@PostMapping("/update-status")
+	public ResponseEntity<String> updateDetectionStatus(@RequestBody Map<String, Object> detectionUpdate) {
+		try {
+			if (detectionUpdate.containsKey("detectionId") && detectionUpdate.containsKey("detectionHistoryId") &&detectionUpdate.containsKey("detectionStatus")) {
+				String detectionId = (String) detectionUpdate.get("detectionId");
+				String detectionHistoryId = (String) detectionUpdate.get("detectionHistoryId");
+				Boolean detectionStatus = (Boolean) detectionUpdate.get("detectionStatus");
+				System.out.println("ID " + detectionId);
+				System.out.println("STATUS " + detectionStatus);
+				
+				detectionRepository.deleteById(detectionId);
+				
+				if (detectionStatus.equals(false)) {
+					Optional<DetectionHistory> optionalDetection = detectionHistoryRepository.findById(detectionHistoryId);
+
+					if (optionalDetection.isPresent()) {
+						DetectionHistory detectionHistory = optionalDetection.get();
+						detectionHistory.setDetectionStatus(detectionStatus);
+						detectionHistoryRepository.save(detectionHistory);
+					}
+				}
+			
+				DetectionManager detectionManager = DetectionManager.getInstance();
+				detectionManager.sendStatus();
+				
+				return ResponseEntity.ok().body("Detection Updated");
+			}		
+			return ResponseEntity.badRequest().body("Invalid JSON");
+		}
+		catch(Exception e) {
+			return ResponseEntity.badRequest().body("Invalid JSON");
+		}
+		
+	}	
 	
 	@GetMapping("/test")
 	public ResponseEntity<String> test() {

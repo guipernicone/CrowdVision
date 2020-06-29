@@ -16,17 +16,19 @@ public class Detection {
 	private String detectionTime;
 	private String captureTime;
 	private String cameraId;
-//	@Indexed(name = "creationTime", expireAfterSeconds = 86400)
+	@Indexed(name = "creationTime", expireAfterSeconds = 86400)
 	private Date creationTime;
+	private String historyId;
 	
 	
 	
-	public Detection(String frame, Float detectionScore, String detectionTime, String captureTime, String cameraId) {
+	public Detection(String frame, Float detectionScore, String detectionTime, String captureTime, String cameraId, String historyId) {
 		this.frame = frame;
 		this.detectionScore = detectionScore;
 		this.detectionTime = detectionTime;
 		this.captureTime = captureTime;
 		this.cameraId = cameraId;
+		this.historyId = historyId;
 		this.creationTime = new Date();
 	}
 
@@ -86,6 +88,14 @@ public class Detection {
 		this.creationTime = creationTime;
 	}
 	
+	public String getHistoryId() {
+		return historyId;
+	}
+
+	public void setHistoryId(String historyId) {
+		this.historyId = historyId;
+	}
+
 	@Override
 	public String toString() {
 		return "Detection [id=" + id + ", frame=" + frame + ", detectionScore=" + detectionScore + ", detectionTime="

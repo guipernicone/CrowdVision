@@ -8,7 +8,7 @@ import GoogleMapsApi from 'Components/GoogleMapsApi/GoogleMapsApi'
 import ExploreIcon from '@material-ui/icons/Explore';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
-import Colors from 'Config/Colors'
+import {sendStatus} from 'Service/DetectionService'
 
 /**
  * Build the body of the detection page
@@ -25,6 +25,15 @@ class DetectionView extends Component {
         }
     }
 
+    sendDetectionStatus = (id, historyId, status) => {
+        sendStatus(id, historyId, status)
+        .then((response) => {
+            console.log(response.status)
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
 
     handlerDialog = (status, index) => {
         let newDialogStatus = this.state.dialogStatus.map((dialog, indexDialog) => {
@@ -51,9 +60,9 @@ class DetectionView extends Component {
                     field2={'Data de Captura: 20-06-2020 10:00:00'}
                     field3={'Data de detecção: 20-06-2020 10:01:00'}
                     buttonText1={<DoneIcon/>}
-                    onClick1={() => {console.log("Clico Left")}}
+                    onClick1={() => this.sendDetectionStatus(frame.id, frame.historyId, true)}
                     buttonText2={<CloseIcon/>}
-                    onClick2={() => {console.log("Clico Right")}}
+                    onClick2={() => this.sendDetectionStatus(frame.id, frame.historyId, false)}
                     buttonColor1={"#00ff00"}
                     buttonColor2={"#ff0000"}
                     infoHeight={'125px'}
