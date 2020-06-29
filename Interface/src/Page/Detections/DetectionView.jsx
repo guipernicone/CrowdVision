@@ -27,8 +27,6 @@ class DetectionView extends Component {
 
 
     handlerDialog = (status, index) => {
-        // this.state.dialogStatus[index] = status;
-        // let newDialogStatus = this.state.dialogStatus;
         let newDialogStatus = this.state.dialogStatus.map((dialog, indexDialog) => {
             if (indexDialog == index) {
                 return status;
@@ -63,10 +61,14 @@ class DetectionView extends Component {
             });
             
             this.state.dialogStatus.push(false);
+
             return (
                 <DetectionViewStyle>
                     <div className="viewTitle">
-                        {cameraJSON.id} | <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>Localização <ExploreIcon className="exploreIcon"/></Button>
+                        {cameraJSON.id} | 
+                        <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>
+                            Localização <ExploreIcon className="exploreIcon"/>
+                        </Button>
                         <Divisor width={"68%"} margin={"20px"}/>
                     </div> 
                     {this.state.dialogStatus[index] ? 
