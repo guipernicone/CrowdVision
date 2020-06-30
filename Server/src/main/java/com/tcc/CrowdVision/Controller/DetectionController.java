@@ -167,4 +167,14 @@ public class DetectionController {
 		detectionManager.sendStatus();
 		return ResponseEntity.ok("ok");
 	}
+	
+	@GetMapping("/statistics-period")
+	public ResponseEntity<String> getStatisticsPeriod(@RequestParam(defaultValue = "none") String StartDate, String EndDate) {
+		return ResponseEntity.ok("ok");
+	}
+	
+	@GetMapping("/statistics-all")
+	public ResponseEntity<String> getStatisticsAllTime() {
+		return ResponseEntity.ok("ok");
+	}
 }
