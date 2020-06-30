@@ -1,6 +1,7 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -18,9 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.tcc.CrowdVision.Repository.CameraRepository;
+import com.tcc.CrowdVision.Repository.DetectionHistoryRepository;
 import com.tcc.CrowdVision.Repository.DetectionRepository;
+import com.tcc.CrowdVision.Repository.OrganizationRepository;
+import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Detection.Detection;
+import com.tcc.CrowdVision.Server.Detection.DetectionHistory;
+import com.tcc.CrowdVision.Server.Detection.DetectionManager;
+import com.tcc.CrowdVision.Server.Organization.Organization;
+import com.tcc.CrowdVision.Server.User.User;
 
 @RestController
 @CrossOrigin
@@ -31,17 +39,35 @@ public class DetectionController {
 	private DetectionRepository detectionRepository;
 	
 	@Autowired
+	private DetectionHistoryRepository detectionHistoryRepository;
+	
+	@Autowired
 	private CameraRepository cameraRepository;
 	
+	
 	@PostMapping("/add-frame/detected")
-	public ResponseEntity<String> addicionar(@RequestBody Detection detection) {
+	public ResponseEntity<String> addicionar(@RequestBody DetectionHistory detection) {
 		try {
 			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
 						
 			if (optionalCamera.isPresent()) {
-				Detection savedDetection = detectionRepository.save(detection);
-				System.out.println(savedDetection.toString());
-				return ResponseEntity.ok("Success");
+				DetectionHistory detectionHistory = detectionHistoryRepository.save(detection);
+				
+				Detection frameDetected = new Detection(
+													detection.getFrame(), 
+													detection.getDetectionScore(), 
+													detection.getDetectionTime(), 
+													detection.getCaptureTime(), 
+													detection.getCameraId(),
+													detectionHistory.getId()
+												);
+				
+				detectionRepository.save(frameDetected);
+				
+				DetectionManager detectionManager = DetectionManager.getInstance();
+				detectionManager.sendStatus();
+				
+				return ResponseEntity.ok("Detection saved");
 			}
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Camera Id");
 		}
@@ -52,8 +78,8 @@ public class DetectionController {
 
 	}
 	
-	@GetMapping("/frames")
-	public ResponseEntity<String> frames_detected(@RequestParam String cameraId) {
+	@GetMapping("/frames-from-camera")
+	public ResponseEntity<String> framesFromCamera(@RequestParam String cameraId) {
 		try {
 			Optional<Camera> cameraOptional  = cameraRepository.findById(cameraId);
 			if (cameraOptional.isPresent()) {
@@ -68,14 +94,13 @@ public class DetectionController {
 				
 				JSONArray detectionArray = new JSONArray();
 				ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
-				int i = 0;
+				
 				for(Detection detection: detections) {
 					String detectionString = gson.toJson(detection);
 					
 					JSONObject detectionObject = new JSONObject(detectionString);
 					detectionArray.put(detectionObject);
-					i++;
-//					if (i > 5) break;
+					
 				}
 				json.put("frames", detectionArray);
 				return ResponseEntity.ok(json.toString());
@@ -88,5 +113,58 @@ public class DetectionController {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed trying to save on database");
 		}
+	}
+	
+	@GetMapping("/frames-from-user")
+	public ResponseEntity<String> framesFromUser(@RequestParam(defaultValue = "none") String userId) {
+		
+		DetectionManager detectionManager = DetectionManager.getInstance();
+		if (!userId.contains("none")) {
+			return ResponseEntity.ok(detectionManager.getFrames(userId, false));
+		}
+		
+		return ResponseEntity.badRequest().body("user id invalido");
+	}
+	
+	@PostMapping("/update-status")
+	public ResponseEntity<String> updateDetectionStatus(@RequestBody Map<String, Object> detectionUpdate) {
+		try {
+			if (detectionUpdate.containsKey("detectionId") && detectionUpdate.containsKey("detectionHistoryId") &&detectionUpdate.containsKey("detectionStatus")) {
+				String detectionId = (String) detectionUpdate.get("detectionId");
+				String detectionHistoryId = (String) detectionUpdate.get("detectionHistoryId");
+				Boolean detectionStatus = (Boolean) detectionUpdate.get("detectionStatus");
+				System.out.println("ID " + detectionId);
+				System.out.println("STATUS " + detectionStatus);
+				
+				detectionRepository.deleteById(detectionId);
+				
+				if (detectionStatus.equals(false)) {
+					Optional<DetectionHistory> optionalDetection = detectionHistoryRepository.findById(detectionHistoryId);
+
+					if (optionalDetection.isPresent()) {
+						DetectionHistory detectionHistory = optionalDetection.get();
+						detectionHistory.setDetectionStatus(detectionStatus);
+						detectionHistoryRepository.save(detectionHistory);
+					}
+				}
+			
+				DetectionManager detectionManager = DetectionManager.getInstance();
+				detectionManager.sendStatus();
+				
+				return ResponseEntity.ok().body("Detection Updated");
+			}		
+			return ResponseEntity.badRequest().body("Invalid JSON");
+		}
+		catch(Exception e) {
+			return ResponseEntity.badRequest().body("Invalid JSON");
+		}
+		
+	}	
+	
+	@GetMapping("/test")
+	public ResponseEntity<String> test() {
+		DetectionManager detectionManager = DetectionManager.getInstance();
+		detectionManager.sendStatus();
+		return ResponseEntity.ok("ok");
 	}
 }

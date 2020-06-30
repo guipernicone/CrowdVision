@@ -4,12 +4,16 @@ import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
 import { Redirect } from "react-router-dom";
 import {DetectionsStyle} from 'Page/Detections/Style/DetectionsStyle';
+import CookieService from 'Service/CookieService'
+import {serverIP, serverPort} from 'Config/Config'
+import  DetectionView from 'Page/Detections/DetectionView'
 
 class Detections extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loggedInStatus: LOGIN_STATES.WAITING,
+            content : [],
         }
     }
     componentDidMount(){
@@ -26,6 +30,19 @@ class Detections extends Component {
             this.setState({loggedInStatus : LOGIN_STATES.NOTLOGGEDIN})
         })
         
+        let cs = new CookieService();
+        let login = cs.get('login');
+
+        const ws = new WebSocket(`ws://${serverIP}:${serverPort}/websocket/detections/${login.user.id}`);
+
+        ws.onopen = () => {
+            console.log("connection stablished")
+        }
+
+        ws.onmessage = evt => {
+            let contentJSON = JSON.parse(evt.data);
+            this.setState({content: contentJSON});
+        }
     }
 
     render() {
@@ -36,8 +53,10 @@ class Detections extends Component {
                     :
                     this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
                     <DetectionsStyle>
-                        <h1 className="title">Detecções Recentes</h1>
-                        <div className="cards">CARDS</div>
+                        <div className="title">Detecções Recentes</div>
+                        <div className="cards">
+                            <DetectionView content={this.state.content}/>    
+                        </div>
                         
                     </DetectionsStyle>
                     :

@@ -1,7 +1,8 @@
 import styled from 'styled-components'
+import Colors from 'Config/Colors'
 
 export const DetectionCardStyle = styled.div `
-    margin: 100px;
+    margin: 10px;
     width: 300px;
     height: 450px;
     display: block;
@@ -12,13 +13,13 @@ export const DetectionCardStyle = styled.div `
         box-sizing: content-box;
         border-width: 1px;
         border-style: solid;
-        border-color: ${props => props.backgroundColor ?? '#454545'};
+        border-color: ${props => props.backgroundColor ?? Colors.tertiary};
         border-bottom: 0;
 
     }
     .cardInfo {
-        background-color: ${props => props.backgroundColor ?? '#454545'};
-        height: 150px;
+        background-color: ${props => props.backgroundColor ?? Colors.tertiary};
+        height: ${props => props.infoHeight ?? "150px"};
         width: 302px;
         padding: 5px;
         color: white;
@@ -27,8 +28,18 @@ export const DetectionCardStyle = styled.div `
 
     .buttonCard{
         float: right;
-        background-color: ${props => props.buttonColor ?? '#bb86fc'};
         border: none;
         margin-top: 5px;
+        color: ${Colors.primary}
+    }
+
+    .buttonCardLeft{
+        float: left;
+        background-color: ${props => props.buttonColor1 ?? Colors.contrast_1};
+    }
+
+    .buttonCardRight{
+        float: right;
+        background-color: ${props => props.buttonColor2 ?? Colors.contrast_1};
     }
 `
