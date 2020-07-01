@@ -1,6 +1,7 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,6 +44,9 @@ public class DetectionController {
 	
 	@Autowired
 	private CameraRepository cameraRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	
 	@PostMapping("/add-frame/detected")
@@ -168,13 +172,54 @@ public class DetectionController {
 		return ResponseEntity.ok("ok");
 	}
 	
-	@GetMapping("/statistics-period")
-	public ResponseEntity<String> getStatisticsPeriod(@RequestParam(defaultValue = "none") String StartDate, String EndDate) {
-		return ResponseEntity.ok("ok");
-	}
+	/**
+	 * Get detections statistics, if StartDate and EndDate is declared 
+	 * filter this period.
+	 * 
+	 * @param cameraIds - An array of camera ids
+	 * @param startDate - The initial date
+	 * @param endDate - The final date
+	 * 
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@PostMapping("/statistics")
+	public ResponseEntity<String> getStatisticsPeriod(@RequestBody Map<String, Object> request) 
+	{
+		try
+		{
+			System.out.println(request);
+			if(request.containsKey("cameraIds"))
+			{
+				ArrayList<String> cameraIds = (ArrayList<String>) request.get("cameraIds");
 	
-	@GetMapping("/statistics-all")
-	public ResponseEntity<String> getStatisticsAllTime() {
-		return ResponseEntity.ok("ok");
+//				Iterable<Camera> iterable = cameraRepository.findAllById(cameraIds);
+//				ArrayList<Camera> cameras = new ArrayList<Camera>();
+//				iterable.iterator().forEachRemaining(cameras::add);
+//				System.out.println(cameras);
+				
+				if(!cameraIds.isEmpty()) {
+					
+					DetectionManager detectionManager = DetectionManager.getInstance();
+					String responseJSON;
+					
+					if (request.containsKey("startDate") && request.containsKey("endDate")) {
+						responseJSON = detectionManager.getStatisticsData(cameraIds, (String) request.get("startDate"), (String) request.get("endDate"));
+					}
+					else {
+						responseJSON = detectionManager.getStatisticsData(cameraIds, null, null);
+					}
+
+					return ResponseEntity.ok(responseJSON);
+				}
+			}
+		
+			return ResponseEntity.badRequest().body("Invalid Request");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("Invalid Request");
+		}
 	}
 }

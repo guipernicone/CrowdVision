@@ -22,7 +22,7 @@ import com.tcc.CrowdVision.Utils.BeanUtils;
 public class DetectionManager {
 
 	private static DetectionManager instance;
-	private WebSocketListener listerner;
+	private WebSocketListener listener;
 	private DetectionRepository detectionRepository = BeanUtils.getBean(DetectionRepository.class);
 	private DetectionHistoryRepository detectionHistoryRepository = BeanUtils.getBean(DetectionHistoryRepository.class);
 	private UserRepository userRepository = BeanUtils.getBean(UserRepository.class);
@@ -37,13 +37,24 @@ public class DetectionManager {
 	}
 	
 	public void addListener(WebSocketListener listener) {
-		this.listerner = listener;
+		this.listener = listener;
 	}
 	
+	/**
+	 * Call the listener send Function
+	 */
 	public synchronized void sendStatus() {
-		this.listerner.sendDetectionFrame();
+		this.listener.sendDetectionFrame();
 	}
 	
+	/**
+	 * Get a list of frames of a User
+	 * 
+	 * @param userId - An User id
+	 * @param history - True for getting frames from history or False for getting recent frames
+	 * 
+	 * @return JSON
+	 */
 	public String getFrames(String userId, Boolean history) {
 		
 		ArrayList<String> cameraIds = new ArrayList<String>();
@@ -108,8 +119,27 @@ public class DetectionManager {
 				
 				
 			}
+		}	
+		return json.toString();
+	}
+	
+	public String getStatisticsData(ArrayList<String> cameraIds, String StartDate, String EndDate) 
+	{	
+		if (StartDate == null && EndDate == null)
+		{
+			ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraIds(cameraIds);
+			JSONArray response = new JSONArray(detections);
+			
+			return response.toString();
+		}
+		else
+		{
+			ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, StartDate, EndDate);
+			JSONArray response = new JSONArray(detections);
+			System.out.println(response.length());
+			return response.toString();
 		}
 		
-		return json.toString();
+//		return null;
 	}
 }
