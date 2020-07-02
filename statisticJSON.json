@@ -1,0 +1,21 @@
+{
+  "detections" : ["detectionsHistory"],
+  "numberOfDetections" : 0,
+  "averageAccurancy": 0,
+  "averageDetectionTime": "date",
+  "averageLocationCenter": "x,y",
+  "positiveDetections": {
+    "numberOfPositiveDetections" : 0,
+    "averagePositiveAccuracy": 0,
+    "PositiveDetections": ["detectionsHistory"],
+    "PositiveLocationCenter": "x,y",
+    "averagePositionDetectionTime": "date"
+  },
+  "falseDetections": {
+    "numberOfFalseDetections" : 0,
+    "averageFalseAccuracy": 0,
+    "FalseDetections": ["detectionsHistory"],
+    "falseLocationCenter": "x,y",
+    "averageFalseDetectionTime": "date"
+  }
+}

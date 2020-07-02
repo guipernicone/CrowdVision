@@ -123,23 +123,39 @@ public class DetectionManager {
 		return json.toString();
 	}
 	
-	public String getStatisticsData(ArrayList<String> cameraIds, String StartDate, String EndDate) 
+	/**
+	 * Build the statistics data JSON
+	 * 
+	 * @param cameraIds An array of camera IDs for search detections linked to the ID
+	 * @param StartDate	The start date to filter the detections search
+	 * @param EndDate The end date to filter the detections search
+	 * 
+	 * @return JSON Object as string
+	 */
+	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) 
 	{	
-		if (StartDate == null && EndDate == null)
+		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
+		JSONObject resultStatistics;
+		String totalStatus;
+		
+		if (StartDate == null || EndDate == null)
 		{
-			ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraIds(cameraIds);
-			JSONArray response = new JSONArray(detections);
-			
-			return response.toString();
+			detections = detectionHistoryRepository.findDetectionByCameraIds(cameraIds);
 		}
 		else
 		{
-			ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, StartDate, EndDate);
-			JSONArray response = new JSONArray(detections);
-			System.out.println(response.length());
-			return response.toString();
+			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, StartDate, EndDate);
 		}
 		
-//		return null;
+		if (!detections.isEmpty()) {
+			
+			BuildStatistics statisticsBuilder = new BuildStatistics(detections);
+			statisticsBuilder.buildTotalStatusStatistics();
+			return statisticsBuilder.getResult();
+//			totalStatus = buildTotalStatusStatistics(detections);
+		}
+		
+		return null;
 	}
+	
 }

@@ -188,15 +188,9 @@ public class DetectionController {
 	{
 		try
 		{
-			System.out.println(request);
 			if(request.containsKey("cameraIds"))
 			{
 				ArrayList<String> cameraIds = (ArrayList<String>) request.get("cameraIds");
-	
-//				Iterable<Camera> iterable = cameraRepository.findAllById(cameraIds);
-//				ArrayList<Camera> cameras = new ArrayList<Camera>();
-//				iterable.iterator().forEachRemaining(cameras::add);
-//				System.out.println(cameras);
 				
 				if(!cameraIds.isEmpty()) {
 					
@@ -204,10 +198,11 @@ public class DetectionController {
 					String responseJSON;
 					
 					if (request.containsKey("startDate") && request.containsKey("endDate")) {
-						responseJSON = detectionManager.getStatisticsData(cameraIds, (String) request.get("startDate"), (String) request.get("endDate"));
+						
+						responseJSON = detectionManager.buildStatisticData(cameraIds, (String) request.get("startDate"), (String) request.get("endDate"));
 					}
 					else {
-						responseJSON = detectionManager.getStatisticsData(cameraIds, null, null);
+						responseJSON = detectionManager.buildStatisticData(cameraIds, null, null);
 					}
 
 					return ResponseEntity.ok(responseJSON);
