@@ -80,6 +80,7 @@ public class BuildStatistics {
 		ArrayList<String> cameraIds = new ArrayList<String>();
 		ArrayList<Points> pointsList = new ArrayList<Points>();
 		Points center;
+		Double radius;
 		JSONObject coordenateJSON = new JSONObject();
 		for (DetectionHistory detection : detections) {
 			if (!cameraIds.contains(detection.getCameraId())) {
@@ -103,9 +104,11 @@ public class BuildStatistics {
 		
 		CoordinateCalculator coordCalc = new CoordinateCalculator(pointsList);
 		center = coordCalc.CalculateCenter();
+		radius = coordCalc.calculateRadiusFromList(center);
 		
 		coordenateJSON.put("latitude", center.getX());
 		coordenateJSON.put("longitude", center.getY());
+		coordenateJSON.put("radius", radius);
 		
 		return coordenateJSON.toString();
 	}
