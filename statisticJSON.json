@@ -4,20 +4,20 @@
 		"numberOfDetections" : 0,
 		"averageAccurancy": 0,
 		"averageDetectionTime": "date",
-		"averageLocationCenter": {lat: 0, long: 0}
+		"averageLocationCenter": {lat: 0, long: 0, radius: 0}
   },
 	"positiveDetections": {
     "numberOfPositiveDetections" : 0,
     "averagePositiveAccuracy": 0,
     "PositiveDetections": ["detectionsHistory"],
-    "PositiveLocationCenter": "x,y",
+    "PositiveLocationCenter": {lat: 0, long: 0, radius: 0},
     "averagePositionDetectionTime": "date"
   },
   "falseDetections": {
     "numberOfFalseDetections" : 0,
     "averageFalseAccuracy": 0,
     "FalseDetections": ["detectionsHistory"],
-    "falseLocationCenter": "x,y",
+    "falseLocationCenter": {lat: 0, long: 0, radius: 0},
     "averageFalseDetectionTime": "date"
   }
 }

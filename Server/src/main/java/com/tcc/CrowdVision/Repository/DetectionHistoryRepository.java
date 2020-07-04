@@ -2,11 +2,11 @@ package com.tcc.CrowdVision.Repository;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import com.tcc.CrowdVision.Server.Detection.Detection;
 import com.tcc.CrowdVision.Server.Detection.DetectionHistory;
 
 public interface DetectionHistoryRepository extends MongoRepository<DetectionHistory, String> {
@@ -18,5 +18,5 @@ public interface DetectionHistoryRepository extends MongoRepository<DetectionHis
 	ArrayList<DetectionHistory> findDetectionByCameraIds(ArrayList<String> cameraIds);
 	
 	@Query("{'cameraId': { $in : ?0}, detectionTime: { $gte : ?1, $lte: ?2}}")
-	ArrayList<DetectionHistory> findDetectionByCameraIdsInPeriod(ArrayList<String> cameraIds, String StartDate, String EndDate);
+	ArrayList<DetectionHistory> findDetectionByCameraIdsInPeriod(ArrayList<String> cameraIds, Date StartDate, Date EndDate);
 }

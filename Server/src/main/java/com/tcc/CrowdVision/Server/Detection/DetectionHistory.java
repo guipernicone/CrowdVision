@@ -1,5 +1,8 @@
 package com.tcc.CrowdVision.Server.Detection;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,20 +12,35 @@ public class DetectionHistory {
 	private String id;
 	private String frame;
 	private Float detectionScore;
-	private String detectionTime;
-	private String captureTime;
+	private Date detectionTime;
+	private Date captureTime;
 	private String cameraId;
 	private Boolean detectionStatus;
 	
+	
+//	public DetectionHistory(
+//			String id,
+//			String frame,
+//			Float detectionScore,
+//			String detectionTime,
+//			String captureTime,
+//			String cameraId) throws ParseException
+//	{
+//		this.id = id;
+//		this.frame = frame;
+//		this.detectionScore = detectionScore;
+//		this.detectionTime = DateUtils.convetStringToDate(detectionTime, "dd/MM/yyyy hh:mm:ss");
+//		this.captureTime = DateUtils.convetStringToDate(captureTime, "dd/MM/yyyy hh:mm:ss");
+//		this.cameraId = cameraId;
+//		this.detectionStatus = true;
+//	}
 	public DetectionHistory(
-			String id,
 			String frame,
 			Float detectionScore,
-			String detectionTime,
-			String captureTime,
-			String cameraId)
+			Date detectionTime,
+			Date captureTime,
+			String cameraId) throws ParseException
 	{
-		this.id = id;
 		this.frame = frame;
 		this.detectionScore = detectionScore;
 		this.detectionTime = detectionTime;
@@ -30,7 +48,7 @@ public class DetectionHistory {
 		this.cameraId = cameraId;
 		this.detectionStatus = true;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -55,19 +73,19 @@ public class DetectionHistory {
 		this.detectionScore = detectionScore;
 	}
 	
-	public String getDetectionTime() {
+	public Date getDetectionTime() {
 		return detectionTime;
 	}
 	
-	public void setDetectionTime(String detectionTime) {
+	public void setDetectionTime(Date detectionTime) {
 		this.detectionTime = detectionTime;
 	}
 	
-	public String getCaptureTime() {
+	public Date getCaptureTime() {
 		return captureTime;
 	}
 	
-	public void setCaptureTime(String captureTime) {
+	public void setCaptureTime(Date captureTime) {
 		this.captureTime = captureTime;
 	}
 	

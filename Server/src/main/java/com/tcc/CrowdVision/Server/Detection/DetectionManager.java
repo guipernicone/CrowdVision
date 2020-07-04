@@ -1,6 +1,8 @@
 package com.tcc.CrowdVision.Server.Detection;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.User;
 import com.tcc.CrowdVision.Utils.BeanUtils;
+import com.tcc.CrowdVision.Utils.DateUtils;
 
 public class DetectionManager {
 
@@ -75,51 +78,48 @@ public class DetectionManager {
 					cameraIds.addAll(org.getCameraIds());
 				}
 				
-				for (String cameraId: cameraIds) {
+				Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+				
+				for (Camera camera : cameras) {
 					JSONObject cameraObject = new JSONObject();
+					Gson gson = new Gson();
+					String cameraString = gson.toJson(camera);
+					cameraObject.put("camera", new JSONObject(cameraString));
 					
-					Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+					JSONArray detectionArray = new JSONArray();
 					
-					for (Camera camera : cameras) {
+					if (history) {
+						ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(camera.getId()); 
 						
-						Gson gson = new Gson();
-						String cameraString = gson.toJson(camera);
-						cameraObject.put("camera", new JSONObject(cameraString));
 						
-						JSONArray detectionArray = new JSONArray();
-						
-						if (history) {
-							ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(cameraId); 
+						for (DetectionHistory detection: detections) {
+							JSONObject detectionObject = new JSONObject(gson.toJson(detection));
+							detectionObject.put("detectionTime", DateUtils.convetDateToString(detection.getDetectionTime(), "dd/MM/yyyy hh:mm:ss"));
+							detectionObject.put("captureTime", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy hh:mm:ss"));
 							
-							
-							for (DetectionHistory detection: detections) {
-								String detectionString = gson.toJson(detection);
-								
-								JSONObject detectionObject = new JSONObject(detectionString);
-								detectionArray.put(detectionObject);
-							}
+							detectionArray.put(detectionObject);
 						}
-						else {
-							ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
-							
-							for (Detection detection: detections) {
-								String detectionString = gson.toJson(detection);
-								
-								JSONObject detectionObject = new JSONObject(detectionString);
-								detectionArray.put(detectionObject);
-							}
-						}
-						
-						
-						
-						cameraObject.put("frames", detectionArray);
 					}
+					else {
+						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(camera.getId());
+						
+						for (Detection detection: detections) {
+						
+							JSONObject detectionObject = new JSONObject(gson.toJson(detection));
+							detectionObject.put("detectionTime", DateUtils.convetDateToString(detection.getDetectionTime(), "dd/MM/yyyy hh:mm:ss"));
+							detectionObject.put("captureTime", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy hh:mm:ss"));
+							
+							detectionArray.put(detectionObject);
+						}
+					}
+					
+					
+					
+					cameraObject.put("frames", detectionArray);
 					json.put(cameraObject);
 				}
-				
-				
 			}
-		}	
+		}
 		return json.toString();
 	}
 	
@@ -131,8 +131,9 @@ public class DetectionManager {
 	 * @param EndDate The end date to filter the detections search
 	 * 
 	 * @return JSON Object as string
+	 * @throws ParseException 
 	 */
-	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) 
+	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) throws ParseException 
 	{	
 		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
 		JSONObject resultStatistics;
@@ -144,7 +145,9 @@ public class DetectionManager {
 		}
 		else
 		{
-			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, StartDate, EndDate);
+			Date firstDate = DateUtils.convetStringToDate(StartDate, "dd/MM/yyyy hh:mm:ss");
+			Date SecondDate = DateUtils.convetStringToDate(EndDate, "dd/MM/yyyy hh:mm:ss");
+			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, firstDate, SecondDate);
 		}
 		
 		if (!detections.isEmpty()) {

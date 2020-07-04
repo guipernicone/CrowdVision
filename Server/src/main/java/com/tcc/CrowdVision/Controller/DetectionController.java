@@ -22,14 +22,11 @@ import com.google.gson.Gson;
 import com.tcc.CrowdVision.Repository.CameraRepository;
 import com.tcc.CrowdVision.Repository.DetectionHistoryRepository;
 import com.tcc.CrowdVision.Repository.DetectionRepository;
-import com.tcc.CrowdVision.Repository.OrganizationRepository;
-import com.tcc.CrowdVision.Repository.UserRepository;
 import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Detection.Detection;
 import com.tcc.CrowdVision.Server.Detection.DetectionHistory;
 import com.tcc.CrowdVision.Server.Detection.DetectionManager;
-import com.tcc.CrowdVision.Server.Organization.Organization;
-import com.tcc.CrowdVision.Server.User.User;
+import com.tcc.CrowdVision.Utils.DateUtils;
 
 @RestController
 @CrossOrigin
@@ -43,28 +40,28 @@ public class DetectionController {
 	private DetectionHistoryRepository detectionHistoryRepository;
 	
 	@Autowired
-	private CameraRepository cameraRepository;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
+	private CameraRepository cameraRepository;	
 	
 	@PostMapping("/add-frame/detected")
-	public ResponseEntity<String> addicionar(@RequestBody DetectionHistory detection) {
+	public ResponseEntity<String> addicionar(@RequestBody Map<String, Object> detection) {
 		try {
-			Optional<Camera> optionalCamera = cameraRepository.findById(detection.getCameraId());
+			double d = (double) detection.get("detectionScore");
+			float detectionScore = (float)d;
+			
+			DetectionHistory detectionHistory = new DetectionHistory(
+													(String) detection.get("frame"), 
+													detectionScore, 
+													DateUtils.convetStringToDate((String) detection.get("detectionTime"), "dd/MM/yyyy hh:mm:ss"), 
+													DateUtils.convetStringToDate((String) detection.get("captureTime"), "dd/MM/yyyy hh:mm:ss"), 
+													(String) detection.get("cameraId")
+												);
+			
+			Optional<Camera> optionalCamera = cameraRepository.findById(detectionHistory.getCameraId());
 						
 			if (optionalCamera.isPresent()) {
-				DetectionHistory detectionHistory = detectionHistoryRepository.save(detection);
+				DetectionHistory detectionHistorySaved = detectionHistoryRepository.save(detectionHistory);
 				
-				Detection frameDetected = new Detection(
-													detection.getFrame(), 
-													detection.getDetectionScore(), 
-													detection.getDetectionTime(), 
-													detection.getCaptureTime(), 
-													detection.getCameraId(),
-													detectionHistory.getId()
-												);
+				Detection frameDetected = new Detection(detectionHistorySaved);
 				
 				detectionRepository.save(frameDetected);
 				
@@ -214,7 +211,7 @@ public class DetectionController {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body("Invalid Request");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while tryning to get statistics");
 		}
 	}
 }

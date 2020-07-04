@@ -48,17 +48,17 @@ class DetectionView extends Component {
     render() {
         let body = []
         let card = []
-    
+
         body = this.props.content.map((camera, index) => {
             let cameraJSON = camera.camera;
-            let framesJSON = camera.frames;
-    
+            let framesJSON = camera.frames.reverse();
+            
             card = framesJSON.map((frame, index) =>{
                 return <DetectionCard 
                     img={`data:image/jpeg;base64, ${frame.frame}`}
                     field1={`Confiabilidade: ${frame.detectionScore}`}
-                    field2={'Data de Captura: 20-06-2020 10:00:00'}
-                    field3={'Data de detecção: 20-06-2020 10:01:00'}
+                    field2={`Data de Captura: ${frame.captureTime}`}
+                    field3={`Data de detecção: ${frame.detectionTime}`}
                     buttonText1={<DoneIcon/>}
                     onClick1={() => this.sendDetectionStatus(frame.id, frame.historyId, true)}
                     buttonText2={<CloseIcon/>}
