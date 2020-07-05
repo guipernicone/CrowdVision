@@ -17,23 +17,6 @@ public class DetectionHistory {
 	private String cameraId;
 	private Boolean detectionStatus;
 	
-	
-//	public DetectionHistory(
-//			String id,
-//			String frame,
-//			Float detectionScore,
-//			String detectionTime,
-//			String captureTime,
-//			String cameraId) throws ParseException
-//	{
-//		this.id = id;
-//		this.frame = frame;
-//		this.detectionScore = detectionScore;
-//		this.detectionTime = DateUtils.convetStringToDate(detectionTime, "dd/MM/yyyy hh:mm:ss");
-//		this.captureTime = DateUtils.convetStringToDate(captureTime, "dd/MM/yyyy hh:mm:ss");
-//		this.cameraId = cameraId;
-//		this.detectionStatus = true;
-//	}
 	public DetectionHistory(
 			String frame,
 			Float detectionScore,

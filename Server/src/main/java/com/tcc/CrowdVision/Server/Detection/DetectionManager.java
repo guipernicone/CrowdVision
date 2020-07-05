@@ -136,7 +136,6 @@ public class DetectionManager {
 	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) throws ParseException 
 	{	
 		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
-		JSONObject resultStatistics;
 		String totalStatus;
 		
 		if (StartDate == null || EndDate == null)
@@ -154,11 +153,14 @@ public class DetectionManager {
 			
 			BuildStatistics statisticsBuilder = new BuildStatistics(detections);
 			statisticsBuilder.buildTotalStatusStatistics();
+			statisticsBuilder.buildPositiveStatistics();
+			statisticsBuilder.buildFalseStatistics();
 			return statisticsBuilder.getResult();
-//			totalStatus = buildTotalStatusStatistics(detections);
 		}
 		
-		return null;
+		JSONObject error = new JSONObject();
+		error.put("dataNotFound", "Nenhuma detecção foi encontrada");
+		return error.toString();
 	}
 	
 }

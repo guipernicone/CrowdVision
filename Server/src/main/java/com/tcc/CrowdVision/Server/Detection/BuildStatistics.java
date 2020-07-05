@@ -11,6 +11,7 @@ import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Coordinate.CoordinateCalculator;
 import com.tcc.CrowdVision.Server.Coordinate.Points;
 import com.tcc.CrowdVision.Utils.BeanUtils;
+import com.tcc.CrowdVision.Utils.DateUtils;
 
 public class BuildStatistics {
 
@@ -28,17 +29,26 @@ public class BuildStatistics {
 	 * Build the total statistics with both positive or false detections
 	 */
 	public void buildTotalStatusStatistics() 
+	{		
+		resultJSON.put("totalStatusStatistics", this.buildStatisticsJSON(detectionHistory));
+	}
+	
+	/**
+	 * Build the total statistics with positive detections
+	 */
+	public void buildPositiveStatistics() 
 	{
-		JSONObject totalStatus = new JSONObject();
-		Gson gson = new Gson();
-		Float averageAccuracy = this.getAverageAccuracy(detectionHistory);
-		String averageLocationCenter = this.getCenterCoordenate(detectionHistory);
-		
-		totalStatus.put("averageAccuracy", averageAccuracy);
-		totalStatus.put("numberOfDetections", detectionHistory.size());
-		totalStatus.put("averageLocationCenter", new JSONObject(averageLocationCenter));
-		totalStatus.put("detections", new JSONArray(gson.toJson(detectionHistory)));
-		resultJSON.put("totalStatusStatistics", totalStatus);
+		ArrayList<DetectionHistory> detections = this.getDetectionsByStatus(DetectionStatusEnum.POSITIVE_DETECTION.getValue());
+		resultJSON.put("positiveDetectonsStatistics", this.buildStatisticsJSON(detections));
+	}
+	
+	/**
+	 * Build the total statistics with false detections
+	 */
+	public void buildFalseStatistics() 
+	{
+		ArrayList<DetectionHistory> detections = this.getDetectionsByStatus(DetectionStatusEnum.FALSE_DETECTION.getValue());
+		resultJSON.put("falseDetectonsStatistics", this.buildStatisticsJSON(detections));
 	}
 	
 	/**
@@ -51,6 +61,46 @@ public class BuildStatistics {
 		return resultJSON.toString();
 	}
 	
+	/**
+	 *  Build the statistics json 
+	 *  
+	 *  @return JSONObject
+	 */
+	private JSONObject buildStatisticsJSON(ArrayList<DetectionHistory> detections) 
+	{
+		JSONObject json = new JSONObject();
+		Float averagePositiveAccuracy = this.getAverageAccuracy(detections);
+		String averagePositiveLocationCenter = this.getCenterCoordenate(detections);
+		String averageTimeOfPositiveDetection = this.getAverageDetectionTime(detections);
+		JSONArray numberOfPositiveDetectionByCamera = this.getNumberOfDetectionByCamera(detections);
+		
+		json.put("numberOfDetectionByCamera", numberOfPositiveDetectionByCamera);
+		json.put("averageTimeOfDetection", averageTimeOfPositiveDetection);
+		json.put("averageAccuracy", averagePositiveAccuracy);
+		json.put("numberOfDetections", detections.size());
+		json.put("numberOfCameras", numberOfPositiveDetectionByCamera.length());
+		json.put("averageLocationCenter", new JSONObject(averagePositiveLocationCenter));
+		return json;
+	
+	}
+	
+	/**
+	 *  Get the result JSON built
+	 *  
+	 *  @return JSON
+	 */
+	private ArrayList<DetectionHistory> getDetectionsByStatus(boolean status) 
+	{
+		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
+		for (DetectionHistory detection : detectionHistory) {
+			if (detection.getDetectionStatus().equals(status))
+			{
+				detections.add(detection);
+			}
+		}
+		return detections;
+	
+	}
 	/**
 	 * Calculate the average accuracy of a list of detections
 	 * 
@@ -113,4 +163,67 @@ public class BuildStatistics {
 		return coordenateJSON.toString();
 	}
 	
+	/**
+	 * Get the average time for detection of a frame
+	 * 
+	 * @param detections An array of detections for search the average time of detection
+	 * 
+	 * @return average time
+	 */
+	private String getAverageDetectionTime(ArrayList<DetectionHistory>  detections) 
+	{
+		long totalTime = 0;
+		long averageTime = 0;
+		
+		for (DetectionHistory detection: detections)
+		{			
+			totalTime += (detection.getDetectionTime().getTime() - detection.getCaptureTime().getTime());
+		}
+		
+		averageTime = totalTime / detections.size();
+		
+		return DateUtils.convertMilisecondsToFormatString(averageTime);
+	}
+	
+	/**
+	 * Get the count of detections by camera
+	 * 
+	 * @param detections An array of detections for search count of detections by camera
+	 * 
+	 * @return count by camera
+	 */
+	private JSONArray getNumberOfDetectionByCamera(ArrayList<DetectionHistory>  detections) 
+	{
+	
+		ArrayList<String> cameraIds = new ArrayList<String>();
+		JSONArray camerasArray = new JSONArray();
+		
+		for (DetectionHistory detection : detections) {
+			if (!cameraIds.contains(detection.getCameraId())) {
+				cameraIds.add(detection.getCameraId());
+			}
+		}
+		
+		Iterable<Camera> iterable = cameraRepository.findAllById(cameraIds);
+		
+		for (Camera camera : iterable) 
+		{
+			
+			Gson gson = new Gson();
+			int count = 0;
+			JSONObject cameraObject = new JSONObject(gson.toJson(camera));
+			for (DetectionHistory detection : detections)
+			{
+				if (detection.getCameraId().equals(camera.getId()))
+				{
+					count++;
+				}
+			}
+			
+			cameraObject.put("numberOfDetetions", count);
+			camerasArray.put(cameraObject);
+		}
+		
+		return camerasArray;
+	}
 }
