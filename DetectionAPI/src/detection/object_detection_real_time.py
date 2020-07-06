@@ -84,7 +84,7 @@ def send_detected_frame(frame, score, device_key, captureTime):
             "frame" : str(frame, 'utf-8'),
             "detectionScore" : float(score),
             "cameraId": str(device_key),
-            "detectionTime" : datetime.today().strftime('%d-%m-%Y %H:%M:%S'),
+            "detectionTime" : datetime.today().strftime('%d/%m/%Y %H:%M:%S'),
             "captureTime": str(captureTime)
         }
 

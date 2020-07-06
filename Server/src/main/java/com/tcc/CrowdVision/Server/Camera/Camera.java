@@ -10,11 +10,7 @@ public class Camera {
 	private String id;
 	private String latitude;
 	private String longitude;
-	
-	@Override
-	public String toString() {
-		return "Camera [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]";
-	}
+	private String name;
 
 	public String getLatitude() {
 		return latitude;
@@ -35,6 +31,16 @@ public class Camera {
 	public String getId() {
 		return id;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 	
 }
