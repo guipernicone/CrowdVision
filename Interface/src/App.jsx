@@ -6,6 +6,7 @@ import Detections from "Page/Detections/Detections"
 import History from "Page/History/History"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from 'Page/Routes/PrivateRoute'
+import Statistics from 'Page/Statistics/Statistics'
 
 class App extends Component {
     render() {
@@ -17,6 +18,7 @@ class App extends Component {
                     <PrivateRoute path="/recent-detections" component={Detections}/>
                     <PrivateRoute path="/history" component={History}/>
                     <PrivateRoute path="/profile" component={Home}/>
+                    <PrivateRoute path="/statistics" component={Statistics}/>
                 </Switch>
             </Router>
         );
