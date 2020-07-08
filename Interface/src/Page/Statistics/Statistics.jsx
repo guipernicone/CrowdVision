@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
 import { Redirect } from "react-router-dom";
-import { StatisticsStyle } from 'Page/Statistics/StatisticsStyle';
+import { StatisticsStyle } from 'Page/Statistics/Style/StatisticsStyle';
+import StatisticsMainForm from 'Page/Statistics/StatisticsMainForm'
 import Navbar from 'Page/Navbar/Navbar';
 class Statistics extends Component {
     constructor(props) {
@@ -40,7 +41,7 @@ class Statistics extends Component {
                     {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                         :
                         this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
-                        'STATISTICS'
+                        <StatisticsMainForm/>
                         :
                         <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                     }

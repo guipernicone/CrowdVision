@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.tcc.CrowdVision.Repository.CameraRepository;
 import com.tcc.CrowdVision.Repository.OrganizationRepository;
 import com.tcc.CrowdVision.Repository.UserRepository;
+import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.PermissionEnum;
 import com.tcc.CrowdVision.Server.User.User;
@@ -38,6 +41,9 @@ public class UserController {
 	@Autowired
 	private OrganizationRepository organizationRepository;
 			
+	@Autowired
+	private CameraRepository cameraRepository;	
+	
 	@PostMapping("/save")
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<String> saveUser(@RequestBody Map<String, Object> userJSON) {
@@ -177,6 +183,54 @@ public class UserController {
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();	
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Invalid JSON");
+		}
+
+	}
+	
+	@GetMapping("/cameras")
+	public ResponseEntity<String> getUserCameras(@RequestParam(defaultValue = "none") String userId) {
+		try 
+		{
+			if (!userId.equals("none"))
+			{
+				JSONArray cameraJSON= new JSONArray();
+				
+				Optional<User> userOptional = userRepository.findById(userId);
+				
+				if(userOptional.isPresent()) 
+				{
+					User user = userOptional.get();
+					
+					if (user.getOrganizationIds() != null) 
+					{
+						ArrayList<String> cameraIds = new ArrayList<String>();
+						Iterable<Organization> iterable = organizationRepository.findAllById(user.getOrganizationIds());
+						for(Organization org: iterable) 
+						{
+							for (String cameraId: org.getCameraIds())
+							{
+								if (!cameraIds.contains(cameraId))
+								{
+									cameraIds.add(cameraId);
+								}
+								
+							}
+						}
+						Iterable<Camera> cameraList = cameraRepository.findAllById(cameraIds);
+						for (Camera camera : cameraList) {
+							Gson gson = new Gson();
+							cameraJSON.put(new JSONObject(gson.toJson(camera)));
+						}
+					}
+					
+				}
+				return ResponseEntity.ok(cameraJSON.toString());
+			}
+			return ResponseEntity.badRequest().body("Invalid user id");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();	
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to get camera information");
 		}
 
 	}
