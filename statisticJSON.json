@@ -1,9 +1,10 @@
 {
-  "totalStatusStatistics":{
+ 	"totalStatusStatistics":{
 		"detections" : ["detectionsHistory"],
 		"numberOfDetections" : 0,
-    "numeberOfCameras" : 0,
+   		"numeberOfCameras" : 0,
 		"averageAccurancy": 0,
+		"positiveDetectionPercentage": 0,
 		"averageLocationCenter": {lat: 0, long: 0, radius: 0},
 		"averageTimeOfDetection": 0,
 		"numberOfDetectionByCamera": [
@@ -14,11 +15,11 @@
 		]																	
   },
 	"positiveDetectonsStatistics": {
-    "numberOfDetections" : 0,
-		"numeberOfCameras" : 0,
-    "averageAccurancy": 0,
-    "detections": ["detectionsHistory"],
-    "averagePositiveLocationCenter": {lat: 0, long: 0, radius: 0},
+	"numberOfDetections" : 0,
+	"numeberOfCameras" : 0,
+	"averageAccurancy": 0,
+	"detections": ["detectionsHistory"],
+	"averagePositiveLocationCenter": {lat: 0, long: 0, radius: 0},
 		"averageTimeOfDetection": 0,
 		"numberOfDetectionByCamera": [
 			{
@@ -29,7 +30,7 @@
   },
   "falseDetections": {
     "numberOfFalseDetections" : 0,
-		"numeberOfCameras" : 0,
+	"numeberOfCameras" : 0,
     "averageFalseAccuracy": 0,
     "FalseDetections": ["detectionsHistory"],
     "falseLocationCenter": {lat: 0, long: 0, radius: 0},

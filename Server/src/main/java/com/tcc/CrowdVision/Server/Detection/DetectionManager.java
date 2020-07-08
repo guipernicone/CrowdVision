@@ -120,6 +120,7 @@ public class DetectionManager {
 				}
 			}
 		}
+		
 		return json.toString();
 	}
 	

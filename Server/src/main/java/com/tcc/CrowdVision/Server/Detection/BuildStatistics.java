@@ -29,8 +29,10 @@ public class BuildStatistics {
 	 * Build the total statistics with both positive or false detections
 	 */
 	public void buildTotalStatusStatistics() 
-	{		
-		resultJSON.put("totalStatusStatistics", this.buildStatisticsJSON(detectionHistory));
+	{	
+		JSONObject statistics = this.buildStatisticsJSON(detectionHistory);
+		statistics.put("positiveDetectionPercentage", this.getStatusPercentage(true));
+		resultJSON.put("totalStatusStatistics", statistics);
 	}
 	
 	/**
@@ -85,6 +87,17 @@ public class BuildStatistics {
 	}
 	
 	/**
+	 *  Get the percentage of a status
+	 *  
+	 *  @return float
+	 */
+	private float getStatusPercentage(boolean status) 
+	{
+		ArrayList<DetectionHistory> positiveDetection = this.getDetectionsByStatus(status);
+		return this.getPercentage((float) detectionHistory.size(), (float) positiveDetection.size());
+	}
+	
+	/**
 	 *  Get the result JSON built
 	 *  
 	 *  @return JSON
@@ -100,6 +113,16 @@ public class BuildStatistics {
 		}
 		return detections;
 	
+	}
+	
+	/**
+	 *  Get the percentage from the given value
+	 *  
+	 *  @return float
+	 */
+	private float getPercentage(float totalNumber, float desireNumber) 
+	{
+		return (100 * desireNumber) / totalNumber;
 	}
 	/**
 	 * Calculate the average accuracy of a list of detections
