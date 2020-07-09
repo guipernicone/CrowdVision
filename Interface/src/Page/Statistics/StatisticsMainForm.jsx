@@ -1,12 +1,8 @@
 import React, {memo, useState, useEffect} from 'react';
 import { StatisticsMainFormStyle } from 'Page/Statistics/Style/StatisticsMainFormStyle'
 import { getUserCameras } from 'Service/UserService';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import DoubleArrowRoundedIcon from '@material-ui/icons/DoubleArrowRounded';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ExploreIcon from '@material-ui/icons/Explore';
 import Divisor from 'Components/Divisor/Divisor'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import BoxSelect from 'Components/BoxSelect/BoxSelect';
 import { Button } from 'react-bootstrap';
 
 const StatisticsMainForm = ({}) => {
@@ -31,6 +27,7 @@ const StatisticsMainForm = ({}) => {
     
 
     const selectHandler = (camera) => {
+        console.log("selecHandler");
         let selectCameras = JSON.parse(JSON.stringify(camerasSelected));
 
         if (!selectCameras.some(object => object.id === camera.id)){
@@ -41,6 +38,7 @@ const StatisticsMainForm = ({}) => {
     }
 
     const selectAll = () => {
+        console.log("all");
         let cameras = JSON.parse(JSON.stringify(camerasContent));
         let selectCameras = JSON.parse(JSON.stringify(camerasSelected));
 
@@ -54,6 +52,7 @@ const StatisticsMainForm = ({}) => {
     }
 
     const deleteSelect = (id) => {
+        console.log("delete");
         let selectCameras = JSON.parse(JSON.stringify(camerasSelected));
         let result = selectCameras.filter(cameraId => cameraId.id !== id);
         
@@ -61,60 +60,17 @@ const StatisticsMainForm = ({}) => {
         setCamerasSelected(result);
     }
 
-    const buildCameraList = () => {
-        let cameraList = [];
-        cameraList = camerasContent.map((camera, index) => {
-            return (
-                <div key={"list" + index} className="camera-list-item">
-                    <span style={{cursor: "default"}}>{camera.name}</span>
-                    <AddCircleOutlineIcon 
-                        className="add-icon"
-                        onClick={() => selectHandler(camera)}
-                    />
-                </div>
-            )
-        })
-
-        return cameraList
-    }
-
-    const buildSelectList = () => {
-        let selectedList = [];
-        selectedList = camerasSelected.map((selectedCamera, index) => {
-            return (
-                <div key={"select" + index} className="camera-list-item">
-                    <span style={{cursor: "default", paddingRight: "15px"}}>{index}</span>
-                    <span style={{cursor: "default"}}>{selectedCamera.name}</span>
-                    <DeleteIcon
-                        className="remove-icon"
-                        onClick={() => deleteSelect(selectedCamera.id)}
-                    />
-                </div>
-            )
-        })
-
-        return selectedList
-    }
-
     return (
         <StatisticsMainFormStyle>
             <div className="title">Estatísticas</div>
             <div className="statistics-form-body">
-                <div className="select-field">
-                    <div className="camera-list-box">
-                        <div className="subtitle">Selecionar Cameras</div>
-                        {buildCameraList()}
-                    </div>
-                    <div style={{position: "relative"}}>
-                        <Button className="select-all-buttom">
-                            <DoubleArrowRoundedIcon onClick={() => selectAll()}/>
-                        </Button>
-                    </div>
-                    <div className="select-list-box">
-                        <div className="subtitle">Cameras Selecionadas</div>
-                        {buildSelectList()}
-                    </div>
-                </div>
+                <BoxSelect 
+                    content={camerasContent} 
+                    selectContent={camerasSelected}
+                    onSelectItem={(camera) => selectHandler(camera)}
+                    onSelectAll={selectAll}
+                    onDeleteItem={(id) => deleteSelect(id)}
+                />
                 <div className="data-field"></div>
                 <div className="buttom-field"></div>
             </div>
