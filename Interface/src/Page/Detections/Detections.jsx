@@ -52,13 +52,15 @@ class Detections extends Component {
                 {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                     :
                     this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
-                    <DetectionsStyle>
-                        <div className="title">Detecções Recentes</div>
-                        <div className="cards">
-                            <DetectionView content={this.state.content}/>    
-                        </div>
-                        
-                    </DetectionsStyle>
+                    <div className="cv-body">
+                        <DetectionsStyle>
+                            <div className="title">Detecções Recentes</div>
+                            <div className="cards">
+                                <DetectionView content={this.state.content}/>    
+                            </div>
+                            
+                        </DetectionsStyle>
+                    </div>
                     :
                     <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                 }
