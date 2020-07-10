@@ -1,13 +1,19 @@
 import React, {memo, useState, useEffect} from 'react';
 import { StatisticsMainFormStyle } from 'Page/Statistics/Style/StatisticsMainFormStyle'
 import { getUserCameras } from 'Service/UserService';
-import Divisor from 'Components/Divisor/Divisor'
 import BoxSelect from 'Components/BoxSelect/BoxSelect';
+import "react-datepicker/dist/react-datepicker.css";
+import StatisticsDateInput from 'Page/Statistics/StatisticsDateInput'
 import { Button } from 'react-bootstrap';
+import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 
-const StatisticsMainForm = ({}) => {
+const StatisticsMainForm = () => {
     const [camerasContent, setCamerasContent] = useState([]);
     const [camerasSelected, setCamerasSelected] = useState([]);
+    const [startDate, setStartDate] = useState([]);
+    const [startTime, setStartTime] = useState([]);
+    const [endDate, setEndDate] = useState([]);
+    const [endTime, setEndTime] = useState([]);
 
     useEffect(() => {
         getUserCameras()
@@ -60,19 +66,48 @@ const StatisticsMainForm = ({}) => {
         setCamerasSelected(result);
     }
 
+    const dateHandler = (date, period) => {
+       if (period === "start") {
+            setStartDate(date);
+       }
+       else if (period === "end") {
+            setEndDate(date);
+       }
+    }
+
+    const timeHandler = (time, period) => {
+        console.log(time);
+        if (period === "start") {
+            setStartTime(time);
+        }
+        else if (period === "end") {
+            setEndTime(time);
+        }
+     }
+
+     const submitResponse = () => {
+         
+     }
+
     return (
         <StatisticsMainFormStyle>
             <div className="title">Estatísticas</div>
             <div className="statistics-form-body">
+                <div style={{ paddingLeft:"40px", paddingBottom:"20px"}}>
+                    <TitleDivisor title="Cameras Disponiveis" width="83%"/>
+                </div>
                 <BoxSelect 
                     content={camerasContent} 
                     selectContent={camerasSelected}
                     onSelectItem={(camera) => selectHandler(camera)}
                     onSelectAll={selectAll}
                     onDeleteItem={(id) => deleteSelect(id)}
+                    title={"Cameras"}
                 />
-                <div className="data-field"></div>
-                <div className="buttom-field"></div>
+                <StatisticsDateInput date={[startDate, endDate]} onDateChange={(date,period) => dateHandler(date, period)} time={[startTime, endTime]} onTimeChange={(time,period) => timeHandler(time, period)}/>
+                <div className="buttom-field">
+                    <Button className="buttonSearch" onClick={submitResponse}>Buscar</Button>
+                </div>
             </div>
         </StatisticsMainFormStyle>
     );
