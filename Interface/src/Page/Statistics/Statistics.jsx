@@ -33,6 +33,11 @@ class Statistics extends Component {
         })
     }
 
+    statisticsFormHandler = (formResponse) => {
+        console.log(formResponse);
+        this.setState({content: [0, 2]})
+    }
+
     render() {
         return (
             <div className="cv-background">
@@ -41,7 +46,7 @@ class Statistics extends Component {
                     {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                         :
                         this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
-                        <StatisticsMainForm/>
+                            this.state.content.length > 0 ? "content" : <StatisticsMainForm formHandler={this.statisticsFormHandler}/>
                         :
                         <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                     }

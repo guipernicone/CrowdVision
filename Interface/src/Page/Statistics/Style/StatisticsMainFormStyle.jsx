@@ -26,7 +26,7 @@ export const StatisticsMainFormStyle = styled.div `
     .buttonSearch{
         float:right;
         margin-right:40px;
-        font-size:24px;
+        font-size:20px;
         background-color: ${Colors.contrast_1};
         color: ${Colors.primary};
         border: 0;
