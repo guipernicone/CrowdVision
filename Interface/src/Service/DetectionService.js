@@ -17,3 +17,21 @@ export const sendStatus = (id, historyId, status) => {
     
     return sendPost(body, route)
 }
+
+/**
+ * Send a request to get statistics data
+ * 
+ * @param {Array} ids An array of cameras ids
+ * @param {String} startPeriodDate The start period date
+ * @param {String} endPeriodDate The end period date
+ */
+export const getStatisticsData = (id, startPeriodDate, endPeriodDate) => {
+    let body = {
+        cameraIds: id,
+        startDate: startPeriodDate,
+        endDate: endPeriodDate
+    }
+    let route = 'detection/statistics'
+    
+    return sendPost(body, route)
+}

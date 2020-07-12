@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
+import { getStatisticsData } from 'Service/DetectionService'
 import { Redirect } from "react-router-dom";
 import { StatisticsStyle } from 'Page/Statistics/Style/StatisticsStyle';
+import StatisticsReport from 'Page/Statistics/StatisticsReport'
 import StatisticsMainForm from 'Page/Statistics/StatisticsMainForm'
 import Navbar from 'Page/Navbar/Navbar';
 class Statistics extends Component {
@@ -10,7 +12,7 @@ class Statistics extends Component {
         super(props);
         this.state = {
             loggedInStatus: LOGIN_STATES.WAITING,
-            content : [],
+            content : null,
         }
     }
 
@@ -35,7 +37,20 @@ class Statistics extends Component {
 
     statisticsFormHandler = (formResponse) => {
         console.log(formResponse);
-        this.setState({content: [0, 2]})
+        
+        getStatisticsData(formResponse.cameraIds, formResponse.startDate, formResponse.endDate)
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+               this.setState({content: response.data})
+            }
+            else {
+                this.setState({content: "Não foram encontrados frames detectados para as cameras selecionadas"})
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
     }
 
     render() {
@@ -46,7 +61,7 @@ class Statistics extends Component {
                     {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                         :
                         this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
-                            this.state.content.length > 0 ? "content" : <StatisticsMainForm formHandler={this.statisticsFormHandler}/>
+                            this.state.content != null ? <StatisticsReport statistics={this.state.content}/> : <StatisticsMainForm formHandler={this.statisticsFormHandler}/>
                         :
                         <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                     }
