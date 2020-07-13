@@ -54,7 +54,8 @@ class DetectionView extends Component {
             let framesJSON = camera.frames.reverse();
             
             card = framesJSON.map((frame, index) =>{
-                return <DetectionCard 
+                return <DetectionCard
+                    key={"detection_card_" + index}
                     img={`data:image/jpeg;base64, ${frame.frame}`}
                     field1={`Confiabilidade: ${frame.detectionScore}`}
                     field2={`Data de Captura: ${frame.captureTime}`}
@@ -72,7 +73,7 @@ class DetectionView extends Component {
             this.state.dialogStatus.push(false);
 
             return (
-                <DetectionViewStyle>
+                <DetectionViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
                         {cameraJSON.id} | 
                         <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>

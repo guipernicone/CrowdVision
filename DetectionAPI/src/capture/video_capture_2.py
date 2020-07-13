@@ -8,6 +8,7 @@ import socket
 import threading
 import time
 import http_request
+import sys
 from datetime import datetime
 from io import StringIO
 
@@ -26,7 +27,7 @@ SERVER_URL = 'http://192.168.15.21:8080'
 
 DETECTION_API_URL = 'http://localhost:5000'
 
-MAX_FRAMES__PER_REQUEST = 199
+MAX_FRAMES__PER_REQUEST = 299
 
 RECONNECT_DELAY = 10
 
@@ -38,14 +39,13 @@ RECONNECT_DELAY = 10
 def convert_frame_to_base_64_string(frame):
     ret, buffer = cv2.imencode('.jpg', cv2.resize(frame, (300, 300)))
     return base64.b64encode(buffer)
-    # return base64.standard_b64encode(buffer)
 
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
 #--------------------------------------------------------------------
-def get_key():
+def get_key(camera_name):
     try:
-        f = open('property2.bin', 'rb')
+        f = open(f'{camera_name}.bin', 'rb')
         contntBytes = f.read()
         print(contntBytes)
         content = str(contntBytes, 'utf-8')
@@ -72,35 +72,36 @@ def get_key():
         print('Local save not found')
         return False
   
-def request_key():
+def request_key(camera_name):
     URL = SERVER_URL + "/camera/register"
     localization = geocoder.ip('me')
 
     payload = {
             "latitude" : str(localization.lat),
             "longitude" : str(localization.lng),
+            "name" : str(camera_name),
         }
 
     print("Request for new device key")
     r = http_request.send_post(URL, payload)
 
-    # print(f"HTTP post request Response status: {r.status_code}")
     if (r.status_code == 200) :
         print("Device key " + r.text + " receive from server")
-        f = open('property2.bin', 'wb')
+        f = open(f'{camera_name}.bin', 'wb')
         f.write(bytes(r.text, 'utf-8'))
         f.close()
         return r.text
+
     print("Device not regitered ")
     return False
 
-def register_device():
-    key = get_key()
+def register_device(camera_name):
+    key = get_key(camera_name)
 
     if (key != False):
         return key
      
-    new_key = request_key()
+    new_key = request_key(camera_name)
 
     if (new_key != False):
         return new_key
@@ -124,58 +125,64 @@ def send_to_detection(frame, device_key):
 #--------------------------------------------------------------------
 #                         CAPTURE
 #--------------------------------------------------------------------
-device_key = register_device()
-frame_list = []
-frame_count = 0
-semaphore = threading.Semaphore(9)
-failed_send_attemps = 0
 
-while True:
-    # Read a frame from the defined stream
-    ret, image_np = cap.read()
+if (len(sys.argv) == 3 and sys.argv[1] == "-camera_name"):
+    print("entrei")
+    print(sys.argv)
+    camera_name = sys.argv[2]
+    device_key = register_device(camera_name)
+    frame_list = []
+    frame_count = 0
+    semaphore = threading.Semaphore(9)
+    failed_send_attemps = 0
+    while True:
+        # Read a frame from the defined stream
+        ret, image_np = cap.read()
 
-    if (failed_send_attemps > 10):
-        failed_send_attemps = 0
-        print('Connection to ' + DETECTION_API_URL + ' qfailed')
-        print('Trying to reconnect again in ' + str(RECONNECT_DELAY) + ' seconds')
-        time.sleep(RECONNECT_DELAY)
-    
-    if (ret == True):
-        img64 = convert_frame_to_base_64_string(image_np)
+        if (failed_send_attemps > 10):
+            failed_send_attemps = 0
+            print('Connection to ' + DETECTION_API_URL + ' qfailed')
+            print('Trying to reconnect again in ' + str(RECONNECT_DELAY) + ' seconds')
+            time.sleep(RECONNECT_DELAY)
+        
+        if (ret == True):
+            img64 = convert_frame_to_base_64_string(image_np)
 
-        frame_count += 1
-        frame_list.append({
-            "frame": str(img64, 'utf-8'),
-            "captureTime": datetime.today().strftime('%d-%m-%Y %H:%M:%S')
-        })
+            frame_count += 1
+            frame_list.append({
+                "frame": str(img64, 'utf-8'),
+                "captureTime": datetime.today().strftime('%d/%m/%Y %H:%M:%S')
+            })
 
-        if (frame_count > MAX_FRAMES__PER_REQUEST):
-            semaphore.acquire()
-            print("Enviando " + str(MAX_FRAMES__PER_REQUEST + 1) + " frames")
+            if (frame_count > MAX_FRAMES__PER_REQUEST):
+                semaphore.acquire()
+                print("Enviando " + str(MAX_FRAMES__PER_REQUEST + 1) + " frames")
 
-            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
-            # threaded.daemon = True
-            threaded.start()
-            frame_list = []
-            frame_count = 0
+                threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
+                # threaded.daemon = True
+                threaded.start()
+                frame_list = []
+                frame_count = 0
 
-        # Display the frames with the detection boxes
-        cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
+            # Display the frames with the detection boxes
+            cv2.imshow('object detection', cv2.resize(image_np, (800, 600)))
 
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
+
+        else:
+            if (frame_count != 0):
+                print(f"Enviando {frame_count} frames")
+                threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
+                threaded.daemon = True
+                threaded.start()
+                frame_list = []
+                frame_count = 0 
+
+            print("No frame was received")
+            time.sleep(2)
             break
-
-    else:
-        if (frame_count != 0):
-            print(f"Enviando {frame_count} frames")
-            threaded = threading.Thread(target=send_to_detection, args=(frame_list, device_key))
-            threaded.daemon = True
-            threaded.start()
-            frame_list = []
-            frame_count = 0 
-
-        print("No frame was received")
-        time.sleep(2)
-        break
+else:
+    print("No name for the camera was declared")
         

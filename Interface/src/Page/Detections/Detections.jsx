@@ -56,7 +56,7 @@ class Detections extends Component {
                         <DetectionsStyle>
                             <div className="title">Detecções Recentes</div>
                             <div className="cards">
-                                <DetectionView content={this.state.content}/>    
+                                <DetectionView key="detection_view" content={this.state.content}/>    
                             </div>
                             
                         </DetectionsStyle>

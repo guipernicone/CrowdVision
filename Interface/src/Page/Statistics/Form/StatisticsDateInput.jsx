@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 import TimeField from 'react-simple-timefield';
-import { StatisticsDateInputStyle} from 'Page/Statistics/Style/StatisticsDateInputStyle'
+import { StatisticsDateInputStyle} from 'Page/Statistics/Form/Style/StatisticsDateInputStyle'
 import { registerLocale } from  "react-datepicker";
 import pt from 'date-fns/locale/pt-BR';
 

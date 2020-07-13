@@ -1,9 +1,9 @@
 import React, {memo, useState, useEffect} from 'react';
-import { StatisticsMainFormStyle } from 'Page/Statistics/Style/StatisticsMainFormStyle'
+import { StatisticsMainFormStyle } from 'Page/Statistics/Form/Style/StatisticsMainFormStyle'
 import { getUserCameras } from 'Service/UserService';
 import BoxSelect from 'Components/BoxSelect/BoxSelect';
 import "react-datepicker/dist/react-datepicker.css";
-import StatisticsDateInput from 'Page/Statistics/StatisticsDateInput'
+import StatisticsDateInput from 'Page/Statistics/Form/StatisticsDateInput'
 import { Button, Alert } from 'react-bootstrap';
 import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 

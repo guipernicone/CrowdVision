@@ -4,8 +4,8 @@ import { validateLogin } from 'Service/LoginService';
 import { getStatisticsData } from 'Service/DetectionService'
 import { Redirect } from "react-router-dom";
 import { StatisticsStyle } from 'Page/Statistics/Style/StatisticsStyle';
-import StatisticsReport from 'Page/Statistics/StatisticsReport'
-import StatisticsMainForm from 'Page/Statistics/StatisticsMainForm'
+import StatisticsReport from 'Page/Statistics/Report/StatisticsReport'
+import StatisticsMainForm from 'Page/Statistics/Form/StatisticsMainForm'
 import Navbar from 'Page/Navbar/Navbar';
 class Statistics extends Component {
     constructor(props) {
@@ -61,7 +61,7 @@ class Statistics extends Component {
                     {this.state.loggedInStatus === LOGIN_STATES.WAITING ? null 
                         :
                         this.state.loggedInStatus === LOGIN_STATES.LOGGEDIN ?
-                            this.state.content != null ? <StatisticsReport statistics={this.state.content}/> : <StatisticsMainForm formHandler={this.statisticsFormHandler}/>
+                            this.state.content == null ? <StatisticsReport statistics={this.state.content}/> : <StatisticsMainForm formHandler={this.statisticsFormHandler}/>
                         :
                         <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>
                     }
