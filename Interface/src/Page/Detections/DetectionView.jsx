@@ -4,7 +4,7 @@ import { DetectionViewStyle } from 'Page/Detections/Style/DetectionViewStyle';
 import Divisor from 'Components/Divisor/Divisor'
 import Dialog from 'Components/Dialog/Dialog'
 import { Button } from 'react-bootstrap';
-import GoogleMapsApi from 'Components/GoogleMapsApi/GoogleMapsApi'
+import SimpleMap from 'Components/GoogleMapsApi/SimpleMap'
 import ExploreIcon from '@material-ui/icons/Explore';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
@@ -84,7 +84,7 @@ class DetectionView extends Component {
                     {this.state.dialogStatus[index] ? 
                         <Dialog 
                             closeDialog={() => {this.handlerDialog(false, index)}}
-                            // dialogContent= {<GoogleMapsApi zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
+                            // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
                             dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>

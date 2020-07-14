@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react'
 
-class GoogleMapsApi extends Component {
+class SimpleMap extends Component {
     render() {
         return (
             <Map
@@ -18,5 +18,5 @@ class GoogleMapsApi extends Component {
 
 export default GoogleApiWrapper({
     apiKey: 'AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE'
-})(GoogleMapsApi);
+})(SimpleMap);
 

@@ -1,14 +1,14 @@
 import React, {memo} from 'react';
 import { InformationNumberCardStyle} from 'Components/InformationNumberCard/InformationNumberCardStyle'
 
-const InformationNumberCard = ({number, label, primaryColor, secundaruColor, textColor}) => {
+const InformationNumberCard = ({number, label, primaryColor, secundaryColor, textColor}) => {
     return (
-        <InformationNumberCardStyle>
+        <InformationNumberCardStyle primaryColor={primaryColor} secundaruColor={secundaryColor} textColor={textColor}>
             <div className="number-card">
-                <div className="number">900</div>
+                <div className="number">{number}</div>
             </div>
             <div className="label">
-                Label para DetecçõesCARDG RANDE
+                {label}
             </div>
         </InformationNumberCardStyle>
     );

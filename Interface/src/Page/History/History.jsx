@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Navbar from 'Page/Navbar/Navbar'
 import DetectionCard from 'Page/Detections/DetectionCard'
 import img from 'Page/Detections/66.jpg'
-import GoogleMapsApi from 'Components/GoogleMapsApi/GoogleMapsApi'
+import GoogleMapsApi from 'Components/GoogleMapsApi/SimpleMap'
 import Dialog from 'Components/Dialog/Dialog'
 
 class History extends Component {

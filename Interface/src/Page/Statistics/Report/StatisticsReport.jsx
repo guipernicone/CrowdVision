@@ -3,10 +3,11 @@ import { StatisticsReportStyle} from 'Page/Statistics/Report/Style/StatisticsRep
 import StatisticsGeneralInformation from 'Page/Statistics/Report/StatisticsGeneralInformation'
 
 const StatisticsReport = ({statistics}) => {
+
     return (
         <StatisticsReportStyle>
             <div className="title">Relatório</div>
-            <StatisticsGeneralInformation />
+            <StatisticsGeneralInformation content={statistics}/>
         </StatisticsReportStyle>
     );
 };

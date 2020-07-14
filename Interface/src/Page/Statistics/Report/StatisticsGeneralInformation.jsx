@@ -3,91 +3,19 @@ import { StatisticsGeneralInformationStyle} from 'Page/Statistics/Report/Style/S
 import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 import { PieChart } from 'react-minimal-pie-chart';
 import InformationNumberCard from 'Components/InformationNumberCard/InformationNumberCard'
+import ClusterMap from 'Components/GoogleMapsApi/ClusterMap'
+import AreaMap from 'Components/GoogleMapsApi/AreaMap'
+
 const StatisticsGeneralInformation = ({content}) => {
 
-    content = {
-        "falseDetectonsStatistics": {
-            "numberOfDetectionByCamera": [
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera01",
-                    "id": "5f02d053866f03440acfbaaa",
-                    "numberOfDetetions": 1,
-                    "longitude": "-47.2119"
-                },
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera02",
-                    "id": "5f0bd8341b6af92c10a81626",
-                    "numberOfDetetions": 10,
-                    "longitude": "-47.2119"
-                }
-            ],
-            "numberOfCameras": 2,
-            "numberOfDetections": 11,
-            "averageLocationCenter": {
-                "latitude": -23.0884,
-                "radius": 0,
-                "longitude": -47.2119
-            },
-            "averageTimeOfDetection": "00:00:15",
-            "averageAccuracy": 0.8903485
-        },
-        "totalStatusStatistics": {
-            "numberOfDetectionByCamera": [
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera01",
-                    "id": "5f02d053866f03440acfbaaa",
-                    "numberOfDetetions": 36,
-                    "longitude": "-47.2119"
-                },
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera02",
-                    "id": "5f0bd8341b6af92c10a81626",
-                    "numberOfDetetions": 20,
-                    "longitude": "-47.2119"
-                }
-            ],
-            "numberOfCameras": 2,
-            "numberOfDetections": 56,
-            "positiveDetectionPercentage": 80.35714,
-            "averageLocationCenter": {
-                "latitude": -23.0884,
-                "radius": 0,
-                "longitude": -47.2119
-            },
-            "averageTimeOfDetection": "00:00:26",
-            "averageAccuracy": 0.904006
-        },
-        "positiveDetectonsStatistics": {
-            "numberOfDetectionByCamera": [
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera01",
-                    "id": "5f02d053866f03440acfbaaa",
-                    "numberOfDetetions": 35,
-                    "longitude": "-47.2119"
-                },
-                {
-                    "latitude": "-23.0884",
-                    "name": "camera02",
-                    "id": "5f0bd8341b6af92c10a81626",
-                    "numberOfDetetions": 10,
-                    "longitude": "-47.2119"
-                }
-            ],
-            "numberOfCameras": 2,
-            "numberOfDetections": 45,
-            "averageLocationCenter": {
-                "latitude": -23.0884,
-                "radius": 0,
-                "longitude": -47.2119
-            },
-            "averageTimeOfDetection": "00:00:28",
-            "averageAccuracy": 0.90734476
-        }
+    const buildInfoCards = () => {
+        console.log(content)
+        return [
+            <InformationNumberCard number={content["totalStatusStatistics"]["numberOfCameras"]} label={"Total de Câmeras"}/>,
+            <InformationNumberCard number={content["totalStatusStatistics"]["numberOfDetections"]} label={"Total de Detecções"}/>,
+            <InformationNumberCard number={`${content["totalStatusStatistics"]["averageAccuracy"].toFixed(3) * 100}%`} label={"Acurácia Média"}/>,
+            <InformationNumberCard number={content["totalStatusStatistics"]["averageTimeOfDetection"]} label={"Tempo Médio de Detecção"}/>
+        ]
     }
 
     const dataMock = [
@@ -95,27 +23,63 @@ const StatisticsGeneralInformation = ({content}) => {
         { title: 'Detecções Incorretas', value: (100 - content["totalStatusStatistics"]["positiveDetectionPercentage"]), color: '#ff0000' },
     ]
 
+    const getCamerasCoordinates = () => {
+        let coordinates = content["totalStatusStatistics"]["numberOfDetectionByCamera"].map(camera => {
+            console.log(camera)
+            return {
+                lat: parseFloat(camera.latitude),
+                lng: parseFloat(camera.longitude)
+            }
+        })
+        // console.log(coordinates);
+        return coordinates
+    }
     return (
         <StatisticsGeneralInformationStyle>
            <TitleDivisor title="Informações Gerais" width="83%"/>
-           <div className="pieChart">
-                <div style={{marginBottom: "15px"}}>Corretas X Incorretas</div>
-                <PieChart
-                    data={dataMock}
-                    label={({ dataEntry }) => `${Math.round(dataEntry.percentage)} %`}
-                    labelStyle={(index) => ({
-                        fill: dataMock[index].color,
-                        fontSize: '12px',
-                        fontFamily: 'sans-serif',
-                    })}
-                    lineWidth={25}
-                    animate
-                />
+            <div className="content">
+                <div style={{position:"relative"}}>
+                    <div className="pieChart">
+                        <div style={{marginBottom: "15px"}}>Corretas X Incorretas</div>
+                        <PieChart
+                            data={dataMock}
+                            label={({ dataEntry }) => `${Math.round(dataEntry.percentage)} %`}
+                            labelStyle={(index) => ({
+                                fill: dataMock[index].color,
+                                fontSize: '12px',
+                                fontFamily: 'sans-serif',
+                            })}
+                            lineWidth={25}
+                            animate
+                        />
+                    </div>
+                </div>
+                <div className="statistics">
+                    <div className="card-information">
+                        {buildInfoCards()}
+                    </div>
+                </div>
+                <div className="clusterMap">
+                    {/* <ClusterMap
+                        zoom={10}
+                        coordinates={getCamerasCoordinates()}
+                    /> */}
+                </div>
+                <div className="areaMap">
+                    {/* <AreaMap
+                        zoom={16}
+                        coordinates={getCamerasCoordinates()}
+                        centerCoordinate={
+                            {
+                                lat:content["totalStatusStatistics"]["averageLocationCenter"]["latitude"],
+                                lng:content["totalStatusStatistics"]["averageLocationCenter"]["longitude"],
+                            }
+                        }
+                        radius= {content["totalStatusStatistics"]["averageLocationCenter"]["radius"]}
+                    /> */}
+                </div>
             </div>
-           <div className="card-information">
-               <InformationNumberCard/>
-           </div>
-           
+            
         </StatisticsGeneralInformationStyle>
     );
 };

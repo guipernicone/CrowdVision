@@ -2,13 +2,13 @@ import styled from 'styled-components'
 import Colors from 'Config/Colors'
 
 export const InformationNumberCardStyle = styled.div `
-    background-color:red;
+    background-color: ${props=> props.primaryColor ?? Colors.tertiary};
     width:150px;
     height:180px;
     position:relative;
     border-radius:15px;
     margin: 20px;
-    
+
     .number-card{
         display: inline-block;
         border-radius:15px;
@@ -16,7 +16,7 @@ export const InformationNumberCardStyle = styled.div `
         margin-right: 25px;
         margin-top:15px;
         margin-bottom: 15px;
-        background-color:blue;
+        background-color: ${props=> props.primaryColor ?? Colors.secundary};
         width:100px;
         height:75px;
         position:relative;
