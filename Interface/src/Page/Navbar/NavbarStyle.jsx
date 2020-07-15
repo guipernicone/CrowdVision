@@ -9,7 +9,7 @@ export const NavbarStyle = styled.div`
     height:60px;
     line-height: 60px;
     position: fixed;
-    
+    z-index:9999;
 
     .navButton:hover {
         background-color: #bb86fc;

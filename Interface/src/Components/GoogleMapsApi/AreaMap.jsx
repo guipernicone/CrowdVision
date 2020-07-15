@@ -1,13 +1,33 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Map, GoogleApiWrapper, Circle, Marker } from 'google-maps-react'
 
+/**
+ * A map with a explicit radius zone
+ * 
+ * @param {Number} zoom - The initial zoom of the map
+ * @param {Array} coordinates - An array of objects of coordinates 
+ * @param {Object} centerCoordinate - An object of coordinates lat, lng for the center of the map
+ * @param {Number} radius - The radius of the area
+ */
 const AreaMap = ({zoom, coordinates, centerCoordinate, radius, ...props}) => {
 
     const buildMarkers = () => {
-        let markers = coordinates.map((coordinate) =>{
-            return <Marker position={coordinate} />
+        let markers = coordinates.map((coordinate, index) =>{
+            return(
+                <Marker 
+                    key={"marker_" + index}
+                    position={{lat:coordinate.lat, lng: coordinate.lng}}
+                    title={coordinate.title}
+                    icon={{
+                        url: coordinate.urlIcon,
+                        anchor: new props.google.maps.Point(32,32),
+                        scaledSize: new props.google.maps.Size(64,64)
+                    }}
+                    label={coordinate.number.toString()}
+                >
+                </Marker>
+            )
         });
-        console.log(markers);
         return markers
     }
 
@@ -22,9 +42,6 @@ const AreaMap = ({zoom, coordinates, centerCoordinate, radius, ...props}) => {
             <Circle
                 radius={radius}
                 center={centerCoordinate}
-                onMouseover={() => console.log('mouseover')}
-                onClick={() => console.log('click')}
-                onMouseout={() => console.log('mouseout')}
                 strokeColor='transparent'
                 strokeOpacity={0}
                 strokeWeight={5}

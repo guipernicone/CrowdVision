@@ -19,7 +19,7 @@ const StatisticsGeneralInformation = ({content}) => {
     }
 
     const dataMock = [
-        { title: 'Detecções Corretas', value: content["totalStatusStatistics"]["positiveDetectionPercentage"], color: '#00ff00' },
+        { title: 'Detecções Corretas', value: content["totalStatusStatistics"]["positiveDetectionPercentage"], color: '#00ff00'},
         { title: 'Detecções Incorretas', value: (100 - content["totalStatusStatistics"]["positiveDetectionPercentage"]), color: '#ff0000' },
     ]
 
@@ -28,7 +28,10 @@ const StatisticsGeneralInformation = ({content}) => {
             console.log(camera)
             return {
                 lat: parseFloat(camera.latitude),
-                lng: parseFloat(camera.longitude)
+                lng: parseFloat(camera.longitude),
+                number: camera.numberOfDetetions,
+                title: camera.name,
+                urlIcon: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png"
             }
         })
         // console.log(coordinates);

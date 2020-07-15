@@ -1,6 +1,10 @@
 package com.tcc.CrowdVision.Server.Detection;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -75,6 +79,7 @@ public class BuildStatistics {
 		String averagePositiveLocationCenter = this.getCenterCoordenate(detections);
 		String averageTimeOfPositiveDetection = this.getAverageDetectionTime(detections);
 		JSONArray numberOfPositiveDetectionByCamera = this.getNumberOfDetectionByCamera(detections);
+		JSONArray detectionsByDate = this.getNumberOfDetectionByDate(detections);
 		
 		json.put("numberOfDetectionByCamera", numberOfPositiveDetectionByCamera);
 		json.put("averageTimeOfDetection", averageTimeOfPositiveDetection);
@@ -82,6 +87,8 @@ public class BuildStatistics {
 		json.put("numberOfDetections", detections.size());
 		json.put("numberOfCameras", numberOfPositiveDetectionByCamera.length());
 		json.put("averageLocationCenter", new JSONObject(averagePositiveLocationCenter));
+		json.put("detectionsByDate", detectionsByDate);
+		
 		return json;
 	
 	}
@@ -213,11 +220,10 @@ public class BuildStatistics {
 	 * 
 	 * @param detections An array of detections for search count of detections by camera
 	 * 
-	 * @return count by camera
+	 * @return A json array of number of detection by camera
 	 */
 	private JSONArray getNumberOfDetectionByCamera(ArrayList<DetectionHistory>  detections) 
 	{
-	
 		ArrayList<String> cameraIds = new ArrayList<String>();
 		JSONArray camerasArray = new JSONArray();
 		
@@ -248,5 +254,60 @@ public class BuildStatistics {
 		}
 		
 		return camerasArray;
+	}
+	
+	/**
+	 * Get the count of detections by date
+	 * 
+	 * @param detections An array of detections for search count of detections by date
+	 * 
+	 * @return A JSON array with the number of detection by date
+	 */
+	private JSONArray getNumberOfDetectionByDate(ArrayList<DetectionHistory>  detections) 
+	{
+		Map<Date, ArrayList<Integer>> detectionsArray = new HashMap<Date, ArrayList<Integer>>();
+		JSONArray detectionJSON = new JSONArray(); 
+		
+		for (DetectionHistory detection : detections) 
+		{
+			Boolean hasDate = false;
+			String compareDate = DateUtils.convetDateToString(detection.getCaptureTime(), "yyyyMMdd");
+			
+			if (detectionJSON.isEmpty()) 
+			{
+				JSONObject object = new JSONObject();
+				object.put("dateCompare", compareDate);
+				object.put("date", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy"));
+				object.put("count", 1);
+				detectionJSON.put(object);
+			}
+			else
+			{
+				
+				for(int i = 0; i < detectionJSON.length(); i++) 
+				{
+					JSONObject jsonObject = detectionJSON.getJSONObject(i);
+					if (jsonObject.getString("dateCompare").equals(compareDate))
+					{
+						int count = jsonObject.getInt("count");
+						jsonObject.put("count", (count + 1));
+						hasDate = true;
+					}
+					else {
+						
+					}
+				}
+				if (!hasDate)
+				{
+					JSONObject object = new JSONObject();
+					object.put("dateCompare", DateUtils.convetDateToString(detection.getCaptureTime(), "yyyyMMdd"));
+					object.put("date", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy"));
+					object.put("count", 1);
+					detectionJSON.put(object);
+				}
+			}
+		}
+		
+		return detectionJSON;
 	}
 }

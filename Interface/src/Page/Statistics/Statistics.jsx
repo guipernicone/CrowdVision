@@ -7,6 +7,10 @@ import { StatisticsStyle } from 'Page/Statistics/Style/StatisticsStyle';
 import StatisticsReport from 'Page/Statistics/Report/StatisticsReport'
 import StatisticsMainForm from 'Page/Statistics/Form/StatisticsMainForm'
 import Navbar from 'Page/Navbar/Navbar';
+
+/**
+ * A statistics report page with a form and the report
+ */
 class Statistics extends Component {
     constructor(props) {
         super(props);

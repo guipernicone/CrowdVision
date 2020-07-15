@@ -7,6 +7,12 @@ import StatisticsDateInput from 'Page/Statistics/Form/StatisticsDateInput'
 import { Button, Alert } from 'react-bootstrap';
 import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 
+/**
+ * An form for the statistics report, list all camereras available 
+ * for the user.
+ * 
+ * @param {func} formHandler 
+ */
 const StatisticsMainForm = ({formHandler}) => {
     const [camerasContent, setCamerasContent] = useState([]);
     const [camerasSelected, setCamerasSelected] = useState([]);
