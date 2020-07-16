@@ -1,6 +1,8 @@
 package com.tcc.CrowdVision.Server.Detection;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +20,12 @@ import com.tcc.CrowdVision.Server.Camera.Camera;
 import com.tcc.CrowdVision.Server.Organization.Organization;
 import com.tcc.CrowdVision.Server.User.User;
 import com.tcc.CrowdVision.Utils.BeanUtils;
+import com.tcc.CrowdVision.Utils.DateUtils;
 
 public class DetectionManager {
 
 	private static DetectionManager instance;
-	private WebSocketListener listerner;
+	private WebSocketListener listener;
 	private DetectionRepository detectionRepository = BeanUtils.getBean(DetectionRepository.class);
 	private DetectionHistoryRepository detectionHistoryRepository = BeanUtils.getBean(DetectionHistoryRepository.class);
 	private UserRepository userRepository = BeanUtils.getBean(UserRepository.class);
@@ -37,13 +40,24 @@ public class DetectionManager {
 	}
 	
 	public void addListener(WebSocketListener listener) {
-		this.listerner = listener;
+		this.listener = listener;
 	}
 	
+	/**
+	 * Call the listener send Function
+	 */
 	public synchronized void sendStatus() {
-		this.listerner.sendDetectionFrame();
+		this.listener.sendDetectionFrame();
 	}
 	
+	/**
+	 * Get a list of frames of a User
+	 * 
+	 * @param userId - An User id
+	 * @param history - True for getting frames from history or False for getting recent frames
+	 * 
+	 * @return JSON
+	 */
 	public String getFrames(String userId, Boolean history) {
 		
 		ArrayList<String> cameraIds = new ArrayList<String>();
@@ -64,52 +78,90 @@ public class DetectionManager {
 					cameraIds.addAll(org.getCameraIds());
 				}
 				
-				for (String cameraId: cameraIds) {
+				Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+				
+				for (Camera camera : cameras) {
 					JSONObject cameraObject = new JSONObject();
+					Gson gson = new Gson();
+					String cameraString = gson.toJson(camera);
+					cameraObject.put("camera", new JSONObject(cameraString));
 					
-					Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+					JSONArray detectionArray = new JSONArray();
 					
-					for (Camera camera : cameras) {
+					if (history) {
+						ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(camera.getId()); 
 						
-						Gson gson = new Gson();
-						String cameraString = gson.toJson(camera);
-						cameraObject.put("camera", new JSONObject(cameraString));
 						
-						JSONArray detectionArray = new JSONArray();
-						
-						if (history) {
-							ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(cameraId); 
+						for (DetectionHistory detection: detections) {
+							JSONObject detectionObject = new JSONObject(gson.toJson(detection));
+							detectionObject.put("detectionTime", DateUtils.convetDateToString(detection.getDetectionTime(), "dd/MM/yyyy hh:mm:ss"));
+							detectionObject.put("captureTime", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy hh:mm:ss"));
 							
-							
-							for (DetectionHistory detection: detections) {
-								String detectionString = gson.toJson(detection);
-								
-								JSONObject detectionObject = new JSONObject(detectionString);
-								detectionArray.put(detectionObject);
-							}
+							detectionArray.put(detectionObject);
 						}
-						else {
-							ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(cameraId);
-							
-							for (Detection detection: detections) {
-								String detectionString = gson.toJson(detection);
-								
-								JSONObject detectionObject = new JSONObject(detectionString);
-								detectionArray.put(detectionObject);
-							}
-						}
-						
-						
-						
-						cameraObject.put("frames", detectionArray);
 					}
+					else {
+						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(camera.getId());
+						
+						for (Detection detection: detections) {
+						
+							JSONObject detectionObject = new JSONObject(gson.toJson(detection));
+							detectionObject.put("detectionTime", DateUtils.convetDateToString(detection.getDetectionTime(), "dd/MM/yyyy hh:mm:ss"));
+							detectionObject.put("captureTime", DateUtils.convetDateToString(detection.getCaptureTime(), "dd/MM/yyyy hh:mm:ss"));
+							
+							detectionArray.put(detectionObject);
+						}
+					}
+					
+					
+					
+					cameraObject.put("frames", detectionArray);
 					json.put(cameraObject);
 				}
-				
-				
 			}
 		}
 		
 		return json.toString();
 	}
+	
+	/**
+	 * Build the statistics data JSON
+	 * 
+	 * @param cameraIds An array of camera IDs for search detections linked to the ID
+	 * @param StartDate	The start date to filter the detections search
+	 * @param EndDate The end date to filter the detections search
+	 * 
+	 * @return JSON Object as string
+	 * @throws ParseException 
+	 */
+	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) throws ParseException 
+	{	
+		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
+		String totalStatus;
+		
+		if (StartDate == null || EndDate == null)
+		{
+			detections = detectionHistoryRepository.findDetectionByCameraIds(cameraIds);
+		}
+		else
+		{
+			Date firstDate = DateUtils.convetStringToDate(StartDate, "dd/MM/yyyy hh:mm:ss");
+			Date SecondDate = DateUtils.convetStringToDate(EndDate, "dd/MM/yyyy hh:mm:ss");
+			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, firstDate, SecondDate);
+		}
+		
+		if (!detections.isEmpty()) {
+			
+			BuildStatistics statisticsBuilder = new BuildStatistics(detections);
+			statisticsBuilder.buildTotalStatusStatistics();
+			statisticsBuilder.buildPositiveStatistics();
+			statisticsBuilder.buildFalseStatistics();
+			return statisticsBuilder.getResult();
+		}
+		
+		JSONObject error = new JSONObject();
+		error.put("dataNotFound", "Nenhuma detecção foi encontrada");
+		return error.toString();
+	}
+	
 }

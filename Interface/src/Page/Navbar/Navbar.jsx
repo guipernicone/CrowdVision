@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { NavbarStyle } from './NavbarStyle';
 import { Link } from 'react-router-dom';
-import { logoutUser } from 'Service/LoginService'
+import { logoutUser } from 'Service/LoginService';
 
 class Navbar extends Component {
     render() {
@@ -12,7 +12,7 @@ class Navbar extends Component {
                     <Link to={'/'} ><div className="navButton">Home</div></Link>
                     <Link to={'/recent-detections'} ><div className="navButton">Detecções</div></Link>
                     <Link to={'/history'} ><div className="navButton">Historico</div></Link>
-                    <div className="navButton">Estatisticas</div>
+                    <Link to={'/statistics'} ><div className="navButton">Estatisticas</div></Link>
                     <div className="navButton">Cameras</div>
                 </div>
                 <div className="navBarGroup2">

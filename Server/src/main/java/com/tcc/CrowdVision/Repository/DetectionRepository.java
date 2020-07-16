@@ -12,4 +12,5 @@ public interface DetectionRepository extends MongoRepository<Detection, String> 
 	
 	@Query("{'cameraId':?0}")
 	ArrayList<Detection> findDetectionByCameraId(String cameraId);
+	
 }
