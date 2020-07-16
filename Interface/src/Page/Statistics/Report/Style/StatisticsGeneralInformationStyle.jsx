@@ -22,12 +22,13 @@ export const StatisticsGeneralInformationStyle = styled.div `
         text-align:center;
         font-size:24px;
         margin: auto;
+        /* padding-right:100px; */
     }
 
-    .clusterMap{
-        background-color:purple;
-        width:1200px;
-        height:800px;
+    .barChart{
+        /* background-color:orange; */
+        width:800px;
+        height:500px;
         margin: auto;
         position: relative;
         margin-bottom:50px;
