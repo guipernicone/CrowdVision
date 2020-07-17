@@ -127,6 +127,24 @@ public class DetectionController {
 		return ResponseEntity.badRequest().body("user id invalido");
 	}
 	
+	@GetMapping("/history")
+	public ResponseEntity<String> getHistory(@RequestParam(defaultValue = "none") String userId) {
+		
+		DetectionManager detectionManager = DetectionManager.getInstance();
+		try {
+			if (!userId.contains("none")) {
+				return ResponseEntity.ok(detectionManager.getFrames(userId, true));
+			}
+			return ResponseEntity.badRequest().body("user id invalido");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("user id invalido");
+		}
+		
+		
+	}
+	
 	@PostMapping("/update-status")
 	public ResponseEntity<String> updateDetectionStatus(@RequestBody Map<String, Object> detectionUpdate) {
 		try {

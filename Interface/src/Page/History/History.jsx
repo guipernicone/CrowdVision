@@ -1,31 +1,71 @@
-import React, { Component } from 'react';
-import Navbar from 'Page/Navbar/Navbar'
-import DetectionCard from 'Page/Detections/DetectionCard'
-import img from 'Page/Detections/66.jpg'
-import GoogleMapsApi from 'Components/GoogleMapsApi/SimpleMap'
-import Dialog from 'Components/Dialog/Dialog'
+import React, { memo, useState, useEffect } from 'react';
+import Navbar from "Page/Navbar/Navbar";
+import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
+import { validateLogin } from 'Service/LoginService';
+import { getHistoryDetections } from 'Service/DetectionService';
+import { Redirect } from "react-router-dom";
+import CookieService from 'Service/CookieService'
+import  HistoryView from 'Page/History/HistoryView'
+import { HistoryStyle } from 'Page/History/Style/HistoryStyle'
 
-class History extends Component {
-    render() {
-        return (
-            <div>
-                <Navbar/>
-                <div style={{margin: "200px", backgroundColor:"#1e1e1e"}}>
-                    <DetectionCard
-                        img={img}
-                        field1={'Camera: 5eedd78c89ca262b4d67644a'}
-                        field2={'Capture Date: 20-06-2020 10:00:00'}
-                        field3={'Detection Date: 20-06-2020 10:01:00'}
-                        field4={'Localization: -22.22222 - 33.54545'}
-                        buttonText={'Detecção Incorreta'}
-                        onClick={() => {console.log("Clico")}}
-                    />
+/**
+ * The history detection page
+ */
+const History = ({...props}) => {
+    const [loggedInStatus, setLoggedInStatus] = useState(LOGIN_STATES.WAITING);
+    const [detectionsContent, setDetectionsContent] = useState([]);
+
+    useEffect(() => {
+        validateLogin()
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return setLoggedInStatus(LOGIN_STATES.LOGGEDIN);
+            }
+            return setLoggedInStatus(LOGIN_STATES.NOTLOGGEDIN);
+        })
+        .catch((error) => {
+            console.log(error);
+            return setLoggedInStatus(LOGIN_STATES.NOTLOGGEDIN);
+        })
+
+        let cs = new CookieService();
+        let login = cs.get('login');
+
+        getHistoryDetections(login.user.id)
+        .then(response => {
+            console.log(response)
+            if (response.status === 200)
+            {
+                setDetectionsContent(response.data)
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+
+    }, []);
+
+    return (
+        <div className="cv-background">
+            <Navbar/>
+            {loggedInStatus === LOGIN_STATES.WAITING ? null 
+                :
+                loggedInStatus === LOGIN_STATES.LOGGEDIN ?
+                <div className="cv-body">
+                    <HistoryStyle>
+                        <div className="title">Histórico de Detecções</div>
+                        <div className="cards">
+                            <HistoryView key="detection_view" detectionsContent={detectionsContent}/> 
+                        </div>
+                        
+                    </HistoryStyle>
                 </div>
-                {/* <GoogleMapsApi zoom={15} coordinates={{ lat: 47.444, lng: -122.176}} style={{width:"50%"}}/> */}
-                <Dialog/>
-            </div>
-        );
-    }
+                :
+                <Redirect to={{pathname: '/login', state: {from: props.location}}}/>
+            }
+        </div>
+    );
 }
 
-export default History;
+export default memo(History);

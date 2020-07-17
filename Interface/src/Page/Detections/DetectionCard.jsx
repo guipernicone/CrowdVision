@@ -45,8 +45,9 @@ const DetectionCard = (
                 <div>{field2}</div>
                 <div>{field3}</div>
                 <div>{field4}</div>
-                <Button variant="primary" className="buttonCardLeft buttonCard" onClick={onClick1}>{buttonText1}</Button>
-                <Button variant="primary" className="buttonCardRight buttonCard" onClick={onClick2}>{buttonText2}</Button>
+                {buttonText1 ? <Button variant="primary" className="buttonCardLeft buttonCard" onClick={onClick1}>{buttonText1}</Button> : null}
+                {buttonText2 ? <Button variant="primary" className="buttonCardRight buttonCard" onClick={onClick2}>{buttonText2}</Button>: null}
+                
             </div>
         </DetectionCardStyle>
     );

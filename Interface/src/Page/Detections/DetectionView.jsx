@@ -48,7 +48,7 @@ class DetectionView extends Component {
     render() {
         let body = []
         let card = []
-
+        console.log(this.props.content);
         body = this.props.content.map((camera, index) => {
             let cameraJSON = camera.camera;
             let framesJSON = camera.frames.reverse();
@@ -75,7 +75,7 @@ class DetectionView extends Component {
             return (
                 <DetectionViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
-                        {cameraJSON.id} | 
+                        {cameraJSON.name} | 
                         <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
