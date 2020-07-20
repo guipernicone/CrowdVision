@@ -64,7 +64,7 @@ const HistoryView = ({detectionsContent}) => {
                     {dialogStatus[index] ? 
                         <Dialog 
                             closeDialog={() => {handlerDialog(false, index)}}
-                            dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
+                            // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
                             dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>
