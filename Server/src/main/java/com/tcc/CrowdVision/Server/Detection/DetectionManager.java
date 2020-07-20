@@ -146,8 +146,11 @@ public class DetectionManager {
 		else
 		{
 			Date firstDate = DateUtils.convetStringToDate(StartDate, "dd/MM/yyyy hh:mm:ss");
-			Date SecondDate = DateUtils.convetStringToDate(EndDate, "dd/MM/yyyy hh:mm:ss");
-			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, firstDate, SecondDate);
+			Date secondDate = DateUtils.convetStringToDate(EndDate, "dd/MM/yyyy hh:mm:ss");
+			System.out.println(firstDate);
+			System.out.println(secondDate);
+			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, firstDate, secondDate);
+			System.out.println(detections);
 		}
 		
 		if (!detections.isEmpty()) {

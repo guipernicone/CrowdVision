@@ -35,3 +35,17 @@ export const getStatisticsData = (id, startPeriodDate, endPeriodDate) => {
     
     return sendPost(body, route)
 }
+
+/**
+ * Send a request to get all historic detections data
+ * 
+ * @param {String} id User id to get all detections relationate
+ */
+export const getHistoryDetections = (id) => {
+    let body = {
+        userId: id,
+    }
+    let route = 'detection/history'
+    
+    return sendGet(body, route)
+}
