@@ -15,7 +15,7 @@ class Navbar extends Component {
                     {/* <div className="navButton">Câmeras</div> */}
                 </div>
                 <div className="navBarGroup2">
-                    <div className="navButton">Perfil</div>
+                    <Link to={'/profile'} ><div className="navButton">Perfil</div></Link>
                     <Link to={'/login'} onClick={logoutUser}><div className="navButton">Sair</div></Link>
                 </div>
             </NavbarStyle>
