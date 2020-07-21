@@ -2,19 +2,17 @@ import React, { memo, useState, useEffect } from 'react';
 import Navbar from "Page/Navbar/Navbar";
 import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
-import { getHistoryDetections } from 'Service/DetectionService';
 import { Redirect } from "react-router-dom";
-import CookieService from 'Service/CookieService'
-import  HistoryView from 'Page/History/HistoryView'
-import { HistoryStyle } from 'Page/History/Style/HistoryStyle'
+import CookieService from 'Service/CookieService';
+import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
+import ProfileForm from 'Page/Profile/ProfileForm';
 
 /**
  * The history detection page
  */
 const Profile = ({...props}) => {
     const [loggedInStatus, setLoggedInStatus] = useState(LOGIN_STATES.WAITING);
-    const [detectionsContent, setDetectionsContent] = useState([]);
-
+    
     useEffect(() => {
         validateLogin()
         .then((response) => {
@@ -30,19 +28,8 @@ const Profile = ({...props}) => {
         })
 
         let cs = new CookieService();
-        let login = cs.get('login');
-
-        getHistoryDetections(login.user.id)
-        .then(response => {
-            console.log(response)
-            if (response.status === 200)
-            {
-                setDetectionsContent(response.data)
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+        let user = cs.get('login').user;
+        console.log(user)
 
     }, []);
 
@@ -53,13 +40,16 @@ const Profile = ({...props}) => {
                 :
                 loggedInStatus === LOGIN_STATES.LOGGEDIN ?
                 <div className="cv-body">
-                    <HistoryStyle>
+                    <ProfileStyle>
                         <div className="title">Perfil</div>
-                        <div className="cards">
-                            <HistoryView key="detection_view" detectionsContent={detectionsContent}/> 
+                        <div className="profile-body">
+                            <div className="side-menu"></div>
+                            <div className="profile-content">
+                                <ProfileForm/>
+                            </div>
                         </div>
                         
-                    </HistoryStyle>
+                    </ProfileStyle>
                 </div>
                 :
                 <Redirect to={{pathname: '/login', state: {from: props.location}}}/>
