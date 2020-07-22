@@ -3,7 +3,6 @@ import { LOGIN_STATES } from "Common/Js/LoginStatusEnum";
 import { validateLogin } from 'Service/LoginService';
 import { getStatisticsData } from 'Service/DetectionService'
 import { Redirect } from "react-router-dom";
-import { StatisticsStyle } from 'Page/Statistics/Style/StatisticsStyle';
 import StatisticsReport from 'Page/Statistics/Report/StatisticsReport'
 import StatisticsMainForm from 'Page/Statistics/Form/StatisticsMainForm'
 import Navbar from 'Page/Navbar/Navbar';

@@ -2,30 +2,88 @@ import React, { memo, useState, useEffect } from 'react';
 import CookieService from 'Service/CookieService';
 import { ProfileFormStyle } from 'Page/Profile/Style/ProfileFormStyle';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { getUserOrganizations, saveUser } from 'Service/UserService';
 
 /**
- * The history detection page
+ * The User register form
  */
-const ProfileForm = ({...props}) => {
-    const [loggedInStatus, setLoggedInStatus] = useState();
-    
-    useEffect(() => {
-        let cs = new CookieService();
-        let user = cs.get('login').user;
-        console.log(user)
-    }, []);
+const ProfileForm = () => {
 
+    const [organizations, setOrganizations] = useState([{id:'', name:'-----'}]);
+    const [errorAlert, setErroAlert] = useState("none");
+    const [successAlert, setSuccessAlert] = useState("none");
+
+    useEffect(() => {
+        const user = (new CookieService()).get('login').user;
+        console.log(user);
+        getUserOrganizations(user.id)
+        .then((response) => {
+            console.log(response)
+            if (response.status === 200) {
+                setOrganizations(response.data);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+
+
+    },[])
+
+    const buildOrganizationOptions = () => {
+        let options;
+
+        options = organizations.map((org, index) => {
+            return <option key={"option_permission_" + index} value={org.id}>{org.name}</option>
+        });
+
+        return options;
+    }
     const handleSubmit = (submit) => {
-        console.log("form");
-        console.log(submit.target.elements.formBasicPermission.value);
         submit.preventDefault();
         submit.stopPropagation();
+        let elements = submit.target.elements;
+        let userJson = {
+            name: elements.formBasicName.value,
+            "surname": elements.formBasicSurname.value,
+            "email": elements.formBasicEmail.value,
+            "password": elements.formBasicPassword.value,
+            "permission": elements.formBasicPermission.value,
+            "organizationIds": [elements.formBasicOrganization.value],
+            "requestUserId": (new CookieService()).get('login').user.id
+        }
+
+        saveUser(userJson)
+        .then((response) => {
+            console.log(response)
+            if (response.status === 200) {
+                if (errorAlert === "" ) {
+                    setErroAlert("none");
+                }
+
+                setSuccessAlert("");
+            }
+            else{
+                if (successAlert === "") {
+                    setSuccessAlert("none");
+                }
+                setErroAlert("");
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            if (successAlert === "") {
+                setSuccessAlert("none");
+            }
+            setErroAlert("");
+        })
     }
 
     return (
         <ProfileFormStyle>
+            <Alert variant={'danger'} style={{display:errorAlert}}>Não foi possível cadastrar o usuário</Alert>
+            <Alert variant={'success'} style={{display:successAlert}}>Usuário cadastrado com sucesso</Alert>
             <Form onSubmit={(e) => handleSubmit(e)}>
-
                 <Form.Group controlId="formBasicName">
                     <Form.Label>Nome</Form.Label>
                     <Form.Control type="text" placeholder="Digite seu primeiro nome" className="inputField"/>
@@ -49,7 +107,7 @@ const ProfileForm = ({...props}) => {
                 <Form.Group controlId="formBasicPermission">
                 <Form.Label>Permissão</Form.Label>
                     <Form.Control as="select">
-                    <option value={300}>User</option>
+                    <option value={100}>User</option>
                     <option value={200}>Manager</option>
                     </Form.Control>
                 </Form.Group>
@@ -57,6 +115,7 @@ const ProfileForm = ({...props}) => {
                 <Form.Group controlId="formBasicOrganization">
                 <Form.Label>Organização</Form.Label>
                     <Form.Control as="select">
+                        {buildOrganizationOptions()}
                     </Form.Control>
                 </Form.Group>
 

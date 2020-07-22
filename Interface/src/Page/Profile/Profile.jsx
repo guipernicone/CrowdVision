@@ -8,11 +8,12 @@ import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
 import ProfileForm from 'Page/Profile/ProfileForm';
 
 /**
- * The history detection page
+ * The Profile detection page
  */
 const Profile = ({...props}) => {
     const [loggedInStatus, setLoggedInStatus] = useState(LOGIN_STATES.WAITING);
-    
+    const User = (new CookieService()).get('login').user;
+
     useEffect(() => {
         validateLogin()
         .then((response) => {
@@ -26,10 +27,6 @@ const Profile = ({...props}) => {
             console.log(error);
             return setLoggedInStatus(LOGIN_STATES.NOTLOGGEDIN);
         })
-
-        let cs = new CookieService();
-        let user = cs.get('login').user;
-        console.log(user)
 
     }, []);
 
@@ -45,7 +42,9 @@ const Profile = ({...props}) => {
                         <div className="profile-body">
                             <div className="side-menu"></div>
                             <div className="profile-content">
-                                <ProfileForm/>
+                            {
+                                User.permission !== 'USER'  ?  <ProfileForm/> : null
+                            }
                             </div>
                         </div>
                         

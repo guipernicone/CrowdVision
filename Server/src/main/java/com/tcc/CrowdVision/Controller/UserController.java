@@ -56,7 +56,8 @@ public class UserController {
 					User requestUser = userOptional.get();
 					
 					if(userManager.isAdminOrManager(requestUser)) {
-						int permission = (int) userJSON.get("permission");
+						String permissionString = userJSON.get("permission").toString();
+						int permission = Integer.parseInt(permissionString);
 						
 						if (permission == PermissionEnum.MANAGER.getValue() || permission == PermissionEnum.USER.getValue()) {
 							String name = (String) userJSON.get("name");
@@ -235,4 +236,37 @@ public class UserController {
 
 	}
 	
+	@GetMapping("/organizations")
+	public ResponseEntity<String> getUserOrganizations(@RequestParam(defaultValue = "none") String userId) {
+		try 
+		{
+			if (!userId.equals("none")) 
+			{
+				Optional<User> userOptional = userRepository.findById(userId);
+				
+				if (userOptional.isPresent()) 
+				{
+					Iterable<Organization> iterable = organizationRepository.findAllById(userOptional.get().getOrganizationIds());
+					JSONArray json = new JSONArray();
+
+					for(Organization org: iterable) 
+					{
+						JSONObject object = new JSONObject();
+						object.put("name", org.getName());
+						object.put("id", org.getId());
+						json.put(object);
+					}
+					
+					return ResponseEntity.ok().body(json.toString());
+				}
+			}
+			
+			return ResponseEntity.badRequest().body("Invalid user id");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();	
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to get camera information");
+		}
+
+	}
 }

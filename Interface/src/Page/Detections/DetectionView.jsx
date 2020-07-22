@@ -37,7 +37,7 @@ class DetectionView extends Component {
 
     handlerDialog = (status, index) => {
         let newDialogStatus = this.state.dialogStatus.map((dialog, indexDialog) => {
-            if (indexDialog == index) {
+            if (indexDialog === index) {
                 return status;
             }
             return false

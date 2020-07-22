@@ -56,7 +56,7 @@ const StatisticsMainForm = ({formHandler}) => {
         let cameras = JSON.parse(JSON.stringify(camerasContent));
         let selectCameras = JSON.parse(JSON.stringify(camerasSelected));
 
-        cameras.map(cameraObject => {
+        cameras.forEach(cameraObject => {
             if (!selectCameras.some(object => object.id === cameraObject.id)){
                 selectCameras.push(cameraObject);
             }

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Colors from 'Config/Colors'
 
 export const ProfileStyle = styled.div `
     .title{
@@ -8,17 +9,20 @@ export const ProfileStyle = styled.div `
         margin-bottom: 25px;
     }
     .profile-body{
-        background-color: green;
+        /* background-color: green; */
         width: 100%;
         display: flex;
     }
     .side-menu{
-        background-color: purple;
+        /* background-color: purple; */
+        /* background-color: ${Colors.tertiary}; */
         width: 250px;
         height: 500px;
     }
     .profile-content{
-        background-color: orange;
+        background-color: ${Colors.tertiary};
         width: 100%;
+        position: relative;
+        padding: 40px;
     }
 `;

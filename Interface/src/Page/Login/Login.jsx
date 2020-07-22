@@ -51,6 +51,7 @@ class Login extends Component {
         })
         .catch((error) => {
             console.log(error)
+            this.setState({errorMSG : ""});
         }) 
     }
 
