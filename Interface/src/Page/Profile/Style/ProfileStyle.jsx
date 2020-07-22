@@ -20,9 +20,10 @@ export const ProfileStyle = styled.div `
         height: 500px;
     }
     .profile-content{
-        background-color: ${Colors.tertiary};
+        /* background-color: ${Colors.tertiary}; */
         width: 100%;
         position: relative;
         padding: 40px;
+        margin-right: 40px;
     }
 `;
