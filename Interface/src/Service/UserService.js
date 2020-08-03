@@ -51,3 +51,19 @@ export const getUserOrganizations = () => {
 export const saveUser = (userJson) => {
     return sendPost(userJson, 'user/save')
 }
+
+/**
+ * Send a request to get user information
+ * 
+ * @param {String} id The user id
+ */
+export const getUserInformation = () => {
+
+    let cm = new CookieService();
+    let params = {
+        userID:  cm.get('login').user.id,
+    }
+    let route = 'user/information'
+    
+    return sendGet(params, route)
+}

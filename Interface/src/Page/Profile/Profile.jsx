@@ -7,6 +7,7 @@ import CookieService from 'Service/CookieService';
 import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
 import ProfileForm from 'Page/Profile/ProfileForm';
 import ProfileSideMenu from 'Page/Profile/ProfileSideMenu';
+import ProfileInformation from 'Page/Profile/ProfileInformation';
 
 /**
  * The Profile detection page
@@ -24,7 +25,6 @@ const Profile = ({...props}) => {
     useEffect(() => {
         validateLogin()
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return setLoggedInStatus(LOGIN_STATES.LOGGEDIN);
             }
@@ -40,7 +40,7 @@ const Profile = ({...props}) => {
     const buildProfileContent = () => {
         switch(menuOption){
             case 'Informações do Usuário':
-                return null;
+                return <ProfileInformation/>;
             case 'Cadastro de Usuário':
                 if (User.permission !== 'USER') {
                     return <ProfileForm/>
