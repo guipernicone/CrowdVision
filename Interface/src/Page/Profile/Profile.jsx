@@ -6,12 +6,19 @@ import { Redirect } from "react-router-dom";
 import CookieService from 'Service/CookieService';
 import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
 import ProfileForm from 'Page/Profile/ProfileForm';
+import ProfileSideMenu from 'Page/Profile/ProfileSideMenu';
 
 /**
  * The Profile detection page
  */
 const Profile = ({...props}) => {
     const [loggedInStatus, setLoggedInStatus] = useState(LOGIN_STATES.WAITING);
+    const [menuOption, setMenuOption] = useState("Informações do Usuário");
+
+    const optionsList = [
+        "Informações do Usuário",
+        "Cadastro de Usuário"
+    ]
     const User = (new CookieService()).get('login').user;
 
     useEffect(() => {
@@ -30,6 +37,23 @@ const Profile = ({...props}) => {
 
     }, []);
 
+    const buildProfileContent = () => {
+        switch(menuOption){
+            case 'Informações do Usuário':
+                return null;
+            case 'Cadastro de Usuário':
+                if (User.permission !== 'USER') {
+                    return <ProfileForm/>
+                }
+                else{
+                    return null
+                }
+            default:{
+                return null;
+            }
+        }
+    }
+
     return (
         <div className="cv-background">
             <Navbar/>
@@ -38,16 +62,15 @@ const Profile = ({...props}) => {
                 loggedInStatus === LOGIN_STATES.LOGGEDIN ?
                 <div className="cv-body">
                     <ProfileStyle>
-                        <div className="title">Perfil</div>
                         <div className="profile-body">
-                            <div className="side-menu"></div>
+                            <div className="side-menu">
+                                <div className="title">Perfil</div>
+                                <ProfileSideMenu options={optionsList} optionHandler={setMenuOption} selectedOption={menuOption}/>
+                            </div>
                             <div className="profile-content">
-                            {
-                                User.permission !== 'USER'  ?  <ProfileForm/> : null
-                            }
+                                {buildProfileContent()}
                             </div>
                         </div>
-                        
                     </ProfileStyle>
                 </div>
                 :

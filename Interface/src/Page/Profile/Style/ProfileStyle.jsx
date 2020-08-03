@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import Colors from 'Config/Colors'
 
 export const ProfileStyle = styled.div `
+    height: calc(100vh - 85px);
+
     .title{
         padding-left:40px;
         padding-top:20px;
@@ -9,21 +11,19 @@ export const ProfileStyle = styled.div `
         margin-bottom: 25px;
     }
     .profile-body{
-        /* background-color: green; */
         width: 100%;
         display: flex;
+        height: 100%;
     }
     .side-menu{
-        /* background-color: purple; */
-        /* background-color: ${Colors.tertiary}; */
-        width: 250px;
-        height: 500px;
+        width: 350px;
+        height: 100%;
     }
     .profile-content{
-        /* background-color: ${Colors.tertiary}; */
+        background-color: ${Colors.tertiary};
         width: 100%;
-        position: relative;
+        position: relative; 
         padding: 40px;
-        margin-right: 40px;
+        padding-right: 40px;
     }
 `;

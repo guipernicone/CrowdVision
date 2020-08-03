@@ -1,9 +1,10 @@
 import styled from 'styled-components'
+import Colors from 'Config/Colors'
 
 export const ProfileFormStyle = styled.div `
     margin:auto;
-    /* position:absolute; */
     width: 50%;
+    
     .submit {
         background-color: #bb86fc;
         color: black;
