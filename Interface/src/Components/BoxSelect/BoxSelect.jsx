@@ -1,9 +1,7 @@
-import React, {memo, useState, useEffect} from 'react';
-import { BoxSelectStyle } from 'Components/BoxSelect/BoxSelectStyle'
-import { getUserCameras } from 'Service/UserService';
+import React, {memo} from 'react';
+import { BoxSelectStyle } from 'Components/BoxSelect/BoxSelectStyle';
 import DoubleArrowRoundedIcon from '@material-ui/icons/DoubleArrowRounded';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ExploreIcon from '@material-ui/icons/Explore';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Button } from 'react-bootstrap';
 

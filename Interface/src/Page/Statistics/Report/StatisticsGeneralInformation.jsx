@@ -4,7 +4,7 @@ import TitleDivisor from 'Components/TitleDivisor/TitleDivisor'
 import { PieChart } from 'react-minimal-pie-chart';
 import InformationNumberCard from 'Components/InformationNumberCard/InformationNumberCard'
 import AreaMap from 'Components/GoogleMapsApi/AreaMap'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Pie, Cell} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
   
   
 

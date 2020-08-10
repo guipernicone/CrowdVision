@@ -1,7 +1,4 @@
-import React from 'react';
 import styled from 'styled-components'
-import Colors from 'Config/Colors'
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 
 export const StatisticsDateInputStyle = styled.div `
     padding-left:40px;

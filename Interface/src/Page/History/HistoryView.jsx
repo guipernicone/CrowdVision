@@ -6,8 +6,6 @@ import Dialog from 'Components/Dialog/Dialog'
 import { Button } from 'react-bootstrap';
 import SimpleMap from 'Components/GoogleMapsApi/SimpleMap'
 import ExploreIcon from '@material-ui/icons/Explore';
-import DoneIcon from '@material-ui/icons/Done';
-import CloseIcon from '@material-ui/icons/Close';
 
 /**
  * Build the body of the history page
@@ -21,7 +19,7 @@ const HistoryView = ({detectionsContent}) => {
 
     const handlerDialog = (status, index) => {
         let newDialogStatus = dialogStatus.map((dialog, indexDialog) => {
-            if (indexDialog == index) {
+            if (indexDialog === index) {
                 return status;
             }
             return false
