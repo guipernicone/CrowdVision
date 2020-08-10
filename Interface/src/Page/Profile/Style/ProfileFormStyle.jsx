@@ -6,7 +6,7 @@ export const ProfileFormStyle = styled.div `
     width: 50%;
     
     .submit {
-        background-color: #bb86fc;
+        background-color: ${Colors.contrast_1};
         color: black;
         font-weight:500;
         border: none;
