@@ -17,3 +17,12 @@
     position:relative;
 }
 
+.cv-background::-webkit-scrollbar {
+    width: 12px;               /* width of the entire scrollbar */
+}
+
+.cv-background::-webkit-scrollbar-thumb {
+    background-color: #bb86fc;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+}
+

@@ -13,7 +13,7 @@ class Navbar extends Component {
                     <Link to={'/'}><div className="navButton">Detecções</div></Link>
                     <Link to={'/history'} ><div className="navButton">Histórico</div></Link>
                     <Link to={'/statistics'} ><div className="navButton">Estatísticas</div></Link>
-                    {/* <div className="navButton">Câmeras</div> */}
+                    <Link to={'/camera'} ><div className="navButton">Câmeras</div></Link>
                 </div>
                 <div className="navBarGroup2">
                     <Link to={'/profile'} ><div className="navButton">Perfil</div></Link>
