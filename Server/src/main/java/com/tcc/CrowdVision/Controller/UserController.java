@@ -269,4 +269,56 @@ public class UserController {
 		}
 
 	}
+	
+	@GetMapping("/organizations-list")
+	public ResponseEntity<String> getUserOrganizationsList(@RequestParam(defaultValue = "none") String userId) {
+		try 
+		{
+			if (!userId.equals("none")) 
+			{
+				Optional<User> userOptional = userRepository.findById(userId);
+				
+				if (userOptional.isPresent()) 
+				{
+					Iterable<Organization> iterable = organizationRepository.findAllById(userOptional.get().getOrganizationIds());
+					JSONArray json = new JSONArray();
+
+					for(Organization org: iterable) 
+					{
+						JSONObject object = new JSONObject();
+						ArrayList<String> cameraIds = new ArrayList<String>();
+						object.put("organization", org.getName());
+						object.put("organizationId", org.getId());
+						for (String cameraId: org.getCameraIds())
+						{
+							if (!cameraIds.contains(cameraId))
+							{
+								cameraIds.add(cameraId);
+							}
+							
+						}
+						Iterable<Camera> cameraList = cameraRepository.findAllById(cameraIds);
+						JSONArray cameraListJson = new JSONArray();
+						for (Camera camera : cameraList) {
+							JSONObject cameraObject  = new JSONObject();
+							cameraObject.put("cameraName", camera.getName());
+							cameraObject.put("cameraId", camera.getId());
+							cameraListJson.put(cameraObject);
+						}
+						object.put("cameras", cameraListJson);
+						json.put(object);
+					}
+					
+					return ResponseEntity.ok().body(json.toString());
+				}
+			}
+			
+			return ResponseEntity.badRequest().body("Invalid user id");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();	
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to get camera information");
+		}
+
+	}
 }
