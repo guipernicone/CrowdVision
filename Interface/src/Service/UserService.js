@@ -67,3 +67,19 @@ export const getUserInformation = () => {
     
     return sendGet(params, route)
 }
+
+/**
+ * Send a request to get all user organizations
+ * 
+ * @param {String} id The user id
+ */
+export const getUserOrganizationsList = () => {
+
+    let cm = new CookieService();
+    let params = {
+        userId:  cm.get('login').user.id,
+    }
+    let route = 'user/organizations-list'
+    
+    return sendGet(params, route)
+}

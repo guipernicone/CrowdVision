@@ -8,6 +8,7 @@ import History from "Page/History/History"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from 'Page/Routes/PrivateRoute'
 import Statistics from 'Page/Statistics/Statistics'
+import Camera from 'Page/Camera/Camera'
 
 class App extends Component {
     render() {
@@ -18,6 +19,7 @@ class App extends Component {
                     {/* <PrivateRoute path="/" exact component={Home}/> */}
                     {/* <PrivateRoute path="/recent-detections" component={Detections}/> */}
                     <PrivateRoute path="/" exact component={Detections}/>
+                    <PrivateRoute path="/camera" exact component={Camera}/>
                     <PrivateRoute path="/history" component={History}/>
                     <PrivateRoute path="/profile" component={Profile}/>
                     <PrivateRoute path="/statistics" component={Statistics}/>
