@@ -57,7 +57,7 @@ const HistoryView = ({detectionsContent}) => {
                         <Button className="buttonLocal" onClick={() => handlerDialog(true, index)}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
-                        <Divisor width={"68%"} margin={"20px"}/>
+                        <Divisor width={"78%"} margin={"20px"}/>
                     </div> 
                     {dialogStatus[index] ? 
                         <Dialog 

@@ -79,7 +79,7 @@ class DetectionView extends Component {
                         <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
-                        <Divisor width={"68%"} margin={"20px"}/>
+                        <Divisor width={"78%"} margin={"20px"}/>
                     </div> 
                     {this.state.dialogStatus[index] ? 
                         <Dialog 

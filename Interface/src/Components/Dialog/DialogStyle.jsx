@@ -3,10 +3,11 @@ import Colors from 'Config/Colors'
 
 const DialogStyle = styled.div `
     position:absolute;
+    z-index:999999;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    
+
     .contentDialog {
         position:relative;
         width: ${props => props.width ?? '800px'};
