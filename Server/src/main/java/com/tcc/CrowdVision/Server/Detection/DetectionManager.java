@@ -137,7 +137,6 @@ public class DetectionManager {
 	public String buildStatisticData(ArrayList<String> cameraIds, String StartDate, String EndDate) throws ParseException 
 	{	
 		ArrayList<DetectionHistory> detections = new ArrayList<DetectionHistory>();
-		String totalStatus;
 		
 		if (StartDate == null || EndDate == null)
 		{
@@ -147,10 +146,8 @@ public class DetectionManager {
 		{
 			Date firstDate = DateUtils.convetStringToDate(StartDate, "dd/MM/yyyy hh:mm:ss");
 			Date secondDate = DateUtils.convetStringToDate(EndDate, "dd/MM/yyyy hh:mm:ss");
-			System.out.println(firstDate);
-			System.out.println(secondDate);
+
 			detections = detectionHistoryRepository.findDetectionByCameraIdsInPeriod(cameraIds, firstDate, secondDate);
-			System.out.println(detections);
 		}
 		
 		if (!detections.isEmpty()) {
