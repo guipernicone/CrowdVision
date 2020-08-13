@@ -8,11 +8,15 @@ import CookieService from 'Service/CookieService';
 import { CameraStyle } from 'Page/Camera/Style/CameraStyle'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExploreIcon from '@material-ui/icons/Explore';
+import Dialog from 'Components/Dialog/Dialog'
+import SimpleMap from 'Components/GoogleMapsApi/SimpleMap'
 
 const Camera = ({...props}) => {
     const [loggedInStatus, setLoggedInStatus] = useState(LOGIN_STATES.WAITING);
     const [itemOpen, setItemOpen] = useState([]);
     const [cameraList, setCameraList] = useState([]);
+    const [dialogWindow, setDialogWindow] = useState("");
 
     const User = (new CookieService()).get('login').user;
 
@@ -58,13 +62,13 @@ const Camera = ({...props}) => {
             return (
                 <div key={"org_" + index}>
                     <div className="organization" onClick={() => organizationHandler(org.organizationId)}>
-                        <div className="organization_name">{org.organization}</div>
-                        <div className="organization_icon">
+                        <div className="organization-name">{org.organization}</div>
+                        <div className="organization-icon">
                             {(itemOpen.includes(org.organizationId)) ? <ExpandMoreIcon/> : <ExpandLessIcon/>}
                         </div>
                     </div>
                     <div 
-                        className="organization_list"
+                        className="organization-list"
                         style={{display: (itemOpen.includes(org.organizationId)) ? "" : "none"}}
                     >
                         {buildCameraItem(org.cameras)}
@@ -77,8 +81,21 @@ const Camera = ({...props}) => {
     const buildCameraItem = (cameras) => {
         return cameras.map((camera, index) =>{
             return (
-                <div key={"camera_" + index} className="camera_item"> 
-                    {camera.cameraName}
+                <div key={"camera_" + index} className="camera-item"> 
+                    <div className="camera-name">
+                        {camera.name}
+                    </div>
+                    <div>
+                        <ExploreIcon className="map-icon" onClick={() => setDialogWindow(camera.id)}/>
+                    </div>
+                    {dialogWindow === camera.id ? 
+                        <Dialog 
+                            closeDialog={() => {setDialogWindow("")}}
+                            // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: camera.latitude, lng: camera.longitude}}/>}
+                            dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
+                        /> 
+                        : null
+                    }
                 </div>
             );
         });

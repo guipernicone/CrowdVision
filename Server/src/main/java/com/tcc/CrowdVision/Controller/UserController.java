@@ -300,10 +300,9 @@ public class UserController {
 						Iterable<Camera> cameraList = cameraRepository.findAllById(cameraIds);
 						JSONArray cameraListJson = new JSONArray();
 						for (Camera camera : cameraList) {
-							JSONObject cameraObject  = new JSONObject();
-							cameraObject.put("cameraName", camera.getName());
-							cameraObject.put("cameraId", camera.getId());
-							cameraListJson.put(cameraObject);
+							Gson gson = new Gson();
+							String cameraString = gson.toJson(camera);
+							cameraListJson.put((new JSONObject(cameraString)));
 						}
 						object.put("cameras", cameraListJson);
 						json.put(object);

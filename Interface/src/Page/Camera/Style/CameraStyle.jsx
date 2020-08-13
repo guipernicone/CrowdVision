@@ -31,14 +31,20 @@ export const CameraStyle = styled.div`
         height: 70px;
         padding-left:20px;
         align-items:center;
+        position: relative;
     }
 
-    .organization_name{
+    .organization-name{
        font-size:20px;
+       font-weight: 600;
        width:95%;
     }
 
-    .camera_item{
+    .organization-list{
+        width: 100%;
+    }
+
+    .camera-item{
         display:flex;
         border-width: 0.5px;
         background-color: ${Colors.tertiary};
@@ -48,5 +54,18 @@ export const CameraStyle = styled.div`
         height: 50px;
         padding-left:40px;
         align-items:center;
+        display: flex;
+    }
+
+    .camera-name{
+        width:94%;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .map-icon{
+        color: ${Colors.contrast_1};
+        width:60px;
+        height: 35px;
     }
 `
