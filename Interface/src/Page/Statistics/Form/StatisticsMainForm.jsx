@@ -17,9 +17,9 @@ const StatisticsMainForm = ({formHandler}) => {
     const [camerasContent, setCamerasContent] = useState([]);
     const [camerasSelected, setCamerasSelected] = useState([]);
     const [startDate, setStartDate] = useState();
-    const [startTime, setStartTime] = useState("0");
+    const [startTime, setStartTime] = useState("00:00:00");
     const [endDate, setEndDate] = useState();
-    const [endTime, setEndTime] = useState("0");
+    const [endTime, setEndTime] = useState("00:00:00");
     const [dateMsg, setDateMsg] = useState("none");
     const [timeMsg, setTimeMsg] = useState("none");
     const [cameraMsg, setCameraMsg] = useState("none");
@@ -94,55 +94,62 @@ const StatisticsMainForm = ({formHandler}) => {
      }
 
      const submitResponse = () => {
+         console.log(startDate)
+         console.log(endDate)
+         console.log(startTime)
+         console.log(endTime)
          if (camerasSelected.length > 0) 
          {
             setCameraMsg("none");
             let cameraIds = camerasSelected.map(camera => {
                 return camera.id;
             })
-            
-            if (startDate || endDate)
-            {
+            if(startDate || endDate) {
+
                 if (startDate && endDate)
                 {
-                    setDateMsg("none");
-                    if (startDate <= endDate)
-                    {
-                        setTimeMsg("none");
-                        if (startTime < endTime)
-                        {
+                    setTimeMsg("none");
+                    let startDateResponse = new Date(startDate);
+                    startDateResponse.setDate(startDateResponse.getDate() + 1);
+                    startDateResponse = new Intl.DateTimeFormat('pt').format(startDateResponse) + " " + startTime;
+                    
+                    let endDateResponse = new Date(endDate);
+                    endDateResponse.setDate(endDateResponse.getDate() + 1);
+                    endDateResponse = new Intl.DateTimeFormat('pt').format(endDateResponse) + " " + endTime;
+                    if (startDate == endDate) {
+                        if (startTime < endTime){
                             setTimeMsg("none");
-                            let startDateResponse = new Date(startDate);
-                            startDateResponse.setDate(startDateResponse.getDate() + 1);
-                            startDateResponse = new Intl.DateTimeFormat('pt').format(startDateResponse) + " " + startTime;
-                            
-                            let endDateResponse = new Date(endDate);
-                            endDateResponse.setDate(endDateResponse.getDate() + 1);
-                            endDateResponse = new Intl.DateTimeFormat('pt').format(endDateResponse) + " " + endTime;
-
                             formHandler({
                                 "cameraIds" : cameraIds,
                                 "startDate": startDateResponse,
                                 "endDate" : endDateResponse
                             })
                         }
-                        else{
-                            setTimeMsg("")
-                        }                    
                     }
-                    else {
-                        setTimeMsg("");
+                    else if (startDate < endDate)
+                    {
+                        setTimeMsg("none");
+                        formHandler({
+                            "cameraIds" : cameraIds,
+                            "startDate": startDateResponse,
+                            "endDate" : endDateResponse
+                        })
                     }
+                    else{
+                        setTimeMsg("")
+                    }                    
                 }
                 else{
                     setDateMsg("");
                 }
             }
-            formHandler({
-                "cameraIds" : cameraIds,
-                "startDate": null,
-                "endDate" : null
-            })
+            else{
+                formHandler({
+                    "cameraIds" : cameraIds,
+                    "startDate": null,
+                    "endDate" : null
+                })
+            }
          }
          else{
              setCameraMsg("");
