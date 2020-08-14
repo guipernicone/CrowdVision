@@ -14,7 +14,7 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
         return [
             <InformationNumberCard key="info_1" number={content["numberOfCameras"]} label={"Total de Câmeras"}/>,
             <InformationNumberCard key="info_2" number={content["numberOfDetections"]} label={"Total de Detecções"}/>,
-            <InformationNumberCard key="info_3" number={`${(content["averageAccuracy"] * 100).toFixed(3)}%`} label={"Acurácia Média"}/>,
+            <InformationNumberCard key="info_3" number={`${(content["averageAccuracy"] * 100).toFixed(3)}%`} label={"Confiança de detecção Média"}/>,
             <InformationNumberCard key="info_4" number={content["averageTimeOfDetection"]} label={"Tempo Médio de Detecção"}/>
         ]
     }
@@ -48,46 +48,61 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
         return barData;
     }
 
+    const buildChartPieLegend = () => {
+        return dataMock.map((data, index) => {
+            return (
+                <div key={"chart_legend_" + index} className="legend-item">
+                    <div className="legend-circle" style={{backgroundColor: data.color}}/>
+                    <div>{data.title}: {`${data.value.toFixed(2)} %`}</div>
+                </div>
+            )
+        })
+    }
+
     return (
         <StatisticsGeneralInformationStyle>
-           <TitleDivisor title={title} width="83%"/>
-            <div className="content">
-                {pieChart ? 
-                    <div style={{position:"relative"}}>
-                        <div className="pieChart">
-                            <div style={{marginBottom: "15px"}}>Corretas X Incorretas</div>
-                            <PieChart
-                                data={dataMock}
-                                label={({ dataEntry }) => `${dataEntry.percentage.toFixed(2)} %`}
-                                labelStyle={(index) => ({
-                                    fill: dataMock[index].color,
-                                    fontSize: '12px',
-                                    fontFamily: 'sans-serif',
-                                })}
-                                lineWidth={10}
-                                labelPosition={100 - 30/ 2}
-                                animate
-                            />
-                        </div>
+            <TitleDivisor title={title} width="83%"/>
+            {pieChart ? 
+                <div style={{position:"relative"}}>
+                    <div className="pieChart">
+                        <div style={{marginBottom: "15px"}}>Detecções</div>
+                        <div style={{marginBottom: "15px"}}>Corretas X Incorretas</div>
+                        <PieChart
+                            data={dataMock}
+                            // label={({ dataEntry }) => `${dataEntry.percentage.toFixed(2)} %`}
+                            labelStyle={(index) => ({
+                                fill: dataMock[index].color,
+                                fontSize: '12px',
+                                fontFamily: 'sans-serif',
+                            })}
+                            lineWidth={10}
+                            labelPosition={50}
+                            animate
+                        />
                     </div>
-                    :null
-                }
-                <div className="statistics">
-                    <div className="card-information">
-                        {buildInfoCards()}
+                    <div className="legend">
+                        {buildChartPieLegend()}
                     </div>
                 </div>
-                <div className="barChart">
-                    <BarChart width={800} height={500} data={buildBarData()}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="count" fill="#8884d8" name="Número de detecções"/>
-                    </BarChart>
+                :null
+            }
+            <div className="statistics">
+                <div className="card-information">
+                    {buildInfoCards()}
                 </div>
-                <div className="areaMap">
+            </div>
+            <div className="barChart">
+                <BarChart width={800} height={500} data={buildBarData()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="count" fill="#8884d8" name="Número de detecções"/>
+                </BarChart>
+            </div>
+            <div className="area">
+                <div className="area-map">
                     {/* <AreaMap
                         zoom={16}
                         coordinates={getCamerasCoordinates()}
@@ -99,6 +114,16 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
                         }
                         radius= {content["averageLocationCenter"]["radius"]}
                     /> */}
+                </div>
+                <div className="legend">
+                    <div className="legend-item">
+                        <div className="legend-circle" style={{backgroundColor:"#ccccff"}}/>
+                        <div>Área englobando todas as câmeras analisadas</div>
+                    </div>
+                    <div className="legend-item">
+                        <img src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png"/>
+                        <div>Detecções por câmera analisada </div>
+                    </div>
                 </div>
             </div>
             

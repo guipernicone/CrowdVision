@@ -2,7 +2,9 @@ import styled from 'styled-components'
 
 export const StatisticsGeneralInformationStyle = styled.div `
     padding-left:20px;
-
+    padding-right:20px;
+    width: 100%
+    ;
     .statistics{
         margin: auto;
         position: relative; 
@@ -21,11 +23,32 @@ export const StatisticsGeneralInformationStyle = styled.div `
         text-align:center;
         font-size:24px;
         margin: auto;
-        /* padding-right:100px; */
+    }
+
+    .legend{
+        width: 100%;
+        height: 50px;
+        margin: 20px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:18px;
+    }
+
+    .legend-item{
+        display:flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .legend-circle{
+        width: 50px;
+        height: 40px;
+        shape-outside: circle();
+        clip-path: circle();
     }
 
     .barChart{
-        /* background-color:orange; */
         width:800px;
         height:500px;
         margin: auto;
@@ -33,7 +56,10 @@ export const StatisticsGeneralInformationStyle = styled.div `
         margin-bottom:50px;
     }
 
-    .areaMap{
+    .area{
+        width: 100%;
+    }
+    .area-map{
         background-color:red;
         width:1200px;
         height:800px;
