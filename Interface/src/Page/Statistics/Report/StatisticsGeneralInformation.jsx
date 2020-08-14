@@ -51,8 +51,8 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
     const buildChartPieLegend = () => {
         return dataMock.map((data, index) => {
             return (
-                <div key={"chart_legend_" + index} className="legend-item">
-                    <div className="legend-circle" style={{backgroundColor: data.color}}/>
+                <div key={"chart_legend_" + index} className="subtitle-item">
+                    <div className="subtitle-circle" style={{backgroundColor: data.color}}/>
                     <div>{data.title}: {`${data.value.toFixed(2)} %`}</div>
                 </div>
             )
@@ -80,7 +80,7 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
                             animate
                         />
                     </div>
-                    <div className="legend">
+                    <div className="subtitle">
                         {buildChartPieLegend()}
                     </div>
                 </div>
@@ -91,6 +91,7 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
                     {buildInfoCards()}
                 </div>
             </div>
+            <div className="sub-title">Detecções por Data</div>
             <div className="barChart">
                 <BarChart width={800} height={500} data={buildBarData()}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -115,12 +116,12 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
                         radius= {content["averageLocationCenter"]["radius"]}
                     /> */}
                 </div>
-                <div className="legend">
-                    <div className="legend-item">
-                        <div className="legend-circle" style={{backgroundColor:"#ccccff"}}/>
+                <div className="subtitle">
+                    <div className="subtitle-item">
+                        <div className="subtitle-circle" style={{backgroundColor:"#ccccff"}}/>
                         <div>Área englobando todas as câmeras analisadas</div>
                     </div>
-                    <div className="legend-item">
+                    <div className="subtitle-item">
                         <img src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png"/>
                         <div>Detecções por câmera analisada </div>
                     </div>

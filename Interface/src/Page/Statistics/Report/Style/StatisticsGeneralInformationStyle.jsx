@@ -25,7 +25,7 @@ export const StatisticsGeneralInformationStyle = styled.div `
         margin: auto;
     }
 
-    .legend{
+    .subtitle{
         width: 100%;
         height: 50px;
         margin: 20px;
@@ -35,13 +35,13 @@ export const StatisticsGeneralInformationStyle = styled.div `
         font-size:18px;
     }
 
-    .legend-item{
+    .subtitle-item{
         display:flex;
         align-items: center;
         margin-left: 10px;
     }
 
-    .legend-circle{
+    .subtitle-circle{
         width: 50px;
         height: 40px;
         shape-outside: circle();
@@ -65,6 +65,12 @@ export const StatisticsGeneralInformationStyle = styled.div `
         height:800px;
         margin: auto;
         position: relative;
+    }
+
+    .sub-title{
+        font-size:24px;
+        text-align:center;
+        margin-bottom: 15px;
     }
 
 `
