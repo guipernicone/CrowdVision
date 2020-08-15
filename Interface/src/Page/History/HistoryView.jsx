@@ -15,23 +15,12 @@ import ExploreIcon from '@material-ui/icons/Explore';
 
 const HistoryView = ({detectionsContent}) => {  
 
-    const [dialogStatus, setDialogStatus] = useState([]);
-
-    const handlerDialog = (status, index) => {
-        let newDialogStatus = dialogStatus.map((dialog, indexDialog) => {
-            if (indexDialog === index) {
-                return status;
-            }
-            return false
-        })
-        setDialogStatus(newDialogStatus);
-    }
-
+    const [dialogStatus, setDialogStatus] = useState("");
+    
     const buildBody = () => {
         let body = []
         let card = []
     
-        console.log(detectionsContent);
         body = detectionsContent.map((camera, index) => {
             let cameraJSON = camera.camera;
             let framesJSON = camera.frames.reverse();
@@ -47,23 +36,20 @@ const HistoryView = ({detectionsContent}) => {
                     infoHeight={'110px'}
                 />
             });
-            
-            dialogStatus.push(false);
     
             return (
                 <HistoryViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
-                        {cameraJSON.name} | 
-                        <Button className="buttonLocal" onClick={() => handlerDialog(true, index)}>
+                        {cameraJSON.name} |
+                        <Button className="buttonLocal" onClick={() => dialogStatus == "" ? setDialogStatus(cameraJSON.id) : null}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
                         <Divisor width={"78%"} margin={"20px"}/>
                     </div> 
-                    {dialogStatus[index] ? 
+                    {dialogStatus == cameraJSON.id ? 
                         <Dialog 
-                            closeDialog={() => {handlerDialog(false, index)}}
+                            closeDialog={() => setDialogStatus("")}
                             // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
-                            dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>
                 </HistoryViewStyle>
