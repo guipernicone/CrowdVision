@@ -8,6 +8,7 @@ const ProfileInformation = () => {
     useEffect(() =>{
         getUserInformation()
         .then((response) => {
+            console.log(response.data);
             if (response.status === 200) {
                 return setUserInformation(response.data);
             }
@@ -18,8 +19,8 @@ const ProfileInformation = () => {
     },[])
 
     const buildOrganizações = () => {
-        return userInformation.org.map(org => {
-            return <div>- {org.name} </div>
+        return userInformation.org.map((org, index) => {
+            return <div key={"org_" + index}>- {org.name} </div>
         })
     }
 
@@ -39,6 +40,21 @@ const ProfileInformation = () => {
                         <div className="label">Permissão</div>
                         <div className="info">{userInformation.permission}</div>
                     </div>
+                    {
+                        userInformation.parentUser != undefined ? 
+                        <div className="item-profile"> 
+                            <div className="label">Usuário Responsavel</div>
+                            <div className="item-profile"> 
+                                <div className="sub-label">Nome</div>
+                                <div className="sub-info">{userInformation.parentUser.name + ' ' + userInformation.parentUser.surname}</div>
+                            </div>
+                            <div className="item-profile"> 
+                                <div className="sub-label">E-mail</div>
+                                <div className="sub-info">{userInformation.parentUser.email}</div>
+                            </div>
+                        </div>
+                        : null
+                    }
                     <div className="item-profile"> 
                         <div className="label">Organizações</div>
                         <div className="info">{buildOrganizações()}</div>

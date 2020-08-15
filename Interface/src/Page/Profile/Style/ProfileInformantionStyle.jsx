@@ -8,7 +8,7 @@ export const ProfileInformationStyle = styled.div`
     padding: 20px;
 
     .item-profile{
-        margin-bottom: 20px
+        margin-bottom: 10px
     }
     
     .label{
@@ -16,8 +16,16 @@ export const ProfileInformationStyle = styled.div`
         font-weight : 700;
     }
 
+    .sub-label{
+        font-size: 20px;
+        padding-left: 20px;
+    }
     .info{
         padding-left: 20px;
         font-size: 18px;
+    }
+    .sub-info{
+        font-size: 18px;
+        padding-left: 40px;
     }
 `

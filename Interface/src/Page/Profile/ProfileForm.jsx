@@ -26,8 +26,6 @@ const ProfileForm = () => {
         .catch((error) => {
             console.log(error);
         })
-
-
     },[])
 
     const buildOrganizationOptions = () => {
