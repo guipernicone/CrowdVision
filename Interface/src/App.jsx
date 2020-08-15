@@ -22,7 +22,7 @@ class App extends Component {
                     <PrivateRoute path="/camera" exact component={Camera}/>
                     <PrivateRoute path="/history" component={History}/>
                     <PrivateRoute path="/profile" component={Profile}/>
-                    <PrivateRoute path="/statistics" component={Statistics}/>
+                    <PrivateRoute path="/statistics" component={Statistics} key={"route_statistic" + Math.random()}/>
                 </Switch>
             </Router>
         );
