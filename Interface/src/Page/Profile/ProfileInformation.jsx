@@ -1,5 +1,6 @@
 import React, {memo, useState, useEffect} from 'react';
 import { getUserInformation } from 'Service/UserService';
+import { ProfileInformationStyle } from 'Page/Profile/Style/ProfileInformantionStyle'
 
 const ProfileInformation = () => {
     const [userInformation, setUserInformation] = useState();
@@ -18,25 +19,34 @@ const ProfileInformation = () => {
 
     const buildOrganizações = () => {
         return userInformation.org.map(org => {
-            return <div> {org.name} </div>
+            return <div>- {org.name} </div>
         })
     }
 
     return (
-        <div>
-            {console.log(userInformation)}
-            {
-               userInformation !== undefined ? 
-                    <div>
-                        <div>{userInformation.name + ' ' + userInformation.surname}</div>
-                        <div>{userInformation.email}</div>
-                        <div>{userInformation.permission}</div>
-                        <div>Organizações:</div>
-                        <div>{buildOrganizações()}</div> 
-                    </div>  
-                    : null
+        <ProfileInformationStyle>
+            {userInformation !== undefined ?
+                <div>
+                    <div className="item-profile"> 
+                        <div className="label">Nome</div>
+                        <div className="info">{userInformation.name + ' ' + userInformation.surname}</div>
+                    </div>
+                    <div className="item-profile"> 
+                        <div className="label">E-mail</div>
+                        <div className="info">{userInformation.email}</div>
+                    </div>
+                    <div className="item-profile"> 
+                        <div className="label">Permissão</div>
+                        <div className="info">{userInformation.permission}</div>
+                    </div>
+                    <div className="item-profile"> 
+                        <div className="label">Organizações</div>
+                        <div className="info">{buildOrganizações()}</div>
+                    </div>
+                </div>
+                :null
             }
-        </div>
+        </ProfileInformationStyle>
     );
 };
 
