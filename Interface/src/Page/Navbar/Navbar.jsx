@@ -8,7 +8,7 @@ const Navbar = () => {
     const location = useLocation()
 
     const verifyStatisticsPage = () => {
-        if (location.pathname == '/statistics') {
+        if (location.pathname === '/statistics') {
             window.location.reload()
         }
     }

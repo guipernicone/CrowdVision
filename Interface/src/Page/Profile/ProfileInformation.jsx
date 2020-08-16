@@ -41,7 +41,7 @@ const ProfileInformation = () => {
                         <div className="info">{userInformation.permission}</div>
                     </div>
                     {
-                        userInformation.parentUser != undefined ? 
+                        userInformation.parentUser !== undefined ? 
                         <div className="item-profile"> 
                             <div className="label">Usuário Responsavel</div>
                             <div className="item-profile"> 
