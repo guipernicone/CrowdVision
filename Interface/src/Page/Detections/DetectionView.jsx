@@ -48,7 +48,7 @@ class DetectionView extends Component {
     render() {
         let body = []
         let card = []
-        console.log(this.props.content);
+ 
         body = this.props.content.map((camera, index) => {
             let cameraJSON = camera.camera;
             let framesJSON = camera.frames.reverse();

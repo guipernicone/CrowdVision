@@ -123,7 +123,7 @@ def run_detection(content):
                     [boxes, scores, classes, num_detections],
                     feed_dict={image_tensor: image_np_expanded})
         
-                if (scores[0][0] > 0.75):
+                if (scores[0][0] > 0.80):
                     print(f"Arma Detectada - {scores[0][0]}")
 
                     detectionTime = int(round(time.time() * 1000))
@@ -143,7 +143,7 @@ def run_detection(content):
                             np.squeeze(scores),
                             category_index,
                             use_normalized_coordinates=True,
-                            min_score_thresh=.75,
+                            min_score_thresh=.80,
                             line_thickness=8)
                         
                         frameConverted = convert_frame_to_base_64_string(image_np)
