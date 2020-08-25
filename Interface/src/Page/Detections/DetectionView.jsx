@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {useState} from 'react';
 import DetectionCard from 'Page/Detections/DetectionCard';
 import { DetectionViewStyle } from 'Page/Detections/Style/DetectionViewStyle';
 import Divisor from 'Components/Divisor/Divisor'
@@ -13,19 +13,13 @@ import {sendStatus} from 'Service/DetectionService'
 /**
  * Build the body of the detection page
  * 
- * @param {Array} content  an array of object with detection crd properties
+ * @param {Array} content  an array of object with detection card properties
  */
+const DetectionView = ({content}) => {
+    
+    const [dialogStatus, setDialogStatus] = useState("");
 
-class DetectionView extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            dialogStatus: []
-        }
-    }
-
-    sendDetectionStatus = (id, historyId, status) => {
+    const sendDetectionStatus = (id, historyId, status) => {
         sendStatus(id, historyId, status)
         .then((response) => {
             console.log(response.status)
@@ -35,21 +29,11 @@ class DetectionView extends Component {
         })
     }
 
-    handlerDialog = (status, index) => {
-        let newDialogStatus = this.state.dialogStatus.map((dialog, indexDialog) => {
-            if (indexDialog === index) {
-                return status;
-            }
-            return false
-        })
-        this.setState({dialogStatus : newDialogStatus});
-    }
-
-    render() {
+    const buildBody = () => {
         let body = []
         let card = []
- 
-        body = this.props.content.map((camera, index) => {
+
+        body = content.map((camera, index) => {
             let cameraJSON = camera.camera;
             let framesJSON = camera.frames.reverse();
             
@@ -61,31 +45,28 @@ class DetectionView extends Component {
                     field2={`Data de Captura: ${frame.captureTime}`}
                     field3={`Data de detecção: ${frame.detectionTime}`}
                     buttonText1={<DoneIcon/>}
-                    onClick1={() => this.sendDetectionStatus(frame.id, frame.historyId, true)}
+                    onClick1={() => sendDetectionStatus(frame.id, frame.historyId, true)}
                     buttonText2={<CloseIcon/>}
-                    onClick2={() => this.sendDetectionStatus(frame.id, frame.historyId, false)}
+                    onClick2={() => sendDetectionStatus(frame.id, frame.historyId, false)}
                     buttonColor1={"#00ff00"}
                     buttonColor2={"#ff0000"}
                     infoHeight={'125px'}
                 />
             });
-            
-            this.state.dialogStatus.push(false);
 
             return (
                 <DetectionViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
                         {cameraJSON.name} | 
-                        <Button className="buttonLocal" onClick={() => this.handlerDialog(true, index)}>
+                        <Button className="buttonLocal" onClick={() => dialogStatus == "" ? setDialogStatus(cameraJSON.id) : null}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
                         <Divisor width={"78%"} margin={"20px"}/>
                     </div> 
-                    {this.state.dialogStatus[index] ? 
+                    {dialogStatus == cameraJSON.id ?
                         <Dialog 
-                            closeDialog={() => {this.handlerDialog(false, index)}}
+                            closeDialog={() => setDialogStatus("")}
                             // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
-                            dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>
                 </DetectionViewStyle>
@@ -94,6 +75,8 @@ class DetectionView extends Component {
     
         return body;
     }
+
+    return buildBody()
 };
 
 export default DetectionView;

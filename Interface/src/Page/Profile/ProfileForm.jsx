@@ -26,30 +26,46 @@ const ProfileForm = () => {
         .catch((error) => {
             console.log(error);
         })
-
-
     },[])
 
+        // const buildOrganizationOptions = () => {
+    //     let options;
+
+    //     options = organizations.map((org, index) => {
+    //         return <option key={"option_permission_" + index} value={org.id}>{org.name}</option>
+    //     });
+
+    //     return options;
+    // }
+
     const buildOrganizationOptions = () => {
-        let options;
-
-        options = organizations.map((org, index) => {
-            return <option key={"option_permission_" + index} value={org.id}>{org.name}</option>
-        });
-
-        return options;
+        return organizations.map((org, index) =>{
+            return <Form.Check type={"checkbox"} key={"option_permission_" + index} id={"checkbox_" + index} label={org.name} value={org.id}/>
+        }) 
     }
+    
+    const getCheckboxFormResponse = (elements) => {
+        let response = [];
+        organizations.map((org, index) =>{
+            if ( elements["checkbox_" + index].checked){
+                response.push(elements["checkbox_" + index].value)
+            }
+        });
+        return response;
+    }
+
     const handleSubmit = (submit) => {
         submit.preventDefault();
         submit.stopPropagation();
         let elements = submit.target.elements;
+
         let userJson = {
             name: elements.formBasicName.value,
             "surname": elements.formBasicSurname.value,
             "email": elements.formBasicEmail.value,
             "password": elements.formBasicPassword.value,
             "permission": elements.formBasicPermission.value,
-            "organizationIds": [elements.formBasicOrganization.value],
+            "organizationIds": getCheckboxFormResponse(elements),
             "requestUserId": (new CookieService()).get('login').user.id
         }
 
@@ -112,11 +128,9 @@ const ProfileForm = () => {
                     </Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId="formBasicOrganization">
+                <Form.Group id="formBasicOrganization">
                 <Form.Label>Organização</Form.Label>
-                    <Form.Control as="select">
-                        {buildOrganizationOptions()}
-                    </Form.Control>
+                    {buildOrganizationOptions()}
                 </Form.Group>
 
                 <Button type="submit" className="submit">Cadastrar</Button>

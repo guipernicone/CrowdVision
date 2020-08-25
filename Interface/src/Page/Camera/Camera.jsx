@@ -92,7 +92,6 @@ const Camera = ({...props}) => {
                         <Dialog 
                             closeDialog={() => {setDialogWindow("")}}
                             // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: camera.latitude, lng: camera.longitude}}/>}
-                            dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> 
                         : null
                     }

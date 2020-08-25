@@ -31,8 +31,6 @@ const HistoryView = ({detectionsContent}) => {
     }
 
     const handlerCameraDropDown = (cameraId) => {
-        console.log("clico")
-        console.log(cameraDropDown)
         if (cameraDropDown != '') {
             setCameraDropDown('');
         }
@@ -64,14 +62,12 @@ const HistoryView = ({detectionsContent}) => {
                     </div>
                 )
             });
-            
-            dialogStatus.push(false);
     
             return (
                 <HistoryViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
-                        {cameraJSON.name} | 
-                        <Button className="buttonLocal" onClick={() => handlerDialog(true, index)}>
+                        {cameraJSON.name} |
+                        <Button className="buttonLocal" onClick={() => dialogStatus == "" ? setDialogStatus(cameraJSON.id) : null}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
                         <div className="dropdown-camera" onClick={() => handlerCameraDropDown(cameraJSON.id)}>
@@ -79,11 +75,10 @@ const HistoryView = ({detectionsContent}) => {
                             {cameraDropDown == cameraJSON.id ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
                         </div>
                     </div> 
-                    {dialogStatus[index] ? 
+                    {dialogStatus == cameraJSON.id ? 
                         <Dialog 
-                            closeDialog={() => {handlerDialog(false, index)}}
+                            closeDialog={() => setDialogStatus("")}
                             // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
-                            dialogStyle={{top:"0%", transform:"translate(-50%, 0%)"}}
                         /> : null}
                     <div className="viewCard">{card}</div>
                 </HistoryViewStyle>
