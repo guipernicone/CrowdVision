@@ -28,4 +28,9 @@ export const HistoryViewStyle = styled.div `
         border: none;
         margin-left: 10px;
     }
+
+    .dropdown-camera{
+        display:flex;
+        width: 80%
+    }
 `

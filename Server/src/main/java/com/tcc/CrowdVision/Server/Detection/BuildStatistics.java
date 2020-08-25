@@ -140,13 +140,17 @@ public class BuildStatistics {
 	private Float getAverageAccuracy(ArrayList<DetectionHistory>  detections)
 	{
 		Float averageAccuracy = 0f;
+		Float ret = 0f;
 		
 		for (DetectionHistory detection : detections)
 		{
 			averageAccuracy += detection.getDetectionScore();
 		}
 		
-		return (averageAccuracy / detections.size());
+		if (detections.size() > 0) {
+			ret = (averageAccuracy / detections.size());
+		}
+		return ret;
 	}
 	
 	/**
@@ -207,10 +211,16 @@ public class BuildStatistics {
 		
 		for (DetectionHistory detection: detections)
 		{			
+			System.out.println("detection " + (detection.getDetectionTime().getTime() - detection.getCaptureTime().getTime()));
 			totalTime += (detection.getDetectionTime().getTime() - detection.getCaptureTime().getTime());
+			System.out.println("totalTime " + totalTime);
 		}
-		
-		averageTime = totalTime / detections.size();
+		System.out.println(totalTime);
+		System.out.println(detections.size());
+		if (detections.size() > 0)
+		{
+			averageTime = totalTime / detections.size();
+		}
 		
 		return DateUtils.convertMilisecondsToFormatString(averageTime);
 	}
