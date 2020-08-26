@@ -26,7 +26,6 @@ const StatisticsGeneralInformation = ({content, title, pieChart=true}) => {
 
     const getCamerasCoordinates = () => {
         let coordinates = content["numberOfDetectionByCamera"].map(camera => {
-            console.log(camera)
             return {
                 lat: parseFloat(camera.latitude),
                 lng: parseFloat(camera.longitude),

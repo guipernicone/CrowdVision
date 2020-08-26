@@ -12,13 +12,11 @@ export const StatisticsMainFormStyle = styled.div `
     .data-field{
         width: 100%;
         height: 100px;
-        /* background-color:blue; */
     }
 
     .buttom-field{
         width: 100%;
         height: 100px;
-        /* float:right; */
     }
 
     .buttonSearch{
