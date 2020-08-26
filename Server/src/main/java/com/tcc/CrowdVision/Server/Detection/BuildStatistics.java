@@ -80,7 +80,7 @@ public class BuildStatistics {
 		String averageTimeOfPositiveDetection = this.getAverageDetectionTime(detections);
 		JSONArray numberOfPositiveDetectionByCamera = this.getNumberOfDetectionByCamera(detections);
 		JSONArray detectionsByDate = this.getNumberOfDetectionByDate(detections);
-		
+
 		json.put("numberOfDetectionByCamera", numberOfPositiveDetectionByCamera);
 		json.put("averageTimeOfDetection", averageTimeOfPositiveDetection);
 		json.put("averageAccuracy", averagePositiveAccuracy);
@@ -211,12 +211,9 @@ public class BuildStatistics {
 		
 		for (DetectionHistory detection: detections)
 		{			
-			System.out.println("detection " + (detection.getDetectionTime().getTime() - detection.getCaptureTime().getTime()));
 			totalTime += (detection.getDetectionTime().getTime() - detection.getCaptureTime().getTime());
-			System.out.println("totalTime " + totalTime);
 		}
-		System.out.println(totalTime);
-		System.out.println(detections.size());
+
 		if (detections.size() > 0)
 		{
 			averageTime = totalTime / detections.size();
