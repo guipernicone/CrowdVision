@@ -1,0 +1,28 @@
+.cv-background{
+    background-color: #121212;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    color: white;
+    overflow: auto;
+}
+
+.cv-body{
+    background-color: #1e1e1e;
+    color: white;
+    min-height: calc(100% - 85px) !important;
+    margin: 0 auto;
+    margin-top: 85px;
+    width: 1750px;
+    position:relative;
+}
+
+.cv-background::-webkit-scrollbar {
+    width: 12px;               /* width of the entire scrollbar */
+}
+
+.cv-background::-webkit-scrollbar-thumb {
+    background-color: #bb86fc;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+}
+

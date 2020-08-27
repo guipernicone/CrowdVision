@@ -1,0 +1,51 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function getFrame() {
+            cameraId = document.getElementById('cameraInput').value
+            console.log(cameraId)
+            // let url = 'http://localhost:8080';
+            let url = 'http://192.168.15.21:8080';
+            axios.get(url + '/detection/frames?cameraId=' + cameraId)
+            .then(function (response) {
+                console.log(response);
+                data = response.data;
+                camera = document.getElementById('camera');
+                frames = document.getElementById('frames');
+                camera.innerHTML = '<h1>Camera: '+ data.camera.id +' | Long: '+ data.camera.longitude +' Lat: '+ data.camera.latitude +'</h1></br>'
+                console.log(data.frames);
+                frames.innerHTML = null;
+                detectionArray = data.frames.reverse();
+                for(let frame in detectionArray) {
+                    console.log(detectionArray[frame].frame)
+                        frames.innerHTML += 
+                        '<img src="data:image/jpeg;base64, '+ 
+                        detectionArray[frame].frame +
+                        '" alt="frames"/><p>Detection Score: '+ 
+                        detectionArray[frame].detectionScore +
+                        '</p><p>Time of capture: ' +
+                        detectionArray[frame].captureTime +
+                        '</p><p>Time of detection: ' +
+                        detectionArray[frame].detectionTime +
+                        '</p></br>'
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    </script>
+</head>
+<body>
+   
+    <label>Insira o id da camera</label>
+    <input type="text" id="cameraInput" value="">
+    <button onClick="getFrame()"> buscar</button>
+    <div id="camera"></div>
+    <div id="frames"></div>
+</body>
+</html>
