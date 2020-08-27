@@ -161,7 +161,7 @@ if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
         # Read a frame from the defined stream
         ret, image_np = cap.read()
 
-        image_np = convert_color_img_to_black_and_white(image_np)
+        #image_np = convert_color_img_to_black_and_white(image_np)
         
         if (failed_send_attemps > 10):
             failed_send_attemps = 0
