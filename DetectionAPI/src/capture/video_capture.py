@@ -141,6 +141,9 @@ if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
 
     if (len(sys.argv) == 5 and sys.argv[3] == "-video"):
         cap = cv2.VideoCapture(f'videos/{sys.argv[4]}.mp4')
+    else:
+        if (len(sys.argv) == 5 and sys.argv[3] == "-camera_src"):
+            cap = cv2.VideoCapture(int(sys.argv[4]))
     
     device_key = register_device(camera_name)
     frame_list = []
