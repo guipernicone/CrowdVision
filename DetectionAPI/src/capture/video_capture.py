@@ -135,12 +135,12 @@ def send_to_detection(frame, device_key):
 #                         CAPTURE
 #--------------------------------------------------------------------
 
-if (len(sys.argv) == 3 and sys.argv[1] == "-camera_name"):
+if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
     print(sys.argv)
     camera_name = sys.argv[2]
 
     if (len(sys.argv) == 5 and sys.argv[3] == "-video"):
-        cap = cv2.VideoCapture(f'videos/{sys.argv[4]}.mp4');
+        cap = cv2.VideoCapture(f'videos/{sys.argv[4]}.mp4')
     
     device_key = register_device(camera_name)
     frame_list = []
@@ -152,7 +152,7 @@ if (len(sys.argv) == 3 and sys.argv[1] == "-camera_name"):
         # Read a frame from the defined stream
         ret, image_np = cap.read()
 
-        image_np = convert_color_img_to_black_and_white(image_np)
+        # image_np = convert_color_img_to_black_and_white(image_np)
         
         if (failed_send_attemps > 10):
             failed_send_attemps = 0
