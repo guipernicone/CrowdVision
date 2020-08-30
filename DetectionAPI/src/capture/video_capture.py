@@ -27,7 +27,7 @@ SERVER_URL = 'http://192.168.15.21:8080'
 
 DETECTION_API_URL = 'http://localhost:5000'
 
-MAX_FRAMES__PER_REQUEST = 299
+MAX_FRAMES__PER_REQUEST = 499
 
 RECONNECT_DELAY = 10
 
@@ -39,6 +39,21 @@ RECONNECT_DELAY = 10
 def convert_frame_to_base_64_string(frame):
     ret, buffer = cv2.imencode('.jpg', cv2.resize(frame, (300, 300)))
     return base64.b64encode(buffer)
+
+def convert_color_img_to_black_and_white(image):
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # # threshold the image
+    # img_binary = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)[1]
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    
+    lower_black = np.array([0, 0, 0], np.uint8)
+    upper_black = np.array([179, 100, 200], np.uint8)
+    
+    mask = cv2.inRange(hsv, lower_black, upper_black)
+    res = cv2.bitwise_and(image,image, mask= mask)
+    return res
+
 
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
@@ -126,22 +141,31 @@ def send_to_detection(frame, device_key):
 #                         CAPTURE
 #--------------------------------------------------------------------
 
-if (len(sys.argv) == 3 and sys.argv[1] == "-camera_name"):
-    print("entrei")
+if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
     print(sys.argv)
     camera_name = sys.argv[2]
+
+    if (len(sys.argv) == 5 and sys.argv[3] == "-video"):
+        cap = cv2.VideoCapture(f'videos/{sys.argv[4]}.mp4')
+    else:
+        if (len(sys.argv) == 5 and sys.argv[3] == "-camera_src"):
+            cap = cv2.VideoCapture(int(sys.argv[4]))
+    
     device_key = register_device(camera_name)
     frame_list = []
     frame_count = 0
     semaphore = threading.Semaphore(9)
     failed_send_attemps = 0
+
     while True:
         # Read a frame from the defined stream
         ret, image_np = cap.read()
 
+        #image_np = convert_color_img_to_black_and_white(image_np)
+        
         if (failed_send_attemps > 10):
             failed_send_attemps = 0
-            print('Connection to ' + DETECTION_API_URL + ' qfailed')
+            print('Connection to ' + DETECTION_API_URL + ' failed')
             print('Trying to reconnect again in ' + str(RECONNECT_DELAY) + ' seconds')
             time.sleep(RECONNECT_DELAY)
         
