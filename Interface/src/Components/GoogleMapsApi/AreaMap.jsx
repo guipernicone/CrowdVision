@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Map, GoogleApiWrapper, Circle, Marker } from 'google-maps-react'
+import {GoogleMaps_KEY} from 'Config/Config'
 
 /**
  * A map with a explicit radius zone
@@ -53,6 +54,6 @@ const AreaMap = ({zoom, coordinates, centerCoordinate, radius, ...props}) => {
 }
 
 export default memo(GoogleApiWrapper({
-    apiKey: 'AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE'
+    apiKey: GoogleMaps_KEY
 })(AreaMap));
 
