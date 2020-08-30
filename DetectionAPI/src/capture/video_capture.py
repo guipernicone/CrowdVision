@@ -40,21 +40,6 @@ def convert_frame_to_base_64_string(frame):
     ret, buffer = cv2.imencode('.jpg', cv2.resize(frame, (300, 300)))
     return base64.b64encode(buffer)
 
-def convert_color_img_to_black_and_white(image):
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # # threshold the image
-    # img_binary = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)[1]
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
-    lower_black = np.array([0, 0, 0], np.uint8)
-    upper_black = np.array([179, 100, 200], np.uint8)
-    
-    mask = cv2.inRange(hsv, lower_black, upper_black)
-    res = cv2.bitwise_and(image,image, mask= mask)
-    return res
-
-
 #--------------------------------------------------------------------
 #                         HTTP REQUEST
 #--------------------------------------------------------------------
@@ -160,8 +145,6 @@ if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
     while True:
         # Read a frame from the defined stream
         ret, image_np = cap.read()
-
-        #image_np = convert_color_img_to_black_and_white(image_np)
         
         if (failed_send_attemps > 10):
             failed_send_attemps = 0
