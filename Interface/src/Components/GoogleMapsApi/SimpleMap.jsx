@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react'
+import {GoogleMaps_KEY} from 'Config/Config'
 
 class SimpleMap extends Component {
     render() {
@@ -17,6 +18,6 @@ class SimpleMap extends Component {
 }
 
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE'
+    apiKey: GoogleMaps_KEY
 })(SimpleMap);
 

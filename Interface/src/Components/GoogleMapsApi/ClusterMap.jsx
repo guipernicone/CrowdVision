@@ -1,5 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react'
+import {GoogleMaps_KEY} from 'Config/Config'
 
 const ClusterMap = ({zoom, coordinates, ...props}) => {
     return (
@@ -15,6 +16,6 @@ const ClusterMap = ({zoom, coordinates, ...props}) => {
 }
 
 export default memo(GoogleApiWrapper({
-    apiKey: 'AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE'
+    apiKey: GoogleMaps_KEY
 })(ClusterMap));
 
