@@ -1,4 +1,4 @@
 /Interface/.env
 
-/DetectionAPI/src/capture/__pycache__/
-/DetectionAPI/src/detection/__pycache__/
+/DetectionAPI/src/capture/__pycache__/**
+/DetectionAPI/src/detection/__pycache__/**
