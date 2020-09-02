@@ -11,7 +11,7 @@ import com.tcc.CrowdVision.Server.Detection.DetectionHistory;
 
 public interface DetectionHistoryRepository extends MongoRepository<DetectionHistory, String> {
 	
-	@Query("{'cameraId':?0}")
+	@Query(sort="{'detectionTime':-1}")
 	ArrayList<DetectionHistory> findDetectionByCameraId(String cameraId);
 	
 	@Query("{'cameraId': { $in : ?0}}")

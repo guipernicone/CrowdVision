@@ -9,7 +9,6 @@ import com.tcc.CrowdVision.Server.Login.Login;
 
 public interface LoginRepository extends MongoRepository<Login, String> {
 
-	@Query("{'userId':?0}")
 	Optional<Login> findLoginByUserId(String userId);
 	
 }

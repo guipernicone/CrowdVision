@@ -35,7 +35,7 @@ const DetectionView = ({content}) => {
 
         body = content.map((camera, index) => {
             let cameraJSON = camera.camera;
-            let framesJSON = camera.frames.reverse();
+            let framesJSON = camera.frames;
             
             card = framesJSON.map((frame, index) =>{
                 return <DetectionCard
