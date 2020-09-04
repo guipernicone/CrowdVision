@@ -396,4 +396,17 @@ public class UserController {
 		}
 		return ResponseEntity.badRequest().body("Invalid USER id");
 	}
+	
+	@PostMapping("/delete")
+	public ResponseEntity<String> deleteUser(@RequestBody Map<String,String> userId)
+	{
+		String id = userId.get("userId");
+		if (!id.isEmpty())
+		{
+			userRepository.deleteById(id);
+			return ResponseEntity.ok("User " + id + " deleted");
+		}
+		return ResponseEntity.badRequest().body("Invalid USER id");
+	}
+	
 }

@@ -8,6 +8,7 @@ import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
 import ProfileForm from 'Page/Profile/ProfileForm';
 import ProfileSideMenu from 'Page/Profile/ProfileSideMenu';
 import ProfileInformation from 'Page/Profile/ProfileInformation';
+import ProfileUserList from 'Page/Profile/ProfileUserList'
 
 /**
  * The Profile detection page
@@ -18,8 +19,10 @@ const Profile = ({...props}) => {
 
     const optionsList = [
         "Informações do Usuário",
-        "Cadastro de Usuário"
+        "Cadastro de Usuário",
+        "Lista de Usuários"
     ]
+
     const User = (new CookieService()).get('login').user;
 
     useEffect(() => {
@@ -44,6 +47,13 @@ const Profile = ({...props}) => {
             case 'Cadastro de Usuário':
                 if (User.permission !== 'USER') {
                     return <ProfileForm/>
+                }
+                else{
+                    return null
+                }
+            case 'Lista de Usuários':
+                if (User.permission === 'ADMIN') {
+                    return <ProfileUserList/>
                 }
                 else{
                     return null
