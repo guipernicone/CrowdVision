@@ -1,6 +1,7 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -319,5 +320,80 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to get camera information");
 		}
 
+	}
+	
+	@GetMapping("/user-list")
+	public ResponseEntity<String> getUsersListFromParent(@RequestParam(defaultValue= "none") String userId)
+	{
+		
+		if (!userId.equals("none"))
+		{
+			Optional<User> userOptional = userRepository.findById(userId);
+			if (userOptional.isPresent()) 
+			{
+				User user = userOptional.get();
+				UserManager userManager = UserManager.getInstance();
+				if (!userManager.isUser(user))
+				{
+					List<User> userParentList;
+					if (userManager.isAdmin(user))
+					{
+						userParentList = userRepository.findUsersByParentId(user.getId());
+					}
+					else
+					{
+						userParentList = userRepository.findUsersByParentId(user.getParentUserId());
+					}
+					
+					if (!userParentList.isEmpty())
+					{
+						JSONArray userListJson = new JSONArray();
+						for (User userFromList : userParentList)
+						{
+							
+							JSONObject userObject = new JSONObject();
+							Boolean containsOrganization = false;
+							
+							for (String organizationid : userFromList.getOrganizationIds()) 
+							{
+								if (user.getOrganizationIds().contains(organizationid)) {
+									containsOrganization = true;
+									break;
+								}
+							}
+							
+							if (containsOrganization) {
+								if (userManager.isManager(user))
+								{
+									if (userManager.isUser(userFromList))
+									{
+										userObject.put("id", userFromList.getId());
+										userObject.put("name", userFromList.getName() + " " + userFromList.getSurname());
+									}
+								}
+								else if (userManager.isAdmin(user)) 
+								{
+									if (userManager.isUser(userFromList) || userManager.isManager(userFromList)) 
+									{
+										userObject.put("id", userFromList.getId());
+										userObject.put("name", userFromList.getName() + " " + userFromList.getSurname());
+									}
+								}
+							}
+							if (!userObject.isEmpty())
+							{
+								userListJson.put(userObject);
+							}
+						}
+						
+						return ResponseEntity.ok(userListJson.toString());
+					}
+					return ResponseEntity.ok("[]");
+				}
+				
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid USER permission");
+			}
+		}
+		return ResponseEntity.badRequest().body("Invalid USER id");
 	}
 }
