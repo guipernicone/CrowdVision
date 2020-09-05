@@ -398,15 +398,43 @@ public class UserController {
 	}
 	
 	@PostMapping("/delete")
-	public ResponseEntity<String> deleteUser(@RequestBody Map<String,String> userId)
+	public ResponseEntity<String> deleteUser(@RequestBody Map<String,String> request)
 	{
-		String id = userId.get("userId");
-		if (!id.isEmpty())
+		String userId = request.get("userId");
+		String deleteId = request.get("deleteId");
+		
+		if (!userId.isEmpty() && !deleteId.isEmpty())
 		{
-			userRepository.deleteById(id);
-			return ResponseEntity.ok("User " + id + " deleted");
+			Optional<User> optionalUser = userRepository.findById(userId);
+			Optional<User> optionalDeleteUser = userRepository.findById(deleteId);
+			UserManager userManager = UserManager.getInstance();
+			
+			if (optionalUser.isPresent() && optionalDeleteUser.isPresent())
+			{
+				User user = optionalUser.get();
+				User deleteUser = optionalDeleteUser.get();
+				
+				if (userManager.isAdmin(user))
+				{
+					if(userManager.isManagerOrUser(deleteUser))
+					{
+						userRepository.deleteById(deleteId);
+						return ResponseEntity.ok("User " + deleteId + " deleted");
+					}
+				}
+				else if(userManager.isManager(user))
+				{
+					if(userManager.isUser(deleteUser))
+					{
+						userRepository.deleteById(deleteId);
+						return ResponseEntity.ok("User " + deleteId + " deleted");
+					}
+				}
+			}
+			
+			return ResponseEntity.ok("Invalid User Permission");
 		}
-		return ResponseEntity.badRequest().body("Invalid USER id");
+		return ResponseEntity.badRequest().body("Invalid JSON");
 	}
 	
 }

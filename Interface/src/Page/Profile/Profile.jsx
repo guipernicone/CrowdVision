@@ -52,7 +52,7 @@ const Profile = ({...props}) => {
                     return null
                 }
             case 'Lista de Usuários':
-                if (User.permission === 'ADMIN') {
+                if (User.permission !== 'USER') {
                     return <ProfileUserList/>
                 }
                 else{

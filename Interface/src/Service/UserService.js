@@ -105,9 +105,11 @@ export const getUserListFromParent = () => {
  * @param {String} id The user id
  */
 export const deleteUser = (id) => {
-
+    
+    let cm = new CookieService();
     let params = {
-        userId:  id,
+        userId:  cm.get('login').user.id,
+        deleteId:  id,
     }
     let route = 'user/delete'
     
