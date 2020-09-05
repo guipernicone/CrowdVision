@@ -16,4 +16,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 	
 	@Query("{'email':?0, 'password':?1}")
 	Optional<User> findUserByEmailAndPassword(String email, String password);
+	
+	@Query("{'parentUserId':?0}")
+	ArrayList<User> findUsersByParentId(String parentUserId);
+	
 }
