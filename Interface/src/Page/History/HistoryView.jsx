@@ -1,6 +1,8 @@
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import DetectionCard from 'Page/Detections/DetectionCard';
 import { HistoryViewStyle } from 'Page/History/Style/HistoryViewStyle';
+import { getUserCameras } from 'Service/UserService';
+import { getHistoryDetections } from 'Service/DetectionService';
 import Divisor from 'Components/Divisor/Divisor'
 import Dialog from 'Components/Dialog/Dialog'
 import { Button } from 'react-bootstrap';
@@ -8,6 +10,8 @@ import SimpleMap from 'Components/GoogleMapsApi/SimpleMap'
 import ExploreIcon from '@material-ui/icons/Explore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CookieService from 'Service/CookieService'
+import ClipLoader from "react-spinners/ClipLoader";
 
 /**
  * Build the body of the history page
@@ -15,76 +19,104 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
  * @param {Array} detectionsContent  an array of object with history detections
  */
 
-const HistoryView = ({detectionsContent}) => {  
+const HistoryView = () => {  
 
     const [dialogStatus, setDialogStatus] = useState([]);
+    const [cameraList, setCameraList] = useState([]);
+    const [detections, setDetections] = useState([]);
     const [cameraDropDown, setCameraDropDown] = useState('');
 
-    const handlerDialog = (status, index) => {
-        let newDialogStatus = dialogStatus.map((dialog, indexDialog) => {
-            if (indexDialog === index) {
-                return status;
+    useEffect(() => {
+        getUserCameras()
+        .then(response => {
+            console.log(response)
+            if (response.status === 200)
+            {
+                setCameraList(response.data)
             }
-            return false
         })
-        setDialogStatus(newDialogStatus);
-    }
+        .catch((error) => {
+            console.log(error);
+        })
+    }, [])
 
     const handlerCameraDropDown = (cameraId) => {
-        if (cameraDropDown != '') {
-            setCameraDropDown('');
+        setDetections([]); 
+        if (cameraId == cameraDropDown) {
+            setCameraDropDown(""); 
         }
         else{
+            let cs = new CookieService();
+            let login = cs.get('login');
+            getHistoryDetections(login.user.id, cameraId)
+            .then(response => {
+                console.log(response)
+                if (response.status === 200)
+                {
+                    setDetections(response.data)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
             setCameraDropDown(cameraId); 
         }
     }
 
-    const buildBody = () => {
-        let body = []
-        let card = []
-    
-        body = detectionsContent.map((camera, index) => {
-            let cameraJSON = camera.camera;
-            let framesJSON = camera.frames;
-            
-            card = framesJSON.map((frame, index) =>{
+    const buildCards = () =>{
+        if (detections.length > 0)
+        {
+            return detections[0].frames.map((frame, index) =>{
                 return (
-                    <div style={{display : cameraDropDown == cameraJSON.id ? '' : 'none'}}>
-                        <DetectionCard
-                            key={"detection_card_" + index}
-                            img={`data:image/jpeg;base64, ${frame.frame}`}
-                            field1={`Confiabilidade: ${frame.detectionScore}`}
-                            field2={`Data de Captura: ${frame.captureTime}`}
-                            field3={`Data de detecção: ${frame.detectionTime}`}
-                            field4={`Status da detecção: ${frame.detectionStatus ? 'Positiva' : 'Falsa'}`}
-                            infoHeight={'110px'}
-                        />
-                    </div>
+                    <DetectionCard
+                        key={"detection_card_" + index}
+                        img={`data:image/jpeg;base64, ${frame.frame}`}
+                        field1={`Confiabilidade: ${frame.detectionScore}`}
+                        field2={`Data de Captura: ${frame.captureTime}`}
+                        field3={`Data de detecção: ${frame.detectionTime}`}
+                        field4={`Status da detecção: ${frame.detectionStatus ? 'Positiva' : 'Falsa'}`}
+                        infoHeight={'110px'}
+                    />
                 )
             });
-    
+        }
+    }
+    const buildBody = () => {
+        let body = []
+
+        body = cameraList.map((camera, index) => {
+
             return (
                 <HistoryViewStyle key={"detection_view_element_" + index}>
                     <div className="viewTitle">
-                        {cameraJSON.name} |
-                        <Button className="buttonLocal" onClick={() => dialogStatus == "" ? setDialogStatus(cameraJSON.id) : null}>
+                        {camera.name} |
+                        <Button className="buttonLocal" onClick={() => dialogStatus == "" ? setDialogStatus(camera.id) : null}>
                             Localização <ExploreIcon className="exploreIcon"/>
                         </Button>
-                        <div className="dropdown-camera" onClick={() => handlerCameraDropDown(cameraJSON.id)}>
+                        <div className="dropdown-camera" onClick={() => handlerCameraDropDown(camera.id)}>
                             <Divisor width={"100%"} margin={"20px"}/>
-                            {cameraDropDown == cameraJSON.id ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+                            {cameraDropDown == camera.id ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
                         </div>
                     </div> 
-                    {dialogStatus == cameraJSON.id ? 
+                    {dialogStatus == camera.id ? 
                         <Dialog 
                             closeDialog={() => setDialogStatus("")}
-                            // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: cameraJSON.latitude, lng: cameraJSON.longitude}}/>}
+                            // dialogContent= {<SimpleMap zoom={15} coordinates={{ lat: camera.latitude, lng: camera.longitude}}/>}
                         /> : null}
-                    <div className="viewCard">{card}</div>
+                    <div className="viewCard" style={{display : cameraDropDown == camera.id ? '' : 'none'}}>
+                        {buildCards()}
+                        <div className="loading-card">
+                            <ClipLoader
+                                size={150}
+                                color={"#123abc"}
+                                loading={(detections.length == 0 ? true : false)}
+                            />
+                        </div>
+                    </div>
+                    
                 </HistoryViewStyle>
             )
-        });
-    
+        })
         return body;
     }
 

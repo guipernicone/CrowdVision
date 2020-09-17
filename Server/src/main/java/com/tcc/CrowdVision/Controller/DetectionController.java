@@ -121,19 +121,26 @@ public class DetectionController {
 		
 		DetectionManager detectionManager = DetectionManager.getInstance();
 		if (!userId.contains("none")) {
-			return ResponseEntity.ok(detectionManager.getFrames(userId, false));
+			return ResponseEntity.ok(detectionManager.getFrames(userId, false, null));
 		}
 		
 		return ResponseEntity.badRequest().body("user id invalido");
 	}
 	
 	@GetMapping("/history")
-	public ResponseEntity<String> getHistory(@RequestParam(defaultValue = "none") String userId) {
+	public ResponseEntity<String> getHistory(@RequestParam(defaultValue = "none") String userId, @RequestParam(defaultValue = "none") String cameraId) {
 		
 		DetectionManager detectionManager = DetectionManager.getInstance();
 		try {
 			if (!userId.contains("none")) {
-				return ResponseEntity.ok(detectionManager.getFrames(userId, true));
+				
+				if (!cameraId.contains("none"))
+				{
+					List<String> temp = new ArrayList<String>();
+					temp.add(cameraId);
+					return ResponseEntity.ok(detectionManager.getFrames(userId, true, temp));
+				}
+				return ResponseEntity.ok(detectionManager.getFrames(userId, true, null));
 			}
 			return ResponseEntity.badRequest().body("user id invalido");
 		}
