@@ -23,7 +23,7 @@ public class SocketDetectionHandler extends TextWebSocketHandler{
 		sessions.add(session);
 		DetectionManager detectionManager = DetectionManager.getInstance();
 		try {
-			session.sendMessage(new TextMessage(detectionManager.getFrames((String) session.getAttributes().get("userId"), false)));
+			session.sendMessage(new TextMessage(detectionManager.getFrames((String) session.getAttributes().get("userId"), false, null)));
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -43,7 +43,7 @@ public class SocketDetectionHandler extends TextWebSocketHandler{
 		for (WebSocketSession session : sessions) 
 		{
 			try {
-				session.sendMessage(new TextMessage(detectionManager.getFrames((String) session.getAttributes().get("userId"), false)));
+				session.sendMessage(new TextMessage(detectionManager.getFrames((String) session.getAttributes().get("userId"), false, null)));
 			}
 			catch (IOException e) {
 				e.printStackTrace();

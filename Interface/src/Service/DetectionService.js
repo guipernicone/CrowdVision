@@ -40,10 +40,12 @@ export const getStatisticsData = (id, startPeriodDate, endPeriodDate) => {
  * Send a request to get all historic detections data
  * 
  * @param {String} id User id to get all detections relationate
+ * @param {String} cameraId Filter by cameraId
  */
-export const getHistoryDetections = (id) => {
+export const getHistoryDetections = (id, cameraId = null) => {
     let body = {
         userId: id,
+        cameraId: cameraId
     }
     let route = 'detection/history'
     
