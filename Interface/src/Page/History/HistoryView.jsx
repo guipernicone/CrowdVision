@@ -108,7 +108,7 @@ const HistoryView = () => {
                         <div className="loading-card">
                             <ClipLoader
                                 size={150}
-                                color={"#123abc"}
+                                color={"#bb86fc"}
                                 loading={(detections.length == 0 ? true : false)}
                             />
                         </div>
