@@ -36,6 +36,9 @@ PATH_TO_LABELS = os.path.join('label_map', 'object-detection.pbtxt')
 #   1 - arma
 NUM_CLASSES = 1
 
+# Delay to send detection request.
+REQUEST_DELAY = 2000
+
 #--------------------------------------------------------------------
 #                         LOAD MODEL
 #--------------------------------------------------------------------
@@ -123,17 +126,23 @@ def run_detection(content):
                     [boxes, scores, classes, num_detections],
                     feed_dict={image_tensor: image_np_expanded})
         
-                if (scores[0][0] > 0.80):
-                    print(f"Arma Detectada - {scores[0][0]}")
+                ymin, xmin, ymax, xmax = boxes[0][0]
+                ySize = ymax - ymin
+                xSize = xmax - xmin
+                boxArea = ySize * xSize
+
+                if (scores[0][0] >= 0.8 and (ySize < (xSize * 1.5)) and boxArea < 0.15):
+                    print(f"\nArma Detectada - {scores[0][0]}\n")
 
                     detectionTime = int(round(time.time() * 1000))
                     running_time = detectionTime - initial_time
-                    #Send the detection once 5 seconds
+                    
+                    #Send the detection with interval set by REQUEST_DELAY
                     if (delay <= running_time):
                         print("Enviado")
 
                         initial_time = int(round(time.time() * 1000))
-                        delay = 2000
+                        delay = REQUEST_DELAY
 
                         # creating the boxes and labels on the frame
                         vis_util.visualize_boxes_and_labels_on_image_array(
@@ -144,7 +153,7 @@ def run_detection(content):
                             category_index,
                             use_normalized_coordinates=True,
                             min_score_thresh=.80,
-                            line_thickness=8)
+                            line_thickness=4)
                         
                         frameConverted = convert_frame_to_base_64_string(image_np)
 
