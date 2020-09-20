@@ -153,7 +153,7 @@ def run_detection(content):
                             category_index,
                             use_normalized_coordinates=True,
                             min_score_thresh=.80,
-                            line_thickness=8)
+                            line_thickness=4)
                         
                         frameConverted = convert_frame_to_base_64_string(image_np)
 
