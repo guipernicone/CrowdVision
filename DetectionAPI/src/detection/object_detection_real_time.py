@@ -131,7 +131,7 @@ def run_detection(content):
                 xSize = xmax - xmin
                 boxArea = ySize * xSize
 
-                if (scores[0][0] >= 0.8 and (ySize < (xSize * 1.5)) and boxArea < 0.15):
+                if (scores[0][0] >= 0.8 and (ySize < (xSize * 1.5)) and boxArea < 0.10):
                     print(f"\nArma Detectada - {scores[0][0]}\n")
 
                     detectionTime = int(round(time.time() * 1000))

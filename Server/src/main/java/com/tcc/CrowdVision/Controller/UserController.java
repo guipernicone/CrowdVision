@@ -272,7 +272,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/organizations-list")
-	public ResponseEntity<String> getUserOrganizationsList(@RequestParam(defaultValue = "none") String userId) {
+	public ResponseEntity<String> getUserOrganizationsList(@RequestParam(defaultValue = "none") String userId, @RequestParam(defaultValue = "none") String orgId) {
 		try 
 		{
 			if (!userId.equals("none")) 
@@ -281,7 +281,21 @@ public class UserController {
 				
 				if (userOptional.isPresent()) 
 				{
-					Iterable<Organization> iterable = organizationRepository.findAllById(userOptional.get().getOrganizationIds());
+					List<String> orgList = new ArrayList<String>();
+					if (!orgId.contentEquals("none")) {
+						if (userOptional.get().getOrganizationIds().contains(orgId)) 
+						{
+							orgList.add(orgId);
+						}
+						else {
+							return ResponseEntity.badRequest().body("Invalid organization id");
+						}
+					}
+					else {
+						orgList = userOptional.get().getOrganizationIds();
+					}
+
+					Iterable<Organization> iterable = organizationRepository.findAllById(orgList);
 					JSONArray json = new JSONArray();
 
 					for(Organization org: iterable) 
