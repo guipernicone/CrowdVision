@@ -6,7 +6,12 @@ O sistema é composto por três módulos principais:
 - Um aplicação desenvolvida em Python responsável pela captura de imagens obtidas através de filmagens ou de câmeras conectadas ao computador.
 - Um servidor responsável pela realização da detecção de objetos nas imagens, e o gerenciamento dos frames detectados.
 
+### Vídeo demonstrativo
+![](https://github.com/guipernicone/CrowdVision/blob/master/Gifs/gif1.gif)
+![](https://github.com/guipernicone/CrowdVision/blob/master/Gifs/gif2.gif)
+![](https://github.com/guipernicone/CrowdVision/blob/master/Gifs/gif3.gif)
 
 ### Rede Neural
 Para o treinamento da rede neural foi utilziado o TensorFlow Objection Detection Api, disponivel em:
 https://github.com/tensorflow/models/tree/r1.13.0
+)
