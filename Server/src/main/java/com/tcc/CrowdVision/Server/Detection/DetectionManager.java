@@ -55,12 +55,13 @@ public class DetectionManager {
 	 * 
 	 * @param userId - An User id
 	 * @param history - True for getting frames from history or False for getting recent frames
+	 * @param filterCameraIds -  If its not null filter by that camera id
 	 * 
 	 * @return JSON
 	 */
-	public String getFrames(String userId, Boolean history) {
+	public String getFrames(String userId, Boolean history, List<String> filterCameraIds) {
 		
-		ArrayList<String> cameraIds = new ArrayList<String>();
+		List<String> cameraIds = new ArrayList<String>();
 		JSONArray json = new JSONArray();
 		
 		Optional<User> optionalUser = userRepository.findById(userId);
@@ -78,7 +79,21 @@ public class DetectionManager {
 					cameraIds.addAll(org.getCameraIds());
 				}
 				
-				Iterable<Camera> cameras = cameraRepository.findAllById(cameraIds);
+				Iterable<Camera> cameras = new ArrayList<Camera>();
+				if (filterCameraIds != null)
+				{
+					List<String> idsTemp = new ArrayList<String>();
+					for (String id : filterCameraIds) {
+						if (cameraIds.contains(id)) {
+							idsTemp.add(id);
+						}
+					}
+
+					cameras = cameraRepository.findAllById(idsTemp);
+				}
+				else {
+					cameras = cameraRepository.findAllById(cameraIds);
+				}
 				
 				for (Camera camera : cameras) {
 					JSONObject cameraObject = new JSONObject();
@@ -89,7 +104,7 @@ public class DetectionManager {
 					JSONArray detectionArray = new JSONArray();
 					
 					if (history) {
-						ArrayList<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(camera.getId()); 
+						List<DetectionHistory> detections = detectionHistoryRepository.findDetectionByCameraId(camera.getId()); 
 						
 						
 						for (DetectionHistory detection: detections) {
@@ -101,7 +116,7 @@ public class DetectionManager {
 						}
 					}
 					else {
-						ArrayList<Detection> detections = detectionRepository.findDetectionByCameraId(camera.getId());
+						List<Detection> detections = detectionRepository.findDetectionByCameraId(camera.getId());
 						
 						for (Detection detection: detections) {
 						

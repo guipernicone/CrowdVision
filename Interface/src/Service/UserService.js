@@ -73,13 +73,69 @@ export const getUserInformation = () => {
  * 
  * @param {String} id The user id
  */
-export const getUserOrganizationsList = () => {
+export const getUserOrganizationsList = (org) => {
+
+    let cm = new CookieService();
+    let params = {};
+    if (org != null) {
+        params = {
+            userId:  cm.get('login').user.id,
+            orgId: org
+        }
+    }
+    else{
+        params = {
+            userId:  cm.get('login').user.id,
+        }
+    }
+    
+    let route = 'user/organizations-list'
+    
+    return sendGet(params, route)
+}
+
+/**
+ * Send a request to get all user organizations list
+ */
+export const getUserListOrganizations = () => {
 
     let cm = new CookieService();
     let params = {
         userId:  cm.get('login').user.id,
     }
-    let route = 'user/organizations-list'
+    let route = 'user/organizations'
     
     return sendGet(params, route)
+}
+
+/**
+ * Get the user List
+ */
+export const getUserListFromParent = () => {
+
+    let cm = new CookieService();
+    let params = {
+        userId:  cm.get('login').user.id,
+    }
+    let route = 'user/user-list'
+    
+    return sendGet(params, route)
+}
+
+
+/**
+ * Get the user List
+ * 
+ * @param {String} id The user id
+ */
+export const deleteUser = (id) => {
+    
+    let cm = new CookieService();
+    let params = {
+        userId:  cm.get('login').user.id,
+        deleteId:  id,
+    }
+    let route = 'user/delete'
+    
+    return sendPost(params, route)
 }

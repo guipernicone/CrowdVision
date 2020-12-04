@@ -27,7 +27,7 @@ SERVER_URL = 'http://192.168.15.21:8080'
 
 DETECTION_API_URL = 'http://localhost:5000'
 
-MAX_FRAMES__PER_REQUEST = 299
+MAX_FRAMES__PER_REQUEST = 499
 
 RECONNECT_DELAY = 10
 
@@ -126,22 +126,29 @@ def send_to_detection(frame, device_key):
 #                         CAPTURE
 #--------------------------------------------------------------------
 
-if (len(sys.argv) == 3 and sys.argv[1] == "-camera_name"):
-    print("entrei")
+if (len(sys.argv) >= 3 and sys.argv[1] == "-camera_name"):
     print(sys.argv)
     camera_name = sys.argv[2]
+
+    if (len(sys.argv) == 5 and sys.argv[3] == "-video"):
+        cap = cv2.VideoCapture(f'videos/{sys.argv[4]}.mp4')
+    else:
+        if (len(sys.argv) == 5 and sys.argv[3] == "-camera_src"):
+            cap = cv2.VideoCapture(int(sys.argv[4]))
+    
     device_key = register_device(camera_name)
     frame_list = []
     frame_count = 0
     semaphore = threading.Semaphore(9)
     failed_send_attemps = 0
+
     while True:
         # Read a frame from the defined stream
         ret, image_np = cap.read()
-
+        
         if (failed_send_attemps > 10):
             failed_send_attemps = 0
-            print('Connection to ' + DETECTION_API_URL + ' qfailed')
+            print('Connection to ' + DETECTION_API_URL + ' failed')
             print('Trying to reconnect again in ' + str(RECONNECT_DELAY) + ' seconds')
             time.sleep(RECONNECT_DELAY)
         

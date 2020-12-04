@@ -1,6 +1,7 @@
 import React, { useEffect, memo } from 'react';
 import GoogleMapReact from 'google-map-react'
 import MarkerClusterer from '@google/markerclusterer'
+import {GoogleMaps_KEY} from 'Config/Config'
 
 const ClusterMap = ({coordinates, zoom, ...props}) => {
 
@@ -34,7 +35,7 @@ const ClusterMap = ({coordinates, zoom, ...props}) => {
 
     return (
         <GoogleMapReact
-            bootstrapURLKeys={"AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE"}
+            bootstrapURLKeys={GoogleMaps_KEY}
             yesIWantToUseGoogleMapApiInternals
             onGoogleApiLoaded={({map, maps}) => setGoogleMapRef(map, maps)}
             defaultCenter={{lat: -31.563910, lng: 147.154312}}
@@ -46,5 +47,3 @@ const ClusterMap = ({coordinates, zoom, ...props}) => {
 }
 
 export default memo(ClusterMap);
-
-// AIzaSyBTpKuKxoJ4N1v13ndFkjjhvbDVGPyTGuE

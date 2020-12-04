@@ -160,12 +160,12 @@ const StatisticsMainForm = ({formHandler}) => {
     return (
         <StatisticsMainFormStyle>
             <div className="title">Estatísticas</div>
-            <Alert variant={'danger'} className="alertForm" style={{display:cameraMsg}}>Selecionar ao menos uma camera</Alert>
-            <Alert variant={'danger'} className="alertForm" style={{display:dateMsg}}>Inserir data inicial e final</Alert>
-            <Alert variant={'danger'} className="alertForm" style={{display:timeMsg}}>Data inicial deve ser menor do que a final</Alert>
+            <Alert variant={'danger'} className="alertForm" style={{display:cameraMsg}}>Selecionar ao menos uma câmera</Alert>
+            <Alert variant={'danger'} className="alertForm" style={{display:dateMsg}}>Inserir uma data inicial e uma final</Alert>
+            <Alert variant={'danger'} className="alertForm" style={{display:timeMsg}}>A data inicial precisa ser menor que a final</Alert>
             <div className="statistics-form-body">
                 <div style={{ paddingLeft:"40px", paddingBottom:"20px"}}>
-                    <TitleDivisor title="Cameras Disponiveis" width="83%"/>
+                    <TitleDivisor title="Câmeras Disponíveis" width="83%"/>
                 </div>
                 <BoxSelect 
                     content={camerasContent} 
@@ -173,11 +173,11 @@ const StatisticsMainForm = ({formHandler}) => {
                     onSelectItem={(camera) => selectHandler(camera)}
                     onSelectAll={selectAll}
                     onDeleteItem={(id) => deleteSelect(id)}
-                    title={"Cameras"}
+                    title={"Câmeras"}
                 />
                 <StatisticsDateInput date={[startDate, endDate]} onDateChange={(date,period) => dateHandler(date, period)} time={[startTime, endTime]} onTimeChange={(time,period) => timeHandler(time, period)}/>
                 <div className="buttom-field">
-                    <Button className="buttonSearch" onClick={submitResponse}>Gerar Relatorio</Button>
+                    <Button className="buttonSearch" onClick={submitResponse}>Gerar Relatório</Button>
                 </div>
             </div>
         </StatisticsMainFormStyle>

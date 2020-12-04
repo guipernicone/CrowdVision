@@ -28,22 +28,6 @@ const History = ({...props}) => {
             console.log(error);
             return setLoggedInStatus(LOGIN_STATES.NOTLOGGEDIN);
         })
-
-        let cs = new CookieService();
-        let login = cs.get('login');
-
-        getHistoryDetections(login.user.id)
-        .then(response => {
-            console.log(response)
-            if (response.status === 200)
-            {
-                setDetectionsContent(response.data)
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-
     }, []);
 
     return (
@@ -56,7 +40,7 @@ const History = ({...props}) => {
                     <HistoryStyle>
                         <div className="title">Histórico de Detecções</div>
                         <div className="cards">
-                            <HistoryView key="detection_view" detectionsContent={detectionsContent}/> 
+                            <HistoryView key="detection_view"/> 
                         </div>
                         
                     </HistoryStyle>

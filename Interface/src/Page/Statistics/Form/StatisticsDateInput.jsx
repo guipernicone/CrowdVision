@@ -9,7 +9,7 @@ const StatisticsDateInput = ({date, onDateChange, time, onTimeChange}) => {
     registerLocale('pt', pt)
     return (
         <StatisticsDateInputStyle>
-            <TitleDivisor title="Periodo de Busca" width="85%"/>
+            <TitleDivisor title="Período de Busca" width="85%"/>
             <div className="select-date">
                 <div className="input-fields">
                     <input type="date" className="date-input" value={date[0]} onChange={(event) => onDateChange(event.target.value, "start")}/>

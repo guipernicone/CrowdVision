@@ -1,6 +1,7 @@
 package com.tcc.CrowdVision.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -271,7 +272,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/organizations-list")
-	public ResponseEntity<String> getUserOrganizationsList(@RequestParam(defaultValue = "none") String userId) {
+	public ResponseEntity<String> getUserOrganizationsList(@RequestParam(defaultValue = "none") String userId, @RequestParam(defaultValue = "none") String orgId) {
 		try 
 		{
 			if (!userId.equals("none")) 
@@ -280,7 +281,21 @@ public class UserController {
 				
 				if (userOptional.isPresent()) 
 				{
-					Iterable<Organization> iterable = organizationRepository.findAllById(userOptional.get().getOrganizationIds());
+					List<String> orgList = new ArrayList<String>();
+					if (!orgId.contentEquals("none")) {
+						if (userOptional.get().getOrganizationIds().contains(orgId)) 
+						{
+							orgList.add(orgId);
+						}
+						else {
+							return ResponseEntity.badRequest().body("Invalid organization id");
+						}
+					}
+					else {
+						orgList = userOptional.get().getOrganizationIds();
+					}
+
+					Iterable<Organization> iterable = organizationRepository.findAllById(orgList);
 					JSONArray json = new JSONArray();
 
 					for(Organization org: iterable) 
@@ -320,4 +335,120 @@ public class UserController {
 		}
 
 	}
+	
+	@GetMapping("/user-list")
+	public ResponseEntity<String> getUsersListFromParent(@RequestParam(defaultValue= "none") String userId)
+	{
+		
+		if (!userId.equals("none"))
+		{
+			Optional<User> userOptional = userRepository.findById(userId);
+			if (userOptional.isPresent()) 
+			{
+				User user = userOptional.get();
+				UserManager userManager = UserManager.getInstance();
+				if (!userManager.isUser(user))
+				{
+					List<User> userParentList;
+					if (userManager.isAdmin(user))
+					{
+						userParentList = userRepository.findUsersByParentId(user.getId());
+					}
+					else
+					{
+						userParentList = userRepository.findUsersByParentId(user.getParentUserId());
+					}
+					
+					if (!userParentList.isEmpty())
+					{
+						JSONArray userListJson = new JSONArray();
+						for (User userFromList : userParentList)
+						{
+							
+							JSONObject userObject = new JSONObject();
+							Boolean containsOrganization = false;
+							
+							for (String organizationid : userFromList.getOrganizationIds()) 
+							{
+								if (user.getOrganizationIds().contains(organizationid)) {
+									containsOrganization = true;
+									break;
+								}
+							}
+							
+							if (containsOrganization) {
+								if (userManager.isManager(user))
+								{
+									if (userManager.isUser(userFromList))
+									{
+										userObject.put("id", userFromList.getId());
+										userObject.put("name", userFromList.getName() + " " + userFromList.getSurname());
+									}
+								}
+								else if (userManager.isAdmin(user)) 
+								{
+									if (userManager.isUser(userFromList) || userManager.isManager(userFromList)) 
+									{
+										userObject.put("id", userFromList.getId());
+										userObject.put("name", userFromList.getName() + " " + userFromList.getSurname());
+									}
+								}
+							}
+							if (!userObject.isEmpty())
+							{
+								userListJson.put(userObject);
+							}
+						}
+						
+						return ResponseEntity.ok(userListJson.toString());
+					}
+					return ResponseEntity.ok("[]");
+				}
+				
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid USER permission");
+			}
+		}
+		return ResponseEntity.badRequest().body("Invalid USER id");
+	}
+	
+	@PostMapping("/delete")
+	public ResponseEntity<String> deleteUser(@RequestBody Map<String,String> request)
+	{
+		String userId = request.get("userId");
+		String deleteId = request.get("deleteId");
+		
+		if (!userId.isEmpty() && !deleteId.isEmpty())
+		{
+			Optional<User> optionalUser = userRepository.findById(userId);
+			Optional<User> optionalDeleteUser = userRepository.findById(deleteId);
+			UserManager userManager = UserManager.getInstance();
+			
+			if (optionalUser.isPresent() && optionalDeleteUser.isPresent())
+			{
+				User user = optionalUser.get();
+				User deleteUser = optionalDeleteUser.get();
+				
+				if (userManager.isAdmin(user))
+				{
+					if(userManager.isManagerOrUser(deleteUser))
+					{
+						userRepository.deleteById(deleteId);
+						return ResponseEntity.ok("User " + deleteId + " deleted");
+					}
+				}
+				else if(userManager.isManager(user))
+				{
+					if(userManager.isUser(deleteUser))
+					{
+						userRepository.deleteById(deleteId);
+						return ResponseEntity.ok("User " + deleteId + " deleted");
+					}
+				}
+			}
+			
+			return ResponseEntity.ok("Invalid User Permission");
+		}
+		return ResponseEntity.badRequest().body("Invalid JSON");
+	}
+	
 }

@@ -28,16 +28,6 @@ const ProfileForm = () => {
         })
     },[])
 
-        // const buildOrganizationOptions = () => {
-    //     let options;
-
-    //     options = organizations.map((org, index) => {
-    //         return <option key={"option_permission_" + index} value={org.id}>{org.name}</option>
-    //     });
-
-    //     return options;
-    // }
-
     const buildOrganizationOptions = () => {
         return organizations.map((org, index) =>{
             return <Form.Check type={"checkbox"} key={"option_permission_" + index} id={"checkbox_" + index} label={org.name} value={org.id}/>

@@ -33,4 +33,9 @@ export const HistoryViewStyle = styled.div `
         display:flex;
         width: 80%
     }
+
+    .loading-card{
+        display:flex;
+        margin:auto;
+    }
 `

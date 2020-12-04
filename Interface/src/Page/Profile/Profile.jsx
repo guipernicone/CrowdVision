@@ -8,6 +8,8 @@ import { ProfileStyle } from 'Page/Profile/Style/ProfileStyle';
 import ProfileForm from 'Page/Profile/ProfileForm';
 import ProfileSideMenu from 'Page/Profile/ProfileSideMenu';
 import ProfileInformation from 'Page/Profile/ProfileInformation';
+import ProfileUserList from 'Page/Profile/ProfileUserList'
+import ProfileCameraList from 'Page/Profile/ProfileCameraList'
 
 /**
  * The Profile detection page
@@ -18,8 +20,11 @@ const Profile = ({...props}) => {
 
     const optionsList = [
         "Informações do Usuário",
-        "Cadastro de Usuário"
+        "Cadastro de Usuário",
+        "Lista de Usuários",
+        "Gerenciar Câmeras"
     ]
+
     const User = (new CookieService()).get('login').user;
 
     useEffect(() => {
@@ -44,6 +49,20 @@ const Profile = ({...props}) => {
             case 'Cadastro de Usuário':
                 if (User.permission !== 'USER') {
                     return <ProfileForm/>
+                }
+                else{
+                    return null
+                }
+            case 'Lista de Usuários':
+                if (User.permission !== 'USER') {
+                    return <ProfileUserList/>
+                }
+                else{
+                    return null
+                }
+            case 'Gerenciar Câmeras':
+                if (User.permission == 'ADMIN') {
+                    return <ProfileCameraList/>
                 }
                 else{
                     return null
